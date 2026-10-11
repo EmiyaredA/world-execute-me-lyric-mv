@@ -16,6 +16,7 @@
 // `love` is the value the persona card left undefined at boot; line 07 is the only line that matters.
 // The sung word is four even syllables: they are the four statements of the loop body (lines 02-05), and the
 // four blocks its big letters are filled in.
+import { nixieDigits } from '../components/memory-instruments.js';
 import { listing, odometer } from '../components/code.js';
 import { clamp, easeOut, lerp, prog, pulse } from '../engine/util.js';
 
@@ -55,10 +56,11 @@ export function monoWord(ctx, str, xr, y, size, { filled = str.length, color = '
  *   overflow    0..1 the counter overflowing
  *   dimList     0..1 the listing stepping back (round 12: the word takes the frame)
  *   output      false = the word of the round in progress is not drawn here (the caller draws it: round 12)
+ *   instrument  true opts into glass digits; false retains the original counter for other callers
  *   lift        px the whole staircase has been pushed up (round 12: out of the top of the frame)
  */
 export function machine(ctx, S) {
-  const { word, title = '', round = 0, sung = 0, bar = 1, since = 1, rise = 1, zoom = [1, 1], arrow = 0, seen = 3, count = 0, total = null, overflow = 0, dimList = 0, stop = true, alpha = 1, output = true, lift = 0 } = S;
+  const { word, title = '', round = 0, sung = 0, bar = 1, since = 1, rise = 1, zoom = [1, 1], arrow = 0, seen = 3, count = 0, total = null, overflow = 0, dimList = 0, stop = true, alpha = 1, output = true, lift = 0, instrument = false } = S;
   const [ZL, ZW] = zoom, X = 96, aL = alpha * (1 - 0.7 * dimList);
 
   // ---- the listing (grows from its top-left corner)
@@ -83,7 +85,7 @@ export function machine(ctx, S) {
     ctx.text('yours', X + kw + 18 * ZL, ky + kh * 0.66, { size: 24 * ZL, font: 'mono', color: 'sub', alpha });
   }
   ctx.text('run', X, by - cs * 0.02, { size: 30 * ZL, font: 'mono', color: 'sub', alpha });
-  const ox = X + 78 * ZL, ow = odometer(ctx, ox, by, count, { digits: 4, size: cs, color: total != null ? 'err' : 'text', overflow, alpha });
+  const ox = X + 78 * ZL, ow = (instrument ? nixieDigits : odometer)(ctx, ox, by, count, { digits: 4, size: cs, color: total != null ? 'err' : 'text', overflow, alpha });
   if (total != null) ctx.text(` / ${total}`, ox + ow, by, { size: cs * 0.5, font: 'mono', weight: 700, color: 'sub', alpha });
   if (overflow > 0) ctx.text(OVERFLOW, ox, by - cs * 0.9 + (1 - easeOut(clamp(overflow * 2))) * 12, { size: 28 * ZL, font: 'mono', weight: 700, color: 'err', alpha: alpha * clamp(overflow * 3) });
 

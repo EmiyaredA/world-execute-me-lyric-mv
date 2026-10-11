@@ -2,19 +2,19 @@
 // The user opens the settings drawer on the AI and plays with it. The cursor is the protagonist and
 // every cut lands ON one of its clicks; the AI can only narrate what is being done to it (serif, orange).
 //   pre1-drawer   wide, the drawer opening        Settings; Current: AC, then DC. The curve it had drawn becomes its current
-//   pre1-vision   macro on one switch             Vision: off. The picture itself breaks into dark blocks; then that one switch is rattled
-//   pre1-date     a band four fifths of the frame  Knowledge date is grabbed and yanked back, a pull a beat: history runs under the spark, over the era line, to the pyramids
+//   pre1-vision   macro on one switch             Vision: off. Sharp picture dims under scan lines; the switch is rattled
+//   pre1-date     a band four fifths of the frame  Archive query pulled back six times: current snapshot, record boundary, then empty slots
 //   pre1-unite    centred sheet                   Shared memory: on; Context depth pushed to the end; Done
 // In the wide shots its lines are written on the page, as in verse 1; in the close ones they are the
 // annotation under the row being touched (chat_script.json ties every row to its lyric line).
 import { chatLayout, composer, header, iconButton, pill, room, toggle, windowFrame } from '../components/chat.js';
 import { cursorAt, pointer, sinceClick } from '../components/cursor.js';
+import { archiveStrip, nixieDigits, scanField, signalTrace } from '../components/memory-instruments.js';
 import { burst, spark, sparkOutline } from '../components/motif.js';
 import { lerpRect } from '../engine/layout.js';
-import { rand } from '../engine/prng.js';
 import { clamp, easeBack, easeIn, easeInOut, easeOut, lerp, prog, pulse, window01 } from '../engine/util.js';
 import { cue } from './cues.js';
-import { ERA_LINE, STOPS, strip } from './history.js';
+import { ERA_LINE, STOPS } from './history.js';
 import { cues } from './kit.js';
 import { enter } from './shot.js';
 
@@ -27,11 +27,11 @@ const FALLBACK_ROWS = [
 ];
 
 export function pre1Shots(env) {
-  const { script, lyrics } = env, { T, H, B, Bt, P, text } = cues(env);
+  const { script, lyrics, art } = env, { T, H, B, Bt, P, text } = cues(env);
   const b = (n) => Bt(96 + n);                               // beats counted from bar 24
   const beat = (id) => ((script.sections ?? []).find((s) => s.n === 4)?.beats ?? []).find((x) => x.id === id) ?? {};
   const ROWS = (script.settings_rows?.section4 ?? []).length >= 5 ? script.settings_rows.section4 : FALLBACK_ROWS;
-  const UI = { settings: beat('drawer-opens').ui?.[0] ?? 'Settings', done: beat('depth-maxed').ui?.[0] ?? 'Done', blind: beat('vision-off').system?.[0] ?? 'image input: none' };
+  const UI = { settings: beat('drawer-opens').ui?.[0] ?? 'Settings', done: beat('depth-maxed').ui?.[0] ?? 'Done', blind: beat('vision-off').system?.[0] ?? 'visual input: suspended' };
   const ROW_LINES = [[24, 25], [26, 27], [28, 29], [30, 30], [31, 31]];
   const ERA = text(29).split(' ').filter((w) => /[A-Z]\.[A-Z]/.test(w));          // the two era tokens, in sung order
   const VAL = ROWS[2].values, Y_AD = +(VAL[0].match(/\d+/) ?? [2026])[0], Y_BC = +(VAL[2].match(/\d+/) ?? [3000])[0];
@@ -53,7 +53,7 @@ export function pre1Shots(env) {
   const vision = (t) => 1 - flick(t, tOff) + flick(t, tOn1) - flick(t, tOff2) + flick(t, tOn2, QUICK) - flick(t, tOff3, QUICK) + flick(t, tOn3, QUICK);
   const blind = (t) => ramp(t, tOff) - ramp(t, tOn1) + ramp(t, tOff2) - ramp(t, tOn2, QUICK) + ramp(t, tOff3, QUICK) - ramp(t, tOn3, QUICK);
   // v4: the date is not slid along a ruler. The hand YANKS it back, once on every beat, six times, and never rests in
-  // between: a snatch, then it runs on. Each pull ends in a gap between two landmarks of the strip (history.js STOPS);
+  // between: a snatch, then it runs on. Each pull retains its original rail stop (history.js STOPS);
   // the fifth starts on the era line. YEAR is signed (A.D. above zero, B.C. below), one value per stop.
   const YEAR = [Y_AD, Y_AD - 26, 1500, 700, 0, -Y_BC / 2, -Y_BC];
   const pull = (t) => { const x = clamp((t - tGrab) / P, 0, 6 - 1e-9), i = Math.floor(x), p = x - i; return [i, p, 0.8 * (1 - (1 - p) ** 3) + 0.2 * p]; };   // [which pull, how far into its beat, how far along its way]
@@ -82,23 +82,6 @@ export function pre1Shots(env) {
   // ---------------------------------------------------------------- small helpers
   /** Run fn in screen space (the shot's camera is put back afterwards). */
   const screen = (ctx, fn) => { const g = ctx.g; g.save(); g.setTransform(ctx.scale, 0, 0, ctx.scale, 0, 0); fn(); g.restore(); ctx._font = ''; };
-  /**
-   * Local kit addition: true mosaic of everything drawn so far on this layer (cells of `cell` virtual px).
-   * Unlike ctx.fx.mosaic it happens in the middle of the draw order, so whatever is drawn afterwards stays sharp.
-   */
-  let scratch = null;
-  function mosaic(ctx, cell) {
-    if (cell < 2) return;
-    const g = ctx.g, c = ctx.canvas, px = cell * ctx.scale, w = Math.ceil(c.width / px), h = Math.ceil(c.height / px);
-    scratch ??= document.createElement('canvas');
-    if (scratch.width !== w || scratch.height !== h) { scratch.width = w; scratch.height = h; }
-    const sg = scratch.getContext('2d');
-    sg.imageSmoothingEnabled = true; sg.imageSmoothingQuality = 'high'; sg.globalCompositeOperation = 'copy';
-    sg.drawImage(c, 0, 0, w * px, h * px, 0, 0, w, h);
-    g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false;
-    g.drawImage(scratch, 0, 0, w, h, 0, 0, w * px, h * px);
-    g.restore(); ctx._font = '';
-  }
   /** The user's pointer along waypoints, with a long ghost trail whenever it moves faster than `fast` px/s. */
   function cur(ctx, way, t, { scale = 1.5, kind = 'arrow', fast = 700, n = 6, dt = 0.011, strength = 0.45 } = {}) {
     const now = cursorAt(way, t), was = cursorAt(way, t - 0.03), sc = sinceClick(way, t);
@@ -254,11 +237,8 @@ export function pre1Shots(env) {
   };
 
   // ---------------------------------------------------------------- shot 3: the timeline, opened across the window (v4)
-  // The row opens into a band four fifths of the frame high. In it the spark is the knob, and the timeline is far longer
-  // than the frame: the hand drags the spark to the left and history runs to the right under it (history.js). Left of
-  // the spark is what it still knows: dark paper with a smear behind it while it flies, inked as it slows. Right of it
-  // is what it has been dragged past: outlines. Under the rail the year, as a milometer, and the two era words of line
-  // 29 either side of it: each lands when it is sung, and the one whose era the spark has left is an outline from then on.
+  // The original slider, six pulls, era crossing and signed years remain. The strip now contains
+  // a current snapshot and a record boundary at STOPS[1]; all earlier queries are empty archives.
   const BAND = { x: -40, y: 108, w: 2000, h: 864 }, GY = 640, TY = 706, HK = 0.86;
   const KX = [1560, 1540, 1440, 1350, 1260, 1170, 1090];                // where the spark is in the frame at the end of each pull: it gives way to the left as more lies behind it
   const snatch = (t) => { const [, p] = pull(t); return t <= tGrab || t >= tEnd ? 0 : p < 0.16 ? easeOut(p / 0.16) : 1 - easeInOut((p - 0.16) / 0.84); };   // the hand jerks ahead of the picture; the picture catches up
@@ -271,22 +251,7 @@ export function pre1Shots(env) {
    * on 9; one that turns faster than a dozen numerals a second is drawn as a wheel in motion (its numerals streaked),
    * not as a flicker of them.
    */
-  function yearWheels(ctx, x, y, year, rate, { size = 150, color = 'text' } = {}) {
-    const cw = ctx.cw(size), H = size * 1.08, o = { size, font: 'mono', weight: 800, color }, v = year + 1e-6;
-    ctx.rrect(x - 16, y - size * 0.86 - 8, 4 * cw + 32, H + 16, 16, { fill: 'bg', stroke: 'line', width: 2 });
-    for (let i = 0; i < 4; i++) {
-      const unit = 10 ** (3 - i), cx = x + i * cw, low = v % unit, d = Math.floor(v / unit) % 10;
-      const fast = clamp((rate / unit - 8) / 8), fr = lerp(clamp(low - (unit - 1)), low / unit, fast);
-      if (i) ctx.line(cx, y - size * 0.86 - 8, cx, y - size * 0.86 + H + 8, { color: 'line', width: 2, alpha: 0.6 });
-      ctx.clip({ x: cx, y: y - size * 0.86, w: cw, h: H }, () => {
-        for (let j = -1; j <= 2; j++) {
-          const n = String((((d + j) % 10) + 10) % 10), yy = y + (j - fr) * H;
-          ctx.text(n, cx, yy, { ...o, alpha: 1 - 0.5 * fast });
-          if (fast > 0) for (const dy of [-0.17, 0.17]) ctx.text(n, cx, yy + dy * H, { ...o, alpha: 0.24 * fast });
-        }
-      });
-    }
-  }
+  const yearWheels = (ctx, x, y, year, rate, opts) => nixieDigits(ctx, x, y, Math.floor(year), opts);
   function band(ctx, t) {
     const k = bandK(t);
     if (k <= 0.002) return;
@@ -300,18 +265,9 @@ export function pre1Shots(env) {
       const kx = knobX(t), S = scrollAt(t), v = speedAt(t), rush = clamp((v - 800) / 1200), right = BAND.x + BAND.w, top = BAND.y;
       const crossed = t >= tCross, hit = pulse(t - tCross, 6), xe = S + ERA_LINE * HK, xa = S + STOPS[6] * HK;
       ctx.gradRect(BAND.x, GY, BAND.w, BAND.y + BAND.h - GY, [[0, 'panel', 0.6], [1, 'panel', 0.1]]);            // the ground it all stands on
-      // what the spark still knows: a lit sky; dark paper with its smear while it flies, inked as it slows
-      ctx.clip({ x: BAND.x, y: top, w: kx - BAND.x, h: GY - top + 1 }, () => {
-        ctx.gradRect(BAND.x, top, BAND.w, GY - top, [[0, 'line', 0], [1, 'line', 0.85]]);
-        ctx.radial(kx, GY, 640, 'meDim', 0.3);
-        ctx.trail(v > 1400 ? 4 : v > 900 ? 2 : 0, 0.012, (tau) => strip(ctx, scrollAt(t - tau), GY, 'dark', { scale: HK }), 0.42);
-        strip(ctx, S, GY, 'ink', { scale: HK, alpha: 1 - rush });
-      });
-      // what it has been dragged past: outlines, in the dark
-      ctx.clip({ x: kx, y: top, w: right - kx, h: GY - top + 1 }, () => {
-        ctx.rect(kx, top, right - kx, GY - top, { fill: true, color: 'panel', alpha: 0.4 });
-        strip(ctx, S, GY, 'hollow', { scale: HK, alpha: 0.8 - 0.35 * rush });
-      });
+      archiveStrip(ctx, art, S, GY, STOPS, { scale: HK });
+      const outside = prog(t, tGrab + P * 0.85, tGrab + P);
+      ctx.text(outside > 0.5 ? 'QUERY OUTSIDE SAVED MEMORY' : 'READING CURRENT ARCHIVE', 150, 224, { size: 21, font: 'mono', color: 'sub' });
       ctx.line(kx, top + 34, kx, TY, { color: 'me', width: 2, alpha: 0.5 });                                    // the edge of what it knows
       // the rail: from the far end to now, filled as far as the spark; the era line stands on it
       ctx.rrect(xa, TY - 3, S - xa, 6, 3, { fill: 'line' });
@@ -323,14 +279,14 @@ export function pre1Shots(env) {
       ctx.text(VAL[1] ?? '', xe, TY + 46, { size: 22, font: 'mono', color: 'mute', align: 'center' });
       burst(ctx, xe, TY, 120, (t - tCross) / 0.5, { color: 'text' });
       burst(ctx, KX[6], TY, 84, (t - tEnd) / 0.4, { color: 'me' });                                              // and the end of the rail: it will go no further
-      ctx.text(ROWS[2].label, 150, 176, { size: 34, weight: 500, color: 'text' });
+      ctx.text('Memory archive / query date', 150, 176, { size: 34, weight: 500, color: 'text' });
       say(ctx, 28, t, 150, 806, { size: 60, out: T(29) });
       say(ctx, 29, t, 150, 806, { size: 60 });
       // the year, and the era words of the lyric either side of it
-      const size = 150, yb = 938, o = { size, weight: 900, font: 'serif' }, cw = ctx.cw(size), gap = 50;
+      const size = 128, yb = 928, o = { size, weight: 900, font: 'serif' }, cw = ctx.cw(size), gap = 50;
       const w0 = ctx.measure(ERA[0] ?? '', o), w1 = ctx.measure(ERA[1] ?? '', o), x1 = 1790 - w1, xd = x1 - gap - 4 * cw, x0 = xd - gap - w0;
       const y = yearAt(t), rate = Math.abs(yearAt(t + 1 / 240) - yearAt(t - 1 / 240)) * 120;
-      yearWheels(ctx, xd, yb + 7 * (pulse(t - tEraA, 9) + pulse(t - tEraB, 9)), Math.max(1, Math.abs(y)), rate, { size });
+      yearWheels(ctx, xd, yb + 7 * (pulse(t - tEraA, 9) + pulse(t - tEraB, 9)), Math.max(1, Math.abs(y)), rate, { size, alpha: prog(k, 0.99, 1) });
       const token = (str, x, align, at, gone) => {
         if (t < at || !str) return;
         const land = prog(t, at, at + 0.13), out = gone === null ? 0 : flick(t, gone, 0.14), oo = { ...o, align };
@@ -416,22 +372,19 @@ export function pre1Shots(env) {
     // ------------------------------------------------------------------ Vision: off; then rattled
     {
       id: 'pre1-vision', at: tOff, lines: [26, 27], palette: 'on', layout: 'macro on the Vision switch, three rows deep',
-      moment: 'The user switches Vision off: the picture breaks into dark blocks and only its own words stay sharp. Then that one switch is rattled on and off, faster each time, and the interface sways; it is left on.',
+      moment: 'Vision is switched off: the sharp client dims under scan lines and its observation signal flattens. The original flips and swaying remain; visual input is restored at the end.',
       enter: { type: 'cut' },                                                // cut on the click
       camera: cam2,
       render(ctx, t, f) {
         client(ctx, t, 1, { skipHint: 1 });
         const bl = clamp(blind(t)), r = rowAt(1);
-        if (bl > 0.01) {                                                     // it cannot see: everything but its own words turns to blocks and goes dark
-          mosaic(ctx, [7, 14, 28, 56, 56][Math.floor(bl * 4)]);            // the cells double in a few steps (not a new grid every frame)
-          screen(ctx, () => {
-            ctx.rect(0, 0, 1920, 1080, { fill: true, color: 'panel', alpha: 0.5 * bl });
-            for (let j = 0; j < 20; j++) for (let i = 0; i < 35; i++) { const v = rand(404, i, j); if (v > 0.5) ctx.rect(i * 56, j * 56, 56, 56, { fill: true, color: 'text', alpha: 0.075 * (v - 0.5) * bl }); }     // a fixed grain of cells: dark, not empty
-          });
+        if (bl > 0.01) {                                                     // input is suspended: dim and scan the full-resolution client; text and controls stay sharp
+          screen(ctx, () => scanField(ctx, { x: 0, y: 0, w: 1920, h: 1080 }, t, { strength: bl, dim: 0.3, seed: 404 }));
           ctx.rrect(r.x + r.w - 104, r.y + 33, 104, 56, 28, { fill: null, stroke: 'sub', width: 1, alpha: 0.8 * bl });
           ctx.circle(r.x + r.w - 104 + 28 + 48 * vision(t), r.y + 61, 23, { color: 'sub', width: 1, alpha: 0.8 * bl });
           ctx.text(UI.blind, r.x + r.w, r.y + 109, { size: 10.5, font: 'mono', color: 'sub', align: 'right', alpha: prog(bl, 0.6, 1) });
         }
+        signalTrace(ctx, { x: r.x + 10, y: r.y + 119, w: r.w - 20, h: 28 }, t, { activity: 1 - bl, alpha: 0.55, color: 'sub' });
         // its annotation under the row: line 26 typed; line 27 wobbling, with after-images
         const h = hintOf(1, t);
         if (h) {
@@ -458,8 +411,8 @@ export function pre1Shots(env) {
 
     // ------------------------------------------------------------------ Knowledge date, dragged back over the era line
     {
-      id: 'pre1-date', at: tGrab, lines: [28, 29], palette: 'on', layout: 'a band four fifths of the frame high: a strip of cut-paper history running to the right under the spark; under the rail the year as a milometer',
-      moment: 'The user grabs the Knowledge date and yanks it back, once on every beat. The row opens across the frame: the spark is the knob, and history runs under it, from towers past spires and a colonnade, over the era line on the beat, to the pyramids. What the spark has been dragged past loses its ink and is an outline.',
+      id: 'pre1-date', at: tGrab, lines: [28, 29], palette: 'on', layout: 'archive strip across the frame: the current Kurisu snapshot, a record boundary, then empty slots; query years in glass digits below',
+      moment: 'The query date is pulled back six times on the original beats. After the first pull it passes the saved-record boundary: Kurisu\'s current snapshot gives way to empty NO RECORD slots. The original A.D./B.C. query and era crossing remain, without inventing memories.',
       enter: { type: 'cut' },                                                // cut on the grab
       camera: cam3,
       render(ctx, t, f) {

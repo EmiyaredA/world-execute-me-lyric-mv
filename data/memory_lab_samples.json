@@ -1,0 +1,22 @@
+{
+  "boot_power": 2.6,
+  "boot_layout": 6,
+  "boot_params": 10.5,
+  "boot_world": 13.8,
+  "vision_off": 48.9,
+  "vision_on": 51.6,
+  "archive_current": 52.15,
+  "archive_edge": 52.7,
+  "archive_empty": 53.2,
+  "archive_bc": 54.7,
+  "exec_01": 148.7,
+  "exec_05": 151.9,
+  "exec_09": 155.6,
+  "exec_12": 158.5,
+  "down_message": 194.8,
+  "down_params": 196.8,
+  "down_layout": 200.4,
+  "down_power": 204.1,
+  "climax_scan": 163.3069,
+  "down_digits": 197.3
+}

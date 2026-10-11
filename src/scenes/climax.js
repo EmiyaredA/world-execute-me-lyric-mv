@@ -4,7 +4,7 @@
 // Two things escalate, and they never peak in the same frame:
 //   CORRUPTION (the first half)  the three ink plates are out of register (a thin red plate shows at one edge), and
 //                                on every kick ONE fault: the plates spring apart, the sheet tears, the colours part,
-//                                a few blocks of mosaic; six frames, then the sheet is clean again. Never a low
+//                                a few dark scan bands; six frames, then the sheet is clean again. Never a low
 //                                frame rate: every move in this stretch runs at the full rate (fix round)
 //   LIGHT (the second half)      a RATCHET: its level is set by a cut, the start of a keyword or a syllable; inside a
 //                                shot it only goes up and it comes down on cuts. On top of it (fix round): one flash
@@ -15,12 +15,13 @@
 //   expose()     the light of a frame from ONE number, its level
 //   figureStage() the three figure shots of the last chorus: the silhouette as a base plate that stands, and the
 //                layers that move behind it and on it (world(), sunburst(), livePlates(), inkScreen(), sungLines(),
-//                tearSheet(), mosaicBlocks())
+//                tearSheet(), scanField())
 //   figure()     her, printed from her three plates m px out of register, the red plate under the orange one
 //   caption()    the caption band: one place and one size for the whole stretch; the band itself may tear
 //   strip()      the band of black ink across the foot of a plate that a keyword stands on
 //   stutter()    THE STUCK WORD: printed in three passes on its three syllables
 //   HEART …      the algebraic curve (x² + y² − 1)³ − x²y³ = 0 itself, as points; where a tangent leaves it
+import { scanField } from '../components/memory-instruments.js';
 import { spark } from '../components/motif.js';
 import { band, marks } from '../components/plate.js';
 import { asciiBursts, asciiSphere } from '../engine/ascii.js';
@@ -222,23 +223,6 @@ export function tearSheet(ctx, seed, amount = 1) {
   }
   g.restore();
 }
-let mosaicScratch = null;
-/** A FEW BLOCKS OF MOSAIC, in the layer itself: each rect [x, y, w, h] (virtual px) is reduced to cells of `cell` px. Call it last, as tearSheet(). */
-export function mosaicBlocks(ctx, rects, cell = 36) {
-  const g = ctx.g, c = ctx.canvas, s = ctx.scale;
-  mosaicScratch ??= document.createElement('canvas');
-  if (mosaicScratch.width < 64) { mosaicScratch.width = 64; mosaicScratch.height = 64; }
-  const sg = mosaicScratch.getContext('2d');
-  g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
-  for (const [x, y, w, h] of rects) {
-    const nx = clamp(Math.round(w / cell), 1, 64), ny = clamp(Math.round(h / cell), 1, 64), R = [x, y, w, h].map((v) => Math.round(v * s));
-    sg.globalCompositeOperation = 'copy'; sg.imageSmoothingEnabled = true;
-    sg.drawImage(c, R[0], R[1], R[2], R[3], 0, 0, nx, ny);
-    g.imageSmoothingEnabled = false;
-    g.drawImage(mosaicScratch, 0, 0, nx, ny, R[0], R[1], R[2], R[3]);
-  }
-  g.restore();
-}
 /**
  * A PUSH: the layer smeared along the lines through (x, y) (virtual px), by `amount` of the distance to that point.
  * Made in the layer itself, so that what is drawn after it (a lyric band) stays sharp; the post pass's fx.zoomBlur
@@ -266,11 +250,11 @@ export function whiteOut(ctx, w) {
   fx.vignette *= 1 - k; fx.scan *= 1 - k; fx.rays *= 1 - k; fx.streak *= 1 - k;
   fx.bright = lerp(fx.bright, 1.3, k);
 }
-/** The fault of kick number `n` (seed: one per shot): for six frames the sheet is torn, a few blocks are mosaic, and the colours lie up to 8 px apart. */
+/** The fault of kick number `n` (seed: one per shot): for six frames the sheet is torn, a few local bands dim and scan, and the colours lie up to 8 px apart. */
 export function fault(ctx, since, n, seed = 0) {
   if (!(since >= 0 && since < FAULT)) return;
   const key = seed * 97 + n, q = (j, lo, hi) => lerp(lo, hi, rand(76, key, j));
-  mosaicBlocks(ctx, [0, 1, 2].map((j) => [q(j * 4, 60, 1500), q(j * 4 + 1, 60, 860), q(j * 4 + 2, 150, 360), q(j * 4 + 3, 70, 150)]));
+  for (let j = 0; j < 3; j++) scanField(ctx, { x: q(j * 4, 60, 1500), y: q(j * 4 + 1, 60, 860), w: q(j * 4 + 2, 150, 360), h: q(j * 4 + 3, 70, 150) }, 0, { strength: 1, dim: 0.18, seed: key + j, moving: false });
   tearSheet(ctx, key, 1);
   ctx.fx.rgbSplit = Math.max(ctx.fx.rgbSplit, 8 * (1 - since / 0.1));
 }
@@ -317,7 +301,7 @@ export function wordFault(ctx, since, key) {
  *      S.on(ctx, lie) = whatever else is printed on her (lie = where her plates lie now)
  *   5  in front: bursts of characters on strong onsets; the sung line as big type         S.bursts = { cx, cy, r0 }; S.lines = [first, last], S.type
  *      S.over(ctx) = more in front
- *   6  once per kick, for six frames: the fault (tear, mosaic, colours apart)             S.kicks = [times], S.seed
+ *   6  once per kick, for six frames: the fault (tear, scan, colours apart)             S.kicks = [times], S.seed
  *   7  the camera: a slow drift (well under 3 %), a light push on the kick
  */
 export function figureStage(ctx, env, t, f, S) {

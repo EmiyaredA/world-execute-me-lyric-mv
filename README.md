@@ -6,6 +6,8 @@
 
 保留原曲时间轴、三色版画、代码图形和镜头节奏。角色使用红莉栖的长发、白衬衫、红领带和滑落肩部的外套造型，主色改为朱红／米白／近黑。界面采用 Amadeus 名称与 参考图衍生的斜三角线稿标志与分段记忆环；猫耳为短暂玩笑形态，F／M 段只修改记忆档案参数，人物始终是红莉栖。
 
+启动、视觉通道、日期回溯、十二次执行及关机采用记忆实验室的仪器语言：辉光管式数字、神经信号、档案边界与不同尝试路径。Vision 及高潮的马赛克已替换为变暗和扫描线，保留原有卡点、撕裂与墨版错位。
+
 当前歌曲和歌词尚未提供。工程可运行完整无声画面预览，占位文本标为 `LAYOUT PREVIEW`；占位预览不能验收歌词排版或人声同步。
 
 ## 运行
@@ -22,6 +24,7 @@ npm run preview
 ```sh
 npm run cover
 npm run check:amadeus
+node tools/check_memory_lab.mjs
 node tools/storyboard.mjs --layout-only
 ```
 
@@ -47,7 +50,11 @@ LRC 的文字按原工程的 129 行重新分行，使用仓库内现有时间�
 node export/export.mjs --layout-only --silent --width 1920 --height 1080 --fps 60 --cq 26 --out out/amadeus_layout_1080p60.mp4
 ```
 
+当前改版关键帧与前后对比见 `out/amadeus_memory_keyframes.png`、`out/amadeus_memory_comparison.png`；完整尺寸单帧在 `out/sg_frames/`，最终视频抽帧检查见 `out/amadeus_memory_video_frames.png`。
+
 ## 验证
+
+`node tools/check_memory_lab.mjs` 使用实际 1080p 渲染检查切点和开关附近帧、跳转／顺序渲染一致性、十二条不同尝试路径和保留的镜头时间轴，并输出完整尺寸关键帧。需要本机 Chrome；在 macOS 使用 Metal。
 
 `npm run check:amadeus` 检查角色 PNG 尺寸与 RGBA、关键区域、眼睛和手掌映射、87 个镜头及全部 129 行覆盖，线稿 SVG 与实时路径一致性，以及代码语法和旧品牌／男性素材残留。
 

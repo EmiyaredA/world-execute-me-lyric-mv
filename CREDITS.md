@@ -10,3 +10,7 @@
 - **字体**：JetBrains Mono、Source Serif 4、Inter 与原工程的 Noto 中韩文字体，来源和 SIL Open Font License 1.1 声明见 [第四版原始来源文件](docs/v4/CREDITS_original.md)。
 
 本次检查结果见 [改编记录](docs/AMADEUS.md)。第四版原有视频的同步、闪光与亮度报告不能直接作为红色改编版的验收结果。
+
+## 记忆仪器修订
+
+辉光管式数字、神经信号、档案边界、扫描干扰及十二条尝试路径为本工程自绘 Canvas／矢量图形。世界线式分支作为视觉隐喻，不对应官方变动率。Amadeus 设定参考 [官方故事介绍](https://steinsgate0.jp/story/)，记忆电信号概念参考 [官方作品介绍](https://steinsgate.jp/sgflash.html)。沿用匿名对话与原镜头／节拍，不引入额外剧情人物。

@@ -21,7 +21,7 @@
 // In a figure shot the silhouette is a BASE PLATE: it stands (no push in), and everything that moves lies behind it or
 // on it (climax.js figureStage: the sunburst, the world of the earliest version of this film, her three plates
 // springing on the kicks, her black ink as a screen, the sung line as big type). EVERY move here runs at the full
-// frame rate. A fault is one event on a kick (six frames: a tear, a few blocks of mosaic, the colours apart), and
+// frame rate. A fault is one event on a kick (six frames: a tear, a few dark scan bands, the colours apart), and
 // between two kicks the sheet is clean. Kicks: one on every beat (the low band of the audio features peaks on each).
 // A tear may cross her face for those six frames; nothing swaps colour channels, and her mouth never moves.
 // She is out of register throughout: the whole, registered, three-ink figure is kept for the last frame of the film.

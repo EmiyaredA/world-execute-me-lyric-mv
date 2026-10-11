@@ -293,13 +293,13 @@
           "lines": [
             26
           ],
-          "moment": "The user switches the second row off and the room behind the thread goes dark for the AI (line 26).",
+          "moment": "The user suspends visual input. The sharp client dims under scan lines; the observation trace flattens.",
           "you": [
             "click: Vision, off"
           ],
           "ui": [],
           "system": [
-            "image input: none"
+            "visual input: suspended"
           ],
           "me_extra": []
         },
@@ -308,7 +308,7 @@
           "lines": [
             27
           ],
-          "moment": "The cursor rattles that one switch for no reason, faster each time (beats 11, 12, 13, 13.5, 14 of the section), the picture going dark and back with every flip and left on at the end, while the AI's line (27) sways with every click. The pointer never leaves the Vision row; Current stays on DC.",
+          "moment": "The original six Vision clicks dim and restore the sharp client, with scanning interference and the same sway; the final state is on.",
           "you": [
             "click: Vision, on",
             "click: Vision, off",
@@ -326,7 +326,7 @@
             28,
             29
           ],
-          "moment": "The user grabs the Knowledge date and yanks it back, one pull on every beat (lines 28-29). The row opens into a band four fifths of the frame high: the spark is the knob, and a strip of cut-paper history runs to the right under it, from towers past spires and a colonnade, over the era line on beat 20 of the section, past a stepped temple and a long empty horizon to the pyramids. What the spark has been dragged past loses its ink and is left as outlines. Under the rail the year is a milometer, and the two era words of line 29 land either side of it as they are sung.",
+          "moment": "Six beat-aligned pulls query progressively earlier years. After the first pull the saved-record boundary is crossed; the current Kurisu snapshot gives way to empty NO RECORD slots. A.D. and B.C. retain their original lyric cues.",
           "you": [
             "drag: Archive date to 3000 B.C."
           ],

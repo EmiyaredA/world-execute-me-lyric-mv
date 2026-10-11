@@ -6,9 +6,10 @@
 //   boot-world   the whole client           an empty new conversation: the space is ready
 // The character is only a grey figure in the room behind the glass (v4: the faceless bust, in two greys).
 import { card, chatLayout, composer, header, pill, room, sidebar, slider, windowFrame } from '../components/chat.js';
+import { nixieDigits, scanField, signalTrace } from '../components/memory-instruments.js';
 import { burst, spark } from '../components/motif.js';
 import { clamp, easeBack, easeInOut, easeOut, lerp, prog, pulse } from '../engine/util.js';
-import { cues, glassFigure, keywordSys, sysLine } from './kit.js';
+import { cues, keywordSys, sysLine } from './kit.js';
 import { enter } from './shot.js';
 
 export function bootShots(env) {
@@ -18,7 +19,20 @@ export function bootShots(env) {
   const tPower = 0.209;                                   // first transient of the track: the switch
 
   /** The grey figure in the room: her faceless bust as a flat two-grey shape (kit.js glassFigure). */
-  const figure = (ctx, a, dx = 0) => glassFigure(ctx, art, a, { dx });
+  const figure = (ctx, a, dx = 0, settle = 1) => {
+    const slip = 1 - clamp(settle);
+    art.inks(ctx, 'f_bust', { x: 1060 + dx, y: -30, w: 960, h: 1280 }, { alpha: a, plates: [
+      { ink: 'all', role: 'mute' },
+      { ink: 'orange', role: 'sub', alpha: 0.28, offset: [24 * slip, -8 * slip] },
+      { ink: 'black', role: 'panel', alpha: 0.55, offset: [-16 * slip, 6 * slip] },
+    ] });
+    if (slip > 0.01) scanField(ctx, { x: 1060 + dx, y: 120, w: 850, h: 800 }, settle * 5, { strength: slip * 0.6, dim: 0.03 });
+  };
+  const readClock = (ctx, t, a = 1) => {
+    ctx.text('MEMORY READ / SESSION CLOCK', 1360, 156, { size: 18, font: 'mono', color: 'sub', alpha: a });
+    nixieDigits(ctx, 1360, 228, t * 100, { size: 52, digits: 6, alpha: a });
+    signalTrace(ctx, { x: 1360, y: 260, w: 320, h: 70 }, t, { alpha: 0.65 * a });
+  };
   /** Boot log: the lyric lines of this shot, in the system's voice. */
   const log = (ctx, t, first, last, x, y, a = 1) => {
     for (let i = first; i <= last; i++) if (!env.lyrics.lines[i].emphasis) sysLine(ctx, text(i), t, T(i), x, y + (i - first) * 42, { size: 27, alpha: a, color: t < env.lyrics.end(i) ? 'text' : 'sub' });
@@ -35,16 +49,17 @@ export function bootShots(env) {
     // ------------------------------------------------------------------ power / protection
     {
       id: 'boot-power', at: 0, lines: [0, 2], palette: 'off', layout: 'wide: dark room, the window opening from a hairline',
-      moment: 'Power reaches the client: a hairline opens into the window, and its protection layer is switched on.',
+      moment: 'Power reaches the memory client: the window opens, a session clock and neural signal wake, and Kurisu\'s grey plates scan into register.',
       render(ctx, t, f) {
         const grow = easeOut(prog(t, tPower, tPower + 0.3)), open = easeInOut(prog(t, tPower + 0.32, tPower + 1.05)), hot = pulse(t - tPower, 3.5);
         room(ctx, { light: [960, 540], dim: 0.85 - 0.35 * open, motif: open, t });
-        figure(ctx, 0.75 * prog(t, 1.2, 3.2));
+        figure(ctx, 0.75 * prog(t, 1.2, 3.2), 0, prog(t, 1.2, 3.2));
         if (t >= tPower) {
           const h = Math.max(2, W.h * open), half = (W.w / 2) * grow;
           if (open <= 0) ctx.glow('text', 24, () => ctx.line(C.x - half, C.y, C.x + half, C.y, { color: 'text', alpha: 0.6 + 0.4 * hot, width: 2 + 2 * hot }), 0.7 * hot);
           else ctx.rrect(W.x, C.y - h / 2, W.w, h, W.r * open, { fill: 'bg', fillAlpha: 0.84 * open, stroke: hot > 0.25 ? 'text' : 'line', width: 1.5 + 2 * hot, shadow: open });
         }
+        readClock(ctx, t, open * 0.8);
         log(ctx, t, 0, 1, W.x + 56, W.y + 84);
         const tProt = T(2), on = prog(t, tProt, tProt + 0.35);
         if (on > 0) {
@@ -99,6 +114,7 @@ export function bootShots(env) {
           if (i > 0) ctx.text(label, r.x + r.w - 18, r.y - 16, { size: 26 / sc, font: 'mono', color: 'text', alpha: arrive * clamp(k * 3), align: 'right' });
           g.restore(); ctx._font = '';
         });
+        readClock(ctx, t, prog(t, B(2), B(2) + 0.5));
         log(ctx, t, 3, 4, 84, 110);
         if (t >= tObj) for (const [x, y] of [[W.x, W.y], [W.x + W.w, W.y], [W.x, W.y + W.h], [W.x + W.w, W.y + W.h]]) burst(ctx, x, y, 70, (t - tObj - 0.25) / 0.5, { color: 'text' });
         keyBand(ctx, t, 5, 830);
@@ -108,13 +124,13 @@ export function bootShots(env) {
     // ------------------------------------------------------------------ parameters → initialization
     {
       id: 'boot-params', at: B(4), lines: [6, 7], palette: 'off', layout: 'close-up: persona card left, loader right',
-      moment: 'The persona card is filled in field by field; the last field, love, stays undefined. Then it initialises.',
+      moment: 'Kurisu\'s saved identity is read field by field; love stays undefined. The memory ring, glass digits and neural trace verify the archive while her plates settle.',
       enter: { type: 'zoom', dur: P, x: 0.5, y: 0.5 },
       camera: (t) => ({ zoom: 1.16 + 0.04 * prog(t, B(4), B(6)), x: lerp(-170, 60, easeInOut(prog(t, T(7) - 0.15, T(7) + 0.35))), y: -8 }),
       render(ctx, t, f) {
         const tInit = T(7), init = prog(t, tInit, tInit + 0.9);
         room(ctx, { dim: 0.45, t });
-        figure(ctx, 0.55);
+        figure(ctx, 0.55, 0, init);
         windowFrame(ctx, L, { glass: 0.86 });
         sidebar(ctx, L, { t, loaded: 0, items: script.sidebar ?? Array(6).fill('') });
         header(ctx, L, { t, loaded: 0, title: '' });
@@ -137,7 +153,9 @@ export function bootShots(env) {
           const x = 1500, y = 440, a = clamp(init * 5);
           ctx.radial(x, y, 330, 'raised', 0.9 * a);
           spark(ctx, x, y, 190, { lit: init, color: 'text', off: 'mute', alpha: a });
-          ctx.text(`${String(Math.round(init * 100)).padStart(3, ' ')}%`, x, y + 286, { size: 34, font: 'mono', color: 'sub', align: 'center', alpha: a });
+          ctx.text('MEMORY CHECK / %', x, y + 258, { size: 20, font: 'mono', color: 'sub', align: 'center', alpha: a });
+          nixieDigits(ctx, x - ctx.cw(64) * 2, y + 345, init * 100, { size: 64, alpha: a });
+          signalTrace(ctx, { x: x - 160, y: y + 390, w: 320, h: 60 }, t, { alpha: a * 0.65 });
         }
         ctx.camera();                                                // screen space from here
         keyBand(ctx, t, 7, 950, 112);
@@ -164,6 +182,8 @@ export function bootShots(env) {
         spark(ctx, cx, cy - 20 + e.dy, 84, { lit: 0, off: 'mute', offAlpha: 0.9, alpha: e.a, rot: 0.08 * (t - B(6)) });
         const c2 = enter(t, B(6) + 2 * P, 0, { dur: 0.45 });
         composer(ctx, { ...L.composer, y: 610 + c2.dy }, { placeholder: script.composer_placeholder ?? '', t, k: c2.raw, send: 'off' });
+        signalTrace(ctx, { x: L.main.x + 38, y: 772, w: 680, h: 84 }, t, { alpha: 0.45 * load });
+        ctx.text('ARCHIVE VERIFIED / PEER CONNECTION PENDING', L.main.x + 38, 886, { size: 19, font: 'mono', color: 'sub', alpha: load });
         if (sim > 0) pill(ctx, L.head.x + L.head.w - 34, L.head.y + 34, `${text(10).toLowerCase()} · ready`, { align: 'right', font: 'mono', size: 17, alpha: sim, color: 'text' });
         ctx.camera();
         keyBand(ctx, t, 10, 925);

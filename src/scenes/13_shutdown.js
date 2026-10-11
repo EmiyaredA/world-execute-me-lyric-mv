@@ -15,6 +15,7 @@
 // SHE: the grey bust behind the glass (kit.js glassFigure, where the boot had her) comes back with the interface in
 // the bridge and stays until the window has closed: the first to be there at the boot, the last to leave.
 import { card, chatLayout, composer, header, room, sidebar, slider, windowFrame } from '../components/chat.js';
+import { nixieDigits, signalTrace } from '../components/memory-instruments.js';
 import { burst, spark } from '../components/motif.js';
 import { lerpRect } from '../engine/layout.js';
 import { place } from '../engine/shapes.js';
@@ -44,6 +45,15 @@ export function shutdownShots(env) {
   /** She, behind the glass, as at the boot (two greys). */
   const figure = (ctx, a, dx = 0) => glassFigure(ctx, art, a, { dx });
 
+  const instruments = (ctx, t, a = 1) => {
+    const g = ctx.g; g.save(); g.setTransform(ctx.scale, 0, 0, ctx.scale, 0, 0);
+    ctx.rrect(1260, 748, 490, 240, 16, { fill: 'panel', fillAlpha: 0.65, stroke: 'line', alpha: a, width: 1.5 });
+    const stopped = t >= A0 + P, lit = 1 - prog(t, B0 + 0.75 * P, B0 + 2.75 * P);
+    ctx.text('ARCHIVE SAVED / CONNECTION CLOSED', 1280, 792, { size: 18, font: 'mono', color: 'sub', alpha: a });
+    nixieDigits(ctx, 1360, 884, A0 * 100, { size: 52, digits: 6, lit, alpha: a });
+    signalTrace(ctx, { x: 1280, y: 922, w: 360, h: 52 }, t, { activity: stopped ? 0 : 1 - prog(t, A0, A0 + P), running: !stopped, alpha: a * 0.65 });
+    g.restore(); ctx._font = '';
+  };
   // ---- the bridge: where the last plate ends up, as her picture message in the thread
   const TH = L.thread, PIC = { x: TH.x + 54, y: TH.y + 22, w: 704, h: 396 }, CAP = { x: PIC.x, y: PIC.y + PIC.h + 80, size: 66 };
   const tShrink = A0 + 2 * P, tDown = A0 + 4 * P, tWord = A0 + 2.5 * P, tHeart = cue('heartZero'), tLog = cue('lastUnread');
@@ -89,6 +99,7 @@ export function shutdownShots(env) {
           }, { scale: 0.5 + 0.5 * e, alpha: clamp(e * 3) });
           burst(ctx, cx, cy, 90, prog(t, tHeart, tHeart + 0.45), { color: 'sub' });
         }
+        instruments(ctx, t, prog(t, tDown, tDown + 0.3));
         sysLine(ctx, 'last message: unread', t, tLog, CAP.x + 4, CAP.y + 62, { size: 27, prefix: '> ', color: 'text' });
       },
     },
@@ -96,7 +107,7 @@ export function shutdownShots(env) {
     // ------------------------------------------------------------------ the persona card (boot-params, backwards)
     {
       id: 'down-params', at: B0, palette: ash, state: 'ash > dead', layout: 'close-up: loader right, the persona card; then closer still, on its last row: love',
-      moment: 'The loader un-lights petal by petal and the persona card comes back. Its last field, love, undefined at the boot, now holds the one word she learned. The view closes in on that row; the value is deleted in three strokes, as it was sung in three, and the field is undefined again. Then the fields clear from the bottom up.',
+      moment: 'The loader un-lights petal by petal and the persona card comes back. Its last field, love, undefined at the boot, now holds the one word she learned. The view closes in on that row; the value is deleted in three strokes, as it was sung in three, and the field is undefined again. The session signal stops, the glass digits and memory ring go dark, and the runtime fields unload bottom up. The saved archive remains intact.',
       enter: { type: 'scan', dur: P, dir: 1, align: 'start' },         // (it opens on the cut, so that the bridge stays whole and quiet to its last frame)
       camera: (t) => {
         const s = beat(t, B0), near = easeInOut(prog(s, 1.6, 3.2)) * (1 - easeInOut(prog(s, 5.3, 6.4)));      // in on the love row, and back
@@ -112,7 +123,7 @@ export function shutdownShots(env) {
         composer(ctx, L.composer, { placeholder: HOLD, t, focus: 1, send: 'off', label: s < 7.4 ? ctx.identity.name : '' });
         const r = { x: 470, y: 160, w: 760, h: 664 }, b = card(ctx, r, { title: ctx.identity.personaTitle, k: 1 - prog(s, 7.6, 8) });
         if (b) {
-          sysLine(ctx, 'archive: saved; connection: closed', t, B0 + 0.1, b.x, b.y - 37, { size: 22, alpha: b.a });
+          sysLine(ctx, 'archive: saved / connection: closed', t, B0 + 0.1, b.x, b.y - 37, { size: 22, alpha: b.a });
           const rows = [                                             // [label, value, font, italic, beat on which the row clears]
             ['name', ctx.identity.name, 'serif', false, 7.5], ['subject', ctx.identity.subject, 'serif', true, 7], ['connection', 'closed', 'mono', false, 6.5],
             ['memory', ctx.identity.memory, 'sans', false, 6], ['love', null, null, false, 5.5],
@@ -143,12 +154,12 @@ export function shutdownShots(env) {
             } else slider(ctx, { x: b.x + 216, y, w: b.w - 256, h: 64 }, 0.62 * (1 - easeInOut(del)), { fill: 'sub', alpha: a });
           });
         }
+        instruments(ctx, t, 1 - prog(s, 6.6, 7.6));
         const lit = 1 - prog(s, 0.75, 2.75), la = 1 - prog(s, 5.2, 6.2);       // the loader: twelve petals going out one after another; it stays, stopped, beside the card
         if (la > 0) {
           const x = 1500, y = 440;
           ctx.radial(x, y, 330, 'raised', 0.9 * la);
           spark(ctx, x, y, 190, { lit, color: 'text', off: 'mute', alpha: la });
-          ctx.text(`${String(Math.round(lit * 100)).padStart(3, ' ')}%`, x, y + 286, { size: 34, font: 'mono', color: 'sub', align: 'center', alpha: la });
         }
       },
     },
@@ -156,7 +167,7 @@ export function shutdownShots(env) {
     // ------------------------------------------------------------------ the pieces (boot-layout, backwards)
     {
       id: 'down-layout', at: C0, palette: ash, state: 'ash > dead', layout: 'tilted exploded view of the client, seen from above',
-      moment: 'The client comes apart into the pieces it was assembled from, and thread, header and sidebar are lifted out one by one. The composer is not: it settles in the middle of the empty window.',
+      moment: 'The client comes apart into the pieces it was assembled from, and thread, header and sidebar are lifted out one by one. The composer is not: it settles in the middle of the empty window. The saved archive badge stays while the runtime unloads.',
       enter: { type: 'zoom', dur: P, out: true, x: 0.5, y: 0.5 },
       render(ctx, t) {
         const g = ctx.g, s = beat(t, C0);
@@ -213,6 +224,7 @@ export function shutdownShots(env) {
         });
         const left = 4 - pieces.filter(([, , , out]) => out != null && s >= out + 0.9).length;
         log(ctx, t, [[`pieces left: ${left}`, C0 + 1.5 * P]], 84, 110);
+        ctx.text('ARCHIVE SAVED / RUNTIME UNLOADING', 84, 165, { size: 21, font: 'mono', color: 'sub' });
       },
     },
 
@@ -246,6 +258,7 @@ export function shutdownShots(env) {
         ctx.rrect(C.x + 230, C.y + 169 + dy, 70, 38, 19, { fill: 'line', alpha: a });
         ctx.rrect(C.x + 230, C.y + 169 + dy, 70, 38, 19, { fill: 'text', alpha: a * (1 - off) });
         ctx.circle(C.x + 281 - 32 * easeBack(prog(s, 0.7, 1.2)), C.y + 188 + dy, 14, { fill: true, color: 'bg', alpha: a });
+        ctx.text('ARCHIVE SAVED', W.x + W.w - 56, W.y + 84, { size: 21, font: 'mono', color: 'sub', align: 'right', alpha: 1 - close });
         log(ctx, t, [['composer: waiting for input', D0 + 0.2 * P]], W.x + 56, W.y + 84);
         composer(ctx, CBOX, { placeholder: HOLD, t, focus: 1, send: 'off', label: '' });
       },

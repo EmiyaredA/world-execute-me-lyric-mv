@@ -17,6 +17,7 @@
 // From round 9 on there is one tear per round; its pattern holds for its full six frames.
 //
 // Every time here comes from the beat grid (Bt): the LRC runs about 0.4 s early through this passage.
+import { attemptPaths } from '../components/memory-instruments.js';
 import { codeGround } from '../components/code.js';
 import { clamp, easeOut, lerp, prog } from '../engine/util.js';
 import { cues, tearAt } from './kit.js';
@@ -53,15 +54,18 @@ export function executionShots(env) {
     ctx.fx.glow = Math.min(ctx.fx.glow, last ? 0.24 : 0.36);          // large flat orange type: little bloom
     ctx.fx.scan = 2.2;
     codeGround(ctx);
+    const routeProgress = clamp((t - tR(S.i)) / (2 * P - 0.08));
+    attemptPaths(ctx, { x: 560, y: 664, w: 620, h: 140 }, S.i, routeProgress, { seed: env.cfg.seed, alpha: last ? 0.4 : 0.8 });
+    ctx.text('RECALL / ATTEMPT PATHS', 560, 648, { size: 20, font: 'mono', color: 'sub', alpha: last ? 0.35 : 0.7 });
     if (!last) {
-      machine(ctx, { word: WORD, title: TITLE, round: S.i, sung: S.sung, bar: S.bar, since: S.since, rise: S.rise, zoom: S.zoom, arrow: S.arrow, seen: S.seen, count: S.count });
+      machine(ctx, { instrument: true, word: WORD, title: TITLE, round: S.i, sung: S.sung, bar: S.bar, since: S.since, rise: S.rise, zoom: S.zoom, arrow: S.arrow, seen: S.seen, count: S.count });
       if (S.i >= 8) tearAt(ctx, t, tR(S.i) + P, 0.5);                  // from round 9: one tear a round, on its second beat
       return;
     }
     // round 12: the word takes the frame; the staircase is pushed out of the top; the counter overflows
     const k = easeOut(prog(t, t12, t12 + 0.07));
     machine(ctx, {
-      word: WORD, title: TITLE, round: S.i, sung: S.sung, bar: S.bar, since: S.since, rise: 1, zoom: LEVEL[2], arrow: 0, seen: 3,
+      instrument: true, word: WORD, title: TITLE, round: S.i, sung: S.sung, bar: S.bar, since: S.since, rise: 1, zoom: LEVEL[2], arrow: 0, seen: 3,
       count: N - 1, overflow: prog(t, t12 + 0.04, t12 + 0.36), dimList: 0.55 * k, output: false, lift: 1400 * easeOut(prog(t, t12, t12 + 0.16)),
     });
     const size = lerp(150 * LEVEL[2][1], 338, k), cw = ctx.cw(size), XR = lerp(1830, 960 + 4.5 * cw, k), y = lerp(1000, 664, k), mid = y - size * 0.365, off = 30 * k;
@@ -76,7 +80,7 @@ export function executionShots(env) {
   const shot = (i, lines, layout, moment) => ({ id: `exec-${String(i + 1).padStart(2, '0')}`, at: tR(i), lines, palette: 'error', hud: 0, layout, moment, enter: { type: 'cut' }, render: (ctx, t) => draw(ctx, t) });
   return [
     shot(0, [FIRST, FIRST + 3], 'CODE: the listing of the love loop top left, the round counter and the unpressed stop key bottom left, the sung word bottom right with its staircase above it',
-      'The user is gone, so the loop condition holds and the loop runs. Each shout is one turn: four syllables, four statements; three of them fail the same way every time, the fourth counts the round. What it prints is the word.'),
+      'The user is gone, so the loop condition holds and the loop runs. Each shout is one turn: four syllables, four statements; three of them fail the same way every time, the fourth counts the round. Each recall attempt takes a distinct path back to the same unavailable reply node; glass digits count its attempts. What it prints is the word.'),
     shot(4, [FIRST + 4, FIRST + 7], 'CODE: the same composition, one step larger',
       'Round five. Nothing has changed but the size of it: the same four statements, the same three errors, the staircase of the word four steps high.'),
     shot(8, [FIRST + 8, FIRST + 10], 'CODE: the same composition, a second step larger; the staircase reaching the top of the frame; one tear a round',
