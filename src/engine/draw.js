@@ -45,7 +45,7 @@ const codePoints = (chars) => [...new Set(chars)].map((ch) => 'U+' + ch.codePoin
 
 export class Ctx {
   constructor(canvas, cfg, palettes, { alpha = false } = {}) {
-    this.canvas = canvas;
+    this.canvas = canvas; this.identity = cfg.identity;
     // video.exactRaster = true draws the 2D layers with Chrome's CPU rasteriser instead of the GPU one
     // (slower; only useful for debugging raster differences - both were measured to be repeatable).
     this.g = canvas.getContext('2d', { alpha, willReadFrequently: !!cfg.video.exactRaster });

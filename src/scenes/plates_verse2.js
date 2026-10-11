@@ -107,7 +107,7 @@ export function plateFruit(ctx, env, P) {
 }
 
 // ============================================================================================ the tabby cat
-/** f_bust on the sheet; the cat-eared bust and the paws register onto it by the flower in her hair. */
+/** f_bust on the sheet; the cat-eared bust and the paws register onto it by the chin and collar. */
 const FIG = { x: 240, y: 180, w: 840, h: 1120 };
 /** The line her purr stands on, from behind her shoulder to the user's edge of the sheet; lanes the stripes leave on. */
 const PURR = { y: 470, x0: 1118, x1: 1858, h: 238, w: 36, amp: [0.5, 0.82, 0.62, 1, 0.7, 0.92, 0.56, 0.8, 1, 0.66, 0.88, 0.58, 0.44] };
@@ -170,8 +170,7 @@ export function plateCat(ctx, env, P) {
   const { t, at, ears, develop, hit } = P, { art } = env, g = ctx.g, a = flashIn(t, at);
   sheet(ctx, [650, 520, 620, 'raised', 1]);
   const text = dataText((env.script.cards_section6 ?? [])[2], 'purr:25-150Hz·', ''), kf = FIG.w / 1086;
-  const flower = (name) => { const r = art.region(name, 'flower'); return r ? [r.x + r.w / 2, r.y + r.h / 2] : [760, 217]; };
-  const fb = flower('f_bust'), fp = flower('cat_paws'), PAWS = { x: FIG.x + (fb[0] - fp[0]) * kf, y: FIG.y + (fb[1] - fp[1]) * kf, w: FIG.w, h: FIG.h };
+  const PAWS = art.fit('cat_paws', FIG);
   const CAT = art.fit('cat_bust', FIG) ?? FIG, dev = prog(t, develop, develop + 0.14), k = 1 + 0.04 * pulse(t - at, 16) + 0.03 * pulse(t - develop, 14);
   purr(ctx, P);
   if (a > 0) ctx.clip({ x: 0, y: 0, w: 1920, h: FOOT }, () => ctx.at(650 * (1 - k), 540 * (1 - k), () => {

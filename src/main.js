@@ -2,6 +2,7 @@
 //   preview (default): real-time, t comes from the <audio> clock (or the seek bar when paused). t is SONG time: the film
 //                      starts at -safety.preroll with a silent warning page, so the seek bar starts there too
 //   export (?mode=export&w=..&h=..): no UI; Node drives window.__mv frame by frame
+import { layoutLyrics } from './engine/placeholder.js';
 import { createEngine, loadSteps } from './engine/engine.js';
 import { timecode } from './engine/util.js';
 
@@ -10,10 +11,11 @@ const $ = (id) => document.getElementById(id);
 const urlOf = (p) => '/' + p.split('/').map(encodeURIComponent).join('/');
 const getJson = async (p) => {
   const r = await fetch(urlOf(p));
-  if (!r.ok) throw new Error(`${p}: HTTP ${r.status}`);
+  if (!r.ok) { const e = new Error(`${p}: HTTP ${r.status}`); e.status = r.status; throw e; }
   return r.json();
 };
 const isExport = qs.get('mode') === 'export';
+const layoutOnly = qs.get('layoutOnly') === '1';
 
 // ---- loading (preview only): a bar over the picture, one step per file, font and silhouette ------------------------
 const boot = (() => {
@@ -41,7 +43,10 @@ try {
   boot.step('config.json');
   const [featuresData, lyricsData] = await Promise.all([
     getJson(cfg.paths.features).then((d) => (boot.step('audio features'), d)),
-    getJson(cfg.paths.lyrics).then((d) => (boot.step('lyric lines'), d)),
+    (layoutOnly ? getJson('data/lyric_timing.json').then(layoutLyrics) : getJson(cfg.paths.lyrics).catch(e => {
+      if (isExport || e.status !== 404) throw e;
+      return getJson('data/lyric_timing.json').then(layoutLyrics);
+    })).then((d) => (boot.step(d.placeholder ? 'layout placeholders' : 'lyric lines'), d)),
   ]);
   width = +qs.get('w') || cfg.video.previewWidth;
   height = +qs.get('h') || cfg.video.previewHeight;
@@ -66,6 +71,8 @@ function setupExport() {
   window.__mv = {
     ready: true,
     duration: engine.duration,
+    placeholder: engine.placeholder,
+    errors: engine.errors,
     renderer: engine.rendererInfo(),
     /** Render stills at arbitrary times (QA contact sheets). */
     async exportTimes(times) {
@@ -96,7 +103,7 @@ function setupExport() {
 function setupPreview() {
   const audio = $('audio'), seek = $('seek'), playBtn = $('play');
   const PRE = engine.preroll, D = engine.duration;      // the film runs from song time -PRE (silent warning page) to D
-  audio.src = urlOf(cfg.paths.audio);
+  if (!engine.placeholder) audio.src = urlOf(cfg.paths.audio);
   seek.min = (-PRE).toFixed(3); seek.max = D.toFixed(3);
 
   const lim = (v) => Math.max(-PRE, Math.min(D, v));
@@ -108,7 +115,7 @@ function setupPreview() {
   //   wall = { t0, at }       running on the wall clock: song time t0 at performance.now() === at
   //   mute = { why, retry }   the sound is not used, and why; retry = try it again at the next press of play
   //   heard = { t, at }       the last time the audio clock was seen to move
-  let wall = null, mute = null, heard = { t: -1, at: 0 };
+  let wall = null, mute = engine.placeholder ? { why: 'LAYOUT PREVIEW: audio and lyric text are pending', retry: false } : null, heard = { t: -1, at: 0 };
   audio.currentTime = Math.max(0, t);
 
   const playing = () => wall !== null || (!audio.paused && !audio.ended);

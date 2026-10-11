@@ -11,11 +11,14 @@
 //        pre2    the four plates of pre-chorus 2 in their states (gender, a day, the two letters, the trance)
 //        history the strip of cut-paper history of pre-chorus 1 (the whole of it in one still; each landmark)
 //        cover   the still for the video's thumbnail (cover.js)
+//        marks   reference mark: small UI / full wordmark / growth and states
 //        meme    a sticker for the comment section (meme.js)
 // Section files add their own sets by exporting `labCards(env)`; see LAB_SOURCES.
 import { ground, marks } from '../components/plate.js';
 import { INK_NAMES } from '../engine/art.js';
+import { EYE, REACH_CROP } from './shared.js';
 import { room } from '../components/chat.js';
+import { spark, thinking } from '../components/motif.js';
 
 /** Section modules that contribute check cards: [file, export]. A missing file is skipped. */
 const LAB_SOURCES = [['./cover.js', 'labCards'], ['./meme.js', 'labCards'], ['./plates_chorus.js', 'labCards'], ['./plates_love.js', 'labCards'], ['./12_chorusx.js', 'labCards'], ['./objects.js', 'labCards'], ['./plates_verse2.js', 'labCards'], ['./plates_pre2.js', 'labCards'], ['./history.js', 'labCards'], ['./11_execution.js', 'labCards'], ['./11_count.js', 'labCards']];
@@ -51,9 +54,9 @@ function inkCards({ art }) {
         put(C(2), 'reveal .6 / .4 / .2', { reveal: { cream: 0.6, orange: 0.4, black: 0.2 } });
         put(C(3), 'vector, flip', { vector: true, flip: true });
         ctx.withPal('off', () => put(C(4), 'state off', {}));
-        // registration: f_bust under boy_bust under cat_bust, outlines only
+        // registration: f_bust under the saved archive under cat_bust, outlines only
         const R = { x: 1470, y: 250, w: 420, h: 560 };
-        for (const [n, role] of [['f_bust', 'text'], ['boy_bust', 'me'], ['cat_bust', 'sub']]) art.inks(ctx, n, art.fit(n, R), { plates: [{ ink: 'black', role, alpha: 0.5 }] });
+        for (const [n, role] of [['f_bust', 'text'], ['f_bust', 'me'], ['cat_bust', 'sub']]) art.inks(ctx, n, art.fit(n, R), { plates: [{ ink: 'black', role, alpha: 0.5 }] });
         label(ctx, 'black plates registered', R.x - 60, R.y - 20);
       },
     },
@@ -61,14 +64,14 @@ function inkCards({ art }) {
       palette: 'error',
       render(ctx) {
         ground(ctx, { light: null, marks: false });
-        art.inks(ctx, 'f_eye', { x: -211, y: -153, w: 2157, h: 2157 }, { flip: true });
+        art.inks(ctx, 'f_eye', EYE, { flip: true });
       },
     },
     {                                                               // f_reach: the lowest band across the whole frame (170.19)
       palette: 'error',
       render(ctx) {
         ground(ctx, { light: null, marks: false });
-        const band = { x: 0, y: 904, w: 1086, h: 544 }, k = 1920 / band.w;
+        const band = REACH_CROP, k = 1920 / band.w;
         art.inks(ctx, 'f_reach', { x: 0, y: 1080 - band.h * k, w: 1920, h: band.h * k }, { crop: band });
       },
     },
@@ -76,7 +79,7 @@ function inkCards({ art }) {
       palette: 'error',
       render(ctx) {
         ground(ctx, { light: null, marks: false });
-        art.inks(ctx, 'f_eye', { x: -211, y: -153, w: 2157, h: 2157 }, { flip: true, vector: false });
+        art.inks(ctx, 'f_eye', EYE, { flip: true, vector: false });
       },
     },
   ];
@@ -87,8 +90,37 @@ function wallCards({ art }) {
   return [one('tea', 'warm'), one('rain', 'on'), one('rain', 'off'), one('library', 'ash'), one('tea', 'error', { alpha: 0.2 })];
 }
 
+// Reference mark at UI sizes, both sides of the detail threshold and all active palettes.
+function markCards() {
+  return ['off', 'on', 'error', 'ash'].map((palette, card) => ({
+    palette,
+    render(ctx, t) {
+      ctx.fx.glow = 0.2;
+      const color = palette === 'error' ? 'err' : 'me';
+      ctx.text(`AMADEUS / REFERENCE LINE ART / ${palette}`, 80, 90, { size: 30, color: 'text' });
+      spark(ctx, 420, 380, 220, { color, rot: 0.6, lit: card === 3 ? 0 : 1, offAlpha: 0.9 });
+      ctx.text('full / upright, ring rotated', 420, 650, { size: 26, align: 'center', color: 'sub' });
+      spark(ctx, 420, 830, 110, { color, nominalRadius: 15 });
+      ctx.text('compact / enlarged', 420, 995, { size: 26, align: 'center', color: 'sub' });
+      [11, 15, 20, 36, 63, 64, 84].forEach((r, i) => {
+        const x = 870 + i * 142;
+        thinking(ctx, x, 315, r, t + 0.7, { color, stuck: card === 2 ? 0.55 : 0 });
+        ctx.text(`r = ${r}`, x, 445, { size: 23, align: 'center', color: 'sub' });
+      });
+      ctx.text('full detail retained throughout growth', 1320, 590, { size: 26, align: 'center', color: 'sub' });
+      [0.25, 0.55, 0.9].forEach((grow, i) => {
+        const x = 1000 + i * 310;
+        spark(ctx, x, 800, 176, { color, grow, lit: card === 3 ? 0.4 : 1, rot: i * 0.5 });
+        ctx.text(`grow = ${grow}`, x, 1020, { size: 23, align: 'center', color: 'sub' });
+      });
+      spark(ctx, 1770, 100, 42, { color, core: 0 });
+      ctx.text('ring only', 1660, 155, { size: 20, color: 'sub' });
+    },
+  }));
+}
+
 export function labShots(env, set, extra = {}) {
-  const sets = { inks: inkCards, walls: wallCards };
+  const sets = { inks: inkCards, walls: wallCards, marks: markCards };
   const cards = sets[set]?.(env) ?? extra[set] ?? [{ palette: 'on', render: (ctx) => label(ctx, `unknown lab set "${set}"`, 60, 540) }];
   return cards.map((c, i) => ({ id: `lab-${set}-${i}`, at: i, palette: c.palette ?? 'on', hud: 0, moment: 'check card', camera: c.camera, render: (ctx, t, f, u) => c.render(ctx, t - i, f, u) }));
 }

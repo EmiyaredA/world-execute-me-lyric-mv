@@ -12,6 +12,7 @@ the last frame before 192.34 s has to be the brightest of the film. This prints 
 """
 import re
 import subprocess
+import platform
 import sys
 from pathlib import Path
 
@@ -22,7 +23,7 @@ FF = "ffmpeg"
 try:
     subprocess.run([FF, "-version"], capture_output=True, check=True)
 except Exception:
-    FF = str(ROOT / "node_modules" / "ffmpeg-static" / "ffmpeg.exe")
+    FF = str(ROOT / "node_modules" / "ffmpeg-static" / ("ffmpeg.exe" if platform.system() == "Windows" else "ffmpeg"))
 
 
 def measures(rgb):

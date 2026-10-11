@@ -102,7 +102,7 @@ export function skeleton(ctx, x, y, w, h, t, { alpha = 1, r = h / 2, seed = 0 } 
  * Sidebar. k = 0..1 load progress (rows arrive one after another); loaded = 0..1 cross-fade from
  * skeleton bars to real labels. items: conversation titles; active: index of the open one.
  */
-export function sidebar(ctx, L, { k = 1, loaded = 1, items = [], active = -1, t = 0, lit = 1, user = 'you', presence: pres = null, brand = 'Claude' } = {}) {
+export function sidebar(ctx, L, { k = 1, loaded = 1, items = [], active = -1, t = 0, lit = 1, user = 'you', presence: pres = null, brand = ctx.identity.name } = {}) {
   const s = L.side;
   if (s.w < 40 || k <= 0) return;
   ctx.clip(s, () => {
@@ -163,7 +163,7 @@ export function header(ctx, L, { title = '', k = 1, presence: pres = null, t = 0
  * the second, so the line being typed, the caret and the bottom row stay where they are (`box` is
  * the box as drawn, taller then).
  */
-export function composer(ctx, r, { text = '', placeholder = '', focus = 0, k = 1, t = 0, send = 'idle', caret = true, color = 'text', size = 28, shake = 0, label = 'Claude' } = {}) {
+export function composer(ctx, r, { text = '', placeholder = '', focus = 0, k = 1, t = 0, send = 'idle', caret = true, color = 'text', size = 28, shake = 0, label = ctx.identity.name } = {}) {
   const a = clamp(k * 2), e = k >= 1 ? 1 : easeOut(k), y = r.y + (1 - e) * 46 + shake;
   const sendC = [r.x + r.w - 44, y + r.h - 40, 20], tx = r.x + 30, ty = y + 48;
   if (a <= 0) return { caret: [tx, ty - 10], send: sendC, box: r };

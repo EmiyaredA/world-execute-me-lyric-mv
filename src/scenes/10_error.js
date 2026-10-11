@@ -258,7 +258,7 @@ export function errorShots(env) {
       g.setLineDash([]);
       ctx.text('no switch', G.slot.x + G.slot.w / 2, G.slot.y + 26, { size: 15, font: 'mono', color: 'mute', align: 'center' });
       ctx.line(c.x, d.y + 204, x1, d.y + 204, { color: 'line', alpha: 0.7, width: 1 });
-      ctx.text('Claude', c.x, d.y + 234, { size: 16, weight: 600, color: 'mute', spacing: 0.6 });
+      ctx.text(ctx.identity.name, c.x, d.y + 234, { size: 16, weight: 600, color: 'mute', spacing: 0.6 });
       SET.forEach((row, i) => {
         const ry = d.y + 246 + i * 66, v = LEFT[row.label] ?? 0;
         ctx.text(row.label, c.x, ry + 40, { size: 21, weight: 500, color: 'text' });

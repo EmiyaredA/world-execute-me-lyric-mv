@@ -35,17 +35,17 @@ import { FAULT, OFF, PAL, WHITEOUT, capHeight, caption, expose, figureStage, pus
 import { cues, tearAt } from './kit.js';
 import { CHUNKS } from './loop.js';
 import { plateExecutionStuck, plateSatisfaction, plateStimulations, windowBox } from './plates_chorus.js';
-import { EYE } from './shared.js';
+import { EYE, REACH_CROP, REACH_PALM } from './shared.js';
 
 const FULL = { x: 0, y: 0, w: 1920, h: 1080 };
 /** Her iris on the sheet (f_eye at the registration of shared.js EYE), and its radius there. */
-const IRIS = { x: EYE.eye[0], y: EYE.eye[1], r: 44 };
+const IRIS = { x: EYE.eye[0], y: EYE.eye[1], r: EYE.irisRadius ?? 44 };
 /** f_bust, whole, in the middle of the sheet. */
 const BUST = { x: 585, y: 40, w: 750, h: 1000 };
 /** The lowest band of f_reach in the proportions of the frame (source px): her open hand, her sleeve, her hair; no face. */
-const HAND_CROP = { x: 0, y: 837, w: 1086, h: 611 };
+const HAND_CROP = REACH_CROP;
 /** Where the palm of that hand then is on the sheet (source px 290, 1100). */
-const PALM = [(290 / HAND_CROP.w) * 1920, ((1100 - HAND_CROP.y) / HAND_CROP.h) * 1080];
+const PALM = REACH_PALM;
 
 /**
  * The letters of the last shout, where 11_count.js sets them (two rows that fill the frame; the stem of the second

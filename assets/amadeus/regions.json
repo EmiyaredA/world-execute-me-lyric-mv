@@ -1,0 +1,304 @@
+{
+  "f_bust": {
+    "size": [
+      1086,
+      1448
+    ],
+    "cut": [],
+    "chin": [
+      488,
+      529
+    ],
+    "tie": [
+      511,
+      699,
+      43
+    ],
+    "face": [
+      374,
+      279,
+      217,
+      250
+    ],
+    "figure": [
+      60,
+      9,
+      976,
+      1429
+    ],
+    "crops": {
+      "avatar": [
+        280,
+        135,
+        520,
+        520
+      ],
+      "bust": [
+        0,
+        0,
+        1086,
+        1448
+      ]
+    },
+    "notes": "Kurisu front archive silhouette, no face details."
+  },
+  "f_profile": {
+    "size": [
+      1087,
+      1447
+    ],
+    "cut": [],
+    "chin": [
+      383,
+      556
+    ],
+    "nose": [
+      289,
+      461
+    ],
+    "tie": [
+      465,
+      738,
+      40
+    ],
+    "face": [
+      270,
+      315,
+      253,
+      246
+    ],
+    "figure": [
+      112,
+      11,
+      909,
+      1422
+    ],
+    "crops": {
+      "avatar": [
+        165,
+        150,
+        560,
+        560
+      ]
+    },
+    "notes": "Left-facing bowed Kurisu; no eye."
+  },
+  "f_reach": {
+    "size": [
+      1086,
+      1448
+    ],
+    "cut": [
+      "bottom",
+      "right"
+    ],
+    "chin": [
+      739,
+      526
+    ],
+    "palm": [
+      253,
+      1211
+    ],
+    "hand": [
+      55,
+      1087,
+      390,
+      337
+    ],
+    "chestHand": [
+      819,
+      782
+    ],
+    "tie": [
+      711,
+      711,
+      40
+    ],
+    "face": [
+      620,
+      265,
+      258,
+      261
+    ],
+    "figure": [
+      42,
+      20,
+      1044,
+      1428
+    ],
+    "crops": {
+      "avatar": [
+        494,
+        70,
+        545,
+        545
+      ],
+      "band": [
+        0,
+        837,
+        1086,
+        611
+      ]
+    },
+    "notes": "Open receiving palm at lower left. Bottom and right meet frame edges."
+  },
+  "f_eye": {
+    "size": [
+      1254,
+      1254
+    ],
+    "cut": [
+      "top",
+      "bottom",
+      "right"
+    ],
+    "eye": [
+      774,
+      490
+    ],
+    "iris": [
+      774,
+      490,
+      26
+    ],
+    "mouth": [
+      585,
+      851
+    ],
+    "chin": [
+      627,
+      1017
+    ],
+    "face": [
+      535,
+      245,
+      377,
+      762
+    ],
+    "figure": [
+      3,
+      0,
+      1251,
+      1254
+    ],
+    "crops": {},
+    "notes": "First open eye appears in the alone section; all film closeups mirror this plate."
+  },
+  "cat_bust": {
+    "size": [
+      1086,
+      1448
+    ],
+    "cut": [
+      "top"
+    ],
+    "chin": [
+      496,
+      526
+    ],
+    "tie": [
+      517,
+      706,
+      43
+    ],
+    "face": [
+      376,
+      282,
+      234,
+      244
+    ],
+    "ears": [
+      [
+        250,
+        0,
+        155,
+        220
+      ],
+      [
+        634,
+        0,
+        138,
+        220
+      ]
+    ],
+    "figure": [
+      59,
+      0,
+      999,
+      1448
+    ],
+    "register": [
+      1,
+      -8,
+      3
+    ],
+    "crops": {},
+    "notes": "Kurisu with playful striped ears; matched to front bust by chin, not an ornament."
+  },
+  "cat_paws": {
+    "size": [
+      1086,
+      1448
+    ],
+    "cut": [],
+    "chin": [
+      549,
+      568
+    ],
+    "tie": [
+      586,
+      772,
+      43
+    ],
+    "face": [
+      424,
+      349,
+      241,
+      219
+    ],
+    "paws": [
+      [
+        389,
+        741
+      ],
+      [
+        807,
+        826
+      ]
+    ],
+    "tail": [
+      44,
+      425,
+      243,
+      686
+    ],
+    "ears": [
+      [
+        252,
+        98,
+        176,
+        200
+      ],
+      [
+        589,
+        5,
+        200,
+        260
+      ]
+    ],
+    "figure": [
+      44,
+      5,
+      1020,
+      1432
+    ],
+    "register": [
+      1,
+      -61,
+      -39
+    ],
+    "crops": {},
+    "notes": "Same Kurisu with raised human hands and a striped tail; no open eyes."
+  }
+}

@@ -13,6 +13,20 @@ export const SCREEN_C = { x: 960, y: 540 };
  */
 export const EYE = { name: 'f_eye', flip: true, x: -211, y: -153, w: 2157, h: 2157, eye: [712, 748] };
 
+// Configured once after the active character loads, before section modules are imported.
+export const REACH_CROP = { x: 0, y: 837, w: 1086, h: 611 };
+export const REACH_PALM = [512, 659];
+export function registerCharacter(art) {
+  const size = art.size('f_eye'), anchor = art.region('f_eye', 'eye');
+  const scale = 2157 / size.w, eye = EYE.eye;
+  EYE.w = size.w * scale; EYE.h = size.h * scale;
+  EYE.x = eye[0] - (size.w - anchor.x) * scale;
+  EYE.y = eye[1] - anchor.y * scale;
+  EYE.irisRadius = art.region('f_eye', 'iris').w / 2 * scale;
+  Object.assign(REACH_CROP, art.region('f_reach', 'crops.band'));
+  REACH_PALM.splice(0, 2, ...art.point('f_reach', 'palm', { x: 0, y: 0, w: 1920, h: 1080 }, { crop: REACH_CROP }));
+}
+
 /** Lyric line indices used as cue points (see data/lyrics.json). */
 export const LINE = {
   POWER: 0, PUT_ON: 1, PROTECTION: 2, PIECES: 3, BEGIN: 4, OBJECT: 5, PARAMS: 6, INIT: 7, WORLD: 8, BEGIN_THE: 9,

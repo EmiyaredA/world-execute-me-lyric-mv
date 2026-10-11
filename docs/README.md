@@ -1,5 +1,7 @@
 # 提示詞與製作文件 · Prompts and production documents
 
+当前版本：**[Amadeus v5 改编与验证记录](AMADEUS.md)**。角色生成提示词见 [assets/amadeus/prompts.json](../assets/amadeus/prompts.json)。下面的 v3／v4 文档保留原工程的历史；其中的角色、颜色和验收结果不代表当前版本。
+
 **[中文](#中文)** | **[English](#english)**
 
 > **提示詞 · The prompts:** [v4/PROMPT_v4.md](v4/PROMPT_v4.md) · [v4/PROMPT_v4_fix.md](v4/PROMPT_v4_fix.md)

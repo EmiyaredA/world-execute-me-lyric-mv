@@ -7,7 +7,7 @@
 // straight out, the world turning in her iris; the sheet torn in three bands; and the title of the song as a call
 // typed into the picture: three rows of mono type on strips of black paper, whole, set over the tear.
 // A thumbnail is seen about 300 px wide and is cut to other shapes by the site: everything that matters (her eye,
-// her flower, the title) stands inside the middle 4:3 of the frame (x 240 … 1680), and the title's capitals are
+// her memory ring, the title) stands inside the middle 4:3 of the frame (x 240 … 1680), and the title's capitals are
 // about a tenth of the frame's height.
 import { marks } from '../components/plate.js';
 import { PAL, expose, inkScreen, livePlates, world } from './climax.js';
@@ -20,7 +20,7 @@ const FULL = { x: 0, y: 0, w: 1920, h: 1080 };
  * Her flower comes in from the top left corner.
  */
 const Z = 1.32, AT_EYE = [610, 640];
-const FACE = { x: AT_EYE[0] - (EYE.eye[0] - EYE.x) * Z, y: AT_EYE[1] - (EYE.eye[1] - EYE.y) * Z, w: EYE.w * Z, h: EYE.h * Z }, IRIS = { x: AT_EYE[0], y: AT_EYE[1], r: 44 * Z };
+const FACE = { x: AT_EYE[0] - (EYE.eye[0] - EYE.x) * Z, y: AT_EYE[1] - (EYE.eye[1] - EYE.y) * Z, w: EYE.w * Z, h: EYE.h * Z }, IRIS = { x: AT_EYE[0], y: AT_EYE[1], r: (EYE.irisRadius ?? 44) * Z };
 /** The instant of the film's eye shot that the moving layers are taken at (the turn of the sphere, the drift of the plates, the scroll). */
 const AT = 163.5;
 /** The tear: bands of the sheet [y, height, dx] (virtual px), moved sideways. None of them crosses her eye. */
@@ -51,6 +51,9 @@ function tear(ctx) {
  * Under it, small, the line the film ends on.
  */
 function title(ctx) {
+  ctx.rect(974, 91, 684, 154, { fill: true, color: 'panel', alpha: 0.94 });
+  ctx.text(ctx.identity.name.toUpperCase(), 1000, 172, { size: 80, weight: 800, font: 'sans', color: 'text', spacing: 5 });
+  ctx.text('KURISU / MEMORY ARCHIVE', 1000, 221, { size: 27, font: 'mono', color: 'sub', spacing: 1.5 });
   const ROWS = ['world.', 'execute', '(me);'], SIZE = 144, LH = 178, X = 1000, Y = 400, PAD = 28, cw = ctx.cw(SIZE), o = { size: SIZE, font: 'mono', weight: 800 };
   const strip = (x, y, w, h) => { ctx.rect(x + 12, y + 12, w, h, { fill: true, color: 'bg', alpha: 0.55 }); ctx.rect(x, y, w, h, { fill: true, color: 'panel' }); };
   ROWS.forEach((str, i) => {
@@ -60,7 +63,7 @@ function title(ctx) {
     ctx.text(str, X, y, { ...o, color: 'text' });
   });
   ctx.rect(X + ROWS[2].length * cw + 12, Y + 2 * LH - SIZE * 0.76, cw * 0.62, SIZE * 0.92, { fill: true, color: 'me' });      // the caret: her orange
-  const note = '> last message: unread', ns = 34, ny = Y + 2 * LH + 104;
+  const note = '> archive saved / reply unread', ns = 34, ny = Y + 2 * LH + 104;
   strip(X - PAD, ny - ns * 1.05, note.length * ctx.cw(ns) + 2 * PAD, ns * 1.6);
   ctx.text(note, X, ny, { size: ns, font: 'mono', color: 'sub' });
 }

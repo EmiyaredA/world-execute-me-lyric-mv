@@ -15,6 +15,7 @@ Usage:  .venv\\Scripts\\python tools/check_sync.py out/sample_0-41_540p30.mp4
 import json
 import re
 import subprocess
+import platform
 import sys
 from pathlib import Path
 
@@ -27,7 +28,7 @@ FF = "ffmpeg"
 try:
     subprocess.run([FF, "-version"], capture_output=True, check=True)
 except Exception:
-    FF = str(ROOT / "node_modules" / "ffmpeg-static" / "ffmpeg.exe")
+    FF = str(ROOT / "node_modules" / "ffmpeg-static" / ("ffmpeg.exe" if platform.system() == "Windows" else "ffmpeg"))
 
 
 def main():

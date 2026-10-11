@@ -61,14 +61,19 @@ export function startServer({ port = 5173, onUpgrade = null } = {}) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   // the repository has neither the song nor its lyrics: the lines are made from your own lyric file, the audio is yours too
   const { ensureLyrics } = await import('../tools/fill_lyrics.mjs');
-  try { ensureLyrics(); } catch (e) { console.error(e.message); process.exit(1); }
+  let layoutOnly = process.argv.includes('--layout-only');
+  if (!layoutOnly) {
+    try { ensureLyrics(); } catch (e) { console.warn(e.message); layoutOnly = true; }
+  }
+  if (layoutOnly) console.warn('[preview] Layout only: placeholder text, audio and lyrics pending.');
   const audio = JSON.parse(fs.readFileSync(path.join(ROOT, 'config.json'), 'utf8')).paths.audio;
-  if (!fs.existsSync(path.join(ROOT, audio))) console.warn(`[audio] "${audio}" not found (config.json -> paths.audio): the preview can be scrubbed but will not play; an export needs the file.`);
+  if (!fs.existsSync(path.join(ROOT, audio))) console.warn(`[audio] "${audio}" not found (config.json -> paths.audio): the preview uses silent wall-clock playback; a normal export needs the file.`);
   const { url } = await startServer({ port: +process.env.PORT || 5173 });   // PORT lets a launcher pick a free port
-  console.log(`preview: ${url}/   (Ctrl+C to stop)`);
+  const previewUrl = `${url}/${layoutOnly ? '?layoutOnly=1' : ''}`;
+  console.log(`preview: ${previewUrl}   (Ctrl+C to stop)`);
   if (process.argv.includes('--open')) {
-    const cmd = process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]]
-      : process.platform === 'darwin' ? ['open', [url]] : ['xdg-open', [url]];
+    const cmd = process.platform === 'win32' ? ['cmd', ['/c', 'start', '', previewUrl]]
+      : process.platform === 'darwin' ? ['open', [previewUrl]] : ['xdg-open', [previewUrl]];
     spawn(cmd[0], cmd[1], { stdio: 'ignore', detached: true }).unref();
   }
 }

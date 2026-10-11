@@ -26,7 +26,7 @@ import { outline, smoothPath } from './trace.js';
 import { clamp } from './util.js';
 
 /** The silhouettes (assets/character/<key>.png; sources and what each shows: docs/v4/PLAN.md §4). All the art there is. */
-export const INK_NAMES = ['f_bust', 'f_profile', 'f_reach', 'f_eye', 'boy_bust', 'man_bust', 'cat_bust', 'cat_paws'];
+export const INK_NAMES = ['f_bust', 'f_profile', 'f_reach', 'f_eye', 'cat_bust', 'cat_paws'];
 export const ART_NAMES = INK_NAMES;
 
 const LUM_H = 240;                              // working resolution of the luminance maps: the longer side
@@ -41,14 +41,14 @@ const INK_KEY = { cream: 0, orange: 1, black: 2 };
  * Registration onto f_bust: p' = s * p + [tx, ty] in source px (measured, docs/v4/maps/map_assets.json):
  * the chin, the flower and the collar then coincide.
  */
-const REGISTER = { cat_bust: [1.0, -28, -49], boy_bust: [0.89, 60, -18], man_bust: [0.873, 81, -4] };
+const REGISTER = {}; // Registration comes from the active character metadata.
 
 const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
 
 /** `step(label)` is told of each silhouette once it is separated (the preview's progress bar; it may ask for a pause). */
 export async function loadArt(cfg, step = () => {}) {
-  const dir = cfg.paths.art, art = new Art();
-  await Promise.all(ART_NAMES.map(async (name) => {
+  const dir = cfg.paths.art, art = new Art(cfg.character);
+  await Promise.all((cfg.character?.names ?? ART_NAMES).map(async (name) => {
     const img = new Image();
     img.src = `/${dir}/${name}.png`;
     await img.decode();
@@ -60,7 +60,8 @@ export async function loadArt(cfg, step = () => {}) {
 }
 
 export class Art {
-  constructor() {
+  constructor(character = {}) {
+    this.sourceInks = character.sourceInks ?? INK_RGB;
     this.sil = {}; this.lum = {}; this.regions = {};
     this.ink = {}; this.dim = {}; this.walls = {};
     this.tmpA = mk(8, 8); this.tmpB = mk(8, 8); this.tmpC = mk(8, 8);
@@ -87,7 +88,7 @@ export class Art {
     for (let i = 0; i < N; i++) { const a = px[i * 4 + 3]; A[i] = a < 16 ? 0 : a >= 250 ? 255 : a; }
 
     // the three inks of THIS image: mean of the solid pixels nearest to each seed
-    const ink = INK_RGB.map((c) => [...c]), sum = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+    const ink = this.sourceInks.map((c) => [...c]), sum = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
     for (let i = 0; i < N; i += 3) {
       if (A[i] !== 255) continue;
       const r = px[i * 4], g = px[i * 4 + 1], b = px[i * 4 + 2];
@@ -169,6 +170,15 @@ export class Art {
     for (const k of key.split('.')) v = v?.[k];
     if (!Array.isArray(v) || typeof v[0] !== 'number') return null;
     return v.length === 3 ? { x: v[0] - v[2], y: v[1] - v[2], w: 2 * v[2], h: 2 * v[2] } : v.length === 2 ? { x: v[0], y: v[1], w: 0, h: 0 } : { x: v[0], y: v[1], w: v[2], h: v[3] };
+  }
+
+  point(name, key, dst, { crop = null, flip = false } = {}) {
+    const r = this.region(name, key);
+    if (!r) throw new Error(`Missing character anchor: ${name}.${key}`);
+    const c = crop ?? { x: 0, y: 0, ...this.size(name) };
+    let u = (r.x + r.w / 2 - c.x) / c.w;
+    if (flip) u = 1 - u;
+    return [dst.x + u * dst.w, dst.y + (r.y + r.h / 2 - c.y) / c.h * dst.h];
   }
 
   /**
@@ -319,9 +329,9 @@ export class Art {
   }
   /** Where to draw bust `name` so that it registers with f_bust drawn into `base` (chin, flower and collar coincide). */
   fit(name, base) {
-    const r = REGISTER[name];
+    const r = this.regions[name]?.register ?? REGISTER[name];
     if (!r) return { ...base };
-    const k = base.w / 1086;
+    const k = base.w / this.size('f_bust').w;
     return { x: base.x + k * r[1], y: base.y + k * r[2], w: base.w * r[0], h: base.h * r[0] };
   }
   /** A plate as a Path2D in source px: 'all' (the whole figure), 'orange' (orange + black) or 'black'; exact = that ink alone. */

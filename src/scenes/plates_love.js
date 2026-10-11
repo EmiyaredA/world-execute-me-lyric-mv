@@ -39,7 +39,7 @@ export const WORD_W = { lesson: 1520, formula: 1700, proof: 1868 };
  * Her in the proof (f_reach). Her head stands under the notch of the curve; the art is cut by its lower edge, and that
  * edge lies below the frame, behind the band of the word. Only her open hand comes forward over the band.
  */
-export const SHE = (() => { const s = 0.655, w = 1086 * s, h = 1448 * s; return { x: CURVE.O.x - 566 * s, y: 143, w, h, s }; })();
+export const SHE = (() => { const s = 0.655, w = 1086 * s, h = 1448 * s; return { x: CURVE.O.x - 760 * s, y: 143, w, h, s }; })();
 const TAN = heartTangent(8), TAN_P = [CURVE.O.x + TAN.p[0] * CURVE.R, CURVE.O.y - TAN.p[1] * CURVE.R];
 /** Where the pen stands when k (0..1) of the curve has been traced (the rays of the formula plate come from it). */
 export const penAt = (k) => PTS[Math.min(HEART_N - 1, Math.floor(clamp(k) * HEART_N))];
@@ -47,9 +47,9 @@ export const penAt = (k) => PTS[Math.min(HEART_N - 1, Math.floor(clamp(k) * HEAR
 export const FOOT = { y: 762, base: BASE };
 /** Where the rays of the last picture come from: the light behind her head. */
 export const LAMP = [CURVE.O.x, CURVE.O.y - 0.2 * CURVE.R];
-/** Her bowed profile in the lesson, and where its flower ornament then is (the white of the fall sinks into it). */
+/** Her bowed profile in the lesson, and where its tie then is (the white of the fall closes onto this memory). */
 const PROFILE = (() => { const h = 1010, w = (h * 1086) / 1448; return { x: 1124, y: 44, w, h }; })();
-export const PROFILE_FLOWER = [PROFILE.x + (704 / 1086) * PROFILE.w, PROFILE.y + (252 / 1448) * PROFILE.h];
+export const profileMemory = (art) => art.point('f_profile', 'tie', PROFILE);
 
 /**
  * A pool of light that is switched on one FLAT step at a time (n = 0..3): three discs, each smaller and lighter
@@ -61,7 +61,7 @@ function pool(ctx, x, y, r, n) {
 }
 
 /**
- * The light round the curve, FLAT: bars of ink standing off the line like the petals of her flower ornament (and of
+ * The light round the curve, FLAT: bars of ink standing off the line like the petals of her memory-ring motif (and of
  * the spark), uneven as if cut by hand; the long ones in the full orange, the short ones a step darker. Never a soft
  * glow, and never wedges that fan out to the edges of the sheet. k 0..1 = how far they have grown out of the curve.
  */

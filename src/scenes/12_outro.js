@@ -19,7 +19,7 @@
 // underline, the count of the answers, the pen closing the curve, her line through the request.
 // THE LIGHT is a ratchet (climax.js expose): inside a shot it only rises, on steps set by the syllables; it comes
 // down on the cuts. The one exception is the brief's own: the lesson opens on the WHITE-OUT the fall ended in (the
-// whole frame, held for five frames: a transition, not a picture), which then closes into the flower in her hair for
+// whole frame, held for five frames: a transition, not a picture), which then closes into the saved memory at her collar for
 // two beats, only ever downwards, before the light climbs. Fix round: the light is a step stronger throughout
 // (climax.js expose), its bloom breathes with the bass, and nothing here runs at a lowered frame rate any more.
 // THE LAST WORD: first syllable = her black and orange plates; second = the cream plate, and within three frames
@@ -30,7 +30,7 @@ import { easeIn, easeOut, lerp, prog } from '../engine/util.js';
 import { PAL, caption, expose, lastOf, ratchet, whiteOut, wordFault } from './climax.js';
 import { cue } from './cues.js';
 import { cues, passOf, replay } from './kit.js';
-import { LAMP, PROFILE_FLOWER, penAt, plateFormula, plateLesson, plateProof, plateTest, saidInChorus1 } from './plates_love.js';
+import { LAMP, profileMemory, penAt, plateFormula, plateLesson, plateProof, plateTest, saidInChorus1 } from './plates_love.js';
 
 /**
  * THE LAST PICTURE, settled: what out-proof holds from 192.05 s. 13_shutdown.js draws the same sheet from 192.34 s on
@@ -41,6 +41,7 @@ export function finalPlate(ctx, env, { word = true } = {}) {
 }
 
 export function outroShots(env) {
+  const PROFILE_MEMORY = profileMemory(env.art);
   const { script } = env, { B, Bt, P, text } = cues(env);
   /**
    * THE WORD BREAKS THE SHEET (fix round; the user's idea, in place of a red sheet): the stuck word is printed in the
@@ -66,11 +67,11 @@ export function outroShots(env) {
         plateLesson(ctx, env, { t, said: SAID, marked: [385, 386, 387, 388, 388.5].map(Bt), again: replay(t, at), word: text(118), at, pass: passOf(t, at) });
         caption(ctx, env, t, 116, 117);
         // the fall ended in a frame of white. It is still the whole frame at the cut and stays so for five frames; then it
-        // sinks for two beats, only ever downwards: it closes into the flower in her hair (the light she fell into is
+        // sinks for two beats, only ever downwards: it closes into the saved memory at her collar (the light she fell into is
         // the ornament she wears)
         const HOLD = 5 / 60, k = 1 - (1 - prog(t, START + HOLD, START + 2 * P)) ** 2.4;      // (it lets go of the frame at once, and closes slowly)
         if (k < 1) {
-          const s = 1 - k, cx = lerp(960, PROFILE_FLOWER[0], k), cy = lerp(540, PROFILE_FLOWER[1], k);
+          const s = 1 - k, cx = lerp(960, PROFILE_MEMORY[0], k), cy = lerp(540, PROFILE_MEMORY[1], k);
           ctx.rrect(cx - 1000 * s, cy - 580 * s, 2000 * s, 1160 * s, Math.min(40, 400 * s) * k, { fill: 'text' });
         }
         expose(ctx, ratchet(t, 2, [[at[0], 3.5], [at[1], 4.6], [at[2], 5.6]]), { at: [1440, 430], breath: f.lowEnv });

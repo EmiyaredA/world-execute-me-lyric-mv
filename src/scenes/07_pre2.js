@@ -5,7 +5,7 @@
 //   pre2-settings  88.96  interface   the pointer (already on the Settings button) clicks; the drawer opens further
 //                                     down its list; the view closes in on the first row
 //   pre2-gender    90.80  PLATE       the control F | M as the whole sheet; when the second letter is SUNG the bust
-//                                     is the boy's
+//                                     is Kurisu's unchanged archive
 //   pre2-day       92.65  PLATE       the On-call slider as an arc, its knob the sun; dragged over the top to dusk
 //   pre2-role      96.34  PLATE       two letters and a switch; the light letter goes soft and slumps
 //   pre2-loop     100.04  interface   Loop: on; Done (two hits a quarter second apart)
@@ -31,8 +31,8 @@ import { enter } from './shot.js';
 
 const WIDE = 1.4;                                            // the drawer opens to 616 px, as in pre-chorus 1
 const FALLBACK_ROWS = [
-  { label: 'Gender', control: 'segmented', values: ['F', 'M'], line: 57 }, { label: 'On call', control: 'slider', values: ['AM', 'PM'], line: 59 },
-  { label: 'Role', control: 'segmented', values: ['S', 'M'], line: 61 }, { label: 'Loop', control: 'toggle', values: ['off', 'on'], line: 63 },
+  { label: 'Archive field', control: 'segmented', values: ['F', 'M'], line: 57 }, { label: 'Connection hours', control: 'slider', values: ['AM', 'PM'], line: 59 },
+  { label: 'Role', control: 'segmented', values: ['S', 'M'], line: 61 }, { label: 'Recall loop', control: 'toggle', values: ['off', 'on'], line: 63 },
 ];
 
 export function pre2Shots(env) {
@@ -180,7 +180,7 @@ export function pre2Shots(env) {
     {
       id: 'pre2-settings', at: START, lines: [56, 57], palette: 'warm', hud: 0, enter: { type: 'cut' },
       layout: 'interface: the whole client; the drawer opening at the right; the view closing in on its first row',
-      moment: 'The pointer is already on the Settings button and clicks. The drawer opens further down its list than last time: Gender, On call, Role, Loop. The view closes in on the first row as she reads it out.',
+      moment: 'The pointer is already on the Settings button and clicks. The drawer opens further down its list than last time: Archive field, Connection hours, Recall mode, Recall loop. The view closes in on the first row as she reads it out.',
       camera: (t) => { const k = push(t), r = rowAt(0); return { x: (r.x + r.w / 2 - 960) * k, y: (r.y + r.h / 2 + 30 - 540) * k, zoom: lerp(1, 2.36, k) }; },
       render(ctx, t) {
         client(ctx, t, drawerK(t), { 0: [56, L57] });
@@ -191,7 +191,7 @@ export function pre2Shots(env) {
     {
       id: 'pre2-gender', at: cF, lines: [57, 58], palette: 'warm', hud: 0, enter: { type: 'cut' },
       layout: 'PLATE: the segmented control as the whole sheet, a cell each for its two letters; her bust whole in the middle; the two letters huge in her serif either side of her',
-      moment: 'The click on the first letter, as it is sung, and the control is as large as the sheet: she stands in it. On the drum the pointer comes down on the other cell and holds it. When the second letter is sung it lets go: the bust is the boy\'s, in register with hers (the long hair is gone), and the letter is printed. The drum after it is a shudder of the sheet. The pointer touches the control, never her.',
+      moment: 'The click on the first letter, as it is sung, and the control is as large as the sheet: she stands in it. On the drum the pointer comes down on the other cell and holds it. When the second letter is sung it lets go: a scan crosses the same Kurisu bust and the archive field changes, and the letter is printed. The drum after it is a shudder of the sheet. The pointer touches the control, never her.',
       render: (ctx, t) => plateGender(ctx, env, { t, at: cF, press: D(1), click: cue('letterM57'), thud: D(2), sung: cue('letterF'), values: ROWS[0].values, lines: [L57, 58], to: dayGrip(art), until: cDay }),
     },
     {
@@ -210,8 +210,8 @@ export function pre2Shots(env) {
       at: cTrance, until: cBack, lines: [63, 63],
       shot: {
         id: 'pre2-trance', lines: [62, 63], palette: 'warm', hud: 0, enter: { type: 'cut' },
-        layout: 'PLATE: one plate of each of three busts over one another in the middle of the sheet, out of register and turning; at the end one bust, in register',
-        moment: 'The drums have stopped. Loop is on: her three looks, one plate of each (the cream of hers, the orange of the boy\'s, the black of the man\'s, a faint ghost), drift apart and turn about one another, a step further each time the word comes round; then they fall into register, and it is the boy: what the settings were left at.',
+        layout: 'PLATE: three ink plates of Kurisu over one another in the middle of the sheet, out of register and turning; at the end one bust, in register',
+        moment: 'The drums have stopped. Recall loop is on: the cream, vermilion and black plates of the same Kurisu drift apart and turn about one another, a step further each time the word comes round. They settle back into the same saved identity.',
         render: (ctx, t) => plateTrance(ctx, env, { t, at: cTrance, steps: [cue('tranceA'), cue('tranceB')], settle: [cBack - 0.3, cBack - 0.1], lines: [62, L63], log: UI.log }),
       },
     }]),

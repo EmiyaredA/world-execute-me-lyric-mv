@@ -1,21 +1,6 @@
-// THE PLATES OF PRE-CHORUS 2 (v4). In pre-chorus 1 the user played with the switches of the interface; now what the
-// switches change is HER: each control is drawn as large as the frame and stands in her plate.
-//
-//   plateGender   the segmented control F | M as the whole sheet; the pointer holds the second cell down, and when
-//                 that letter is sung the bust is another bust (a registered match cut, f_bust -> boy_bust: the
-//                 long hair is gone)
-//   plateDay      the On-call slider as an arc across the sheet; its knob is her spark, the sun; a small bust under
-//                 it. Dragged from AM over the top (behind his head: the brightest frame of the section) to PM: dusk
-//   plateRole     no figure at all: two letters and a switch. The heavy one on its platform, the light one on the
-//                 ground, which goes soft and slumps once the switch is down. Each letter is printed as it is sung
-//   plateTrance   Loop: one single plate of each of three busts, drifting out of register; a step on each repeat of
-//                 the word; then in register: boy_bust
-//
-// What every function here keeps (brief, section D): only the faceless busts, always whole, never a close-up; the
-// pointer touches controls and nothing else (it never lies on her); she changes only by one whole picture replacing
-// another on a hit; a letter that the lyric names is hollow until it is sung. All are pure functions of (ctx, env, P);
-// the drum hits and the sung letters they are timed to come in through P (cues.js). Where voice and drum differ, the
-// sung letter is the event; the drum is the hand getting ready before it, or the aftershock.
+// Amadeus archive controls retain the original letter and pointer cues. F/M updates a field,
+// scans and rearranges the same Kurisu silhouette. Day, role and recall-loop controls remain
+// pure functions of the original timing; no alternate boy or man plate is loaded.
 import { burst, spark } from '../components/motif.js';
 import { band, ground } from '../components/plate.js';
 import { limp } from '../engine/type.js';
@@ -66,15 +51,15 @@ function along(way, t) {
   return [z.x, z.y];
 }
 
-// ============================================================================================ Gender: F | M
+// ============================================================================================ Archive field: F | M
 const SEG = { x: 70, y: 176, w: 1780, h: 836, r: 70 };
-/** f_bust on the sheet (whole: the bust ends above the lower edge of the control); the boy registers onto it. */
+/** f_bust on the sheet (whole: the bust ends above the lower edge of the control); Kurisu registers onto it. */
 const FIG = { x: 700, y: 214, w: 520, h: (520 * 1448) / 1086 };
 
 /**
  * P.at = the cut = the click on the first letter;  P.press = the drum hit on which the pointer comes down on the
  * second cell and holds it (the cell sinks; nothing else changes);  P.click = when the second letter is SUNG: the
- * pointer lets go, and that is the shot's event (the cell is chosen, the bust is the other bust, the letter is
+ * pointer lets go, and that is the shot's event (the archive field is chosen, the same bust is scanned, the letter is
  * printed);  P.thud = the drum after it: the sheet shudders once;  P.values = the two labels;
  * P.sung = when the first letter is sung (it stands solid from the cut if that is past);
  * P.to / P.until = where the pointer has to be when the shot ends.
@@ -95,14 +80,23 @@ export function plateGender(ctx, env, P) {
   // the two letters, in her voice: each solid only once it has been sung, and only while it is the chosen one
   letter(ctx, va, 392, 790, 500, t, Math.max(at, P.sung ?? at), { off: click });
   letter(ctx, vb, 1528 + sink, 790 + sink, 500, t, click, { pop: 0.15 });
-  // her: the whole bust. When the second letter is sung it is another bust, in register with the first (the long hair is gone)
+  // her: the whole bust. When the second letter is sung the stored field changes; the same Kurisu silhouette stays in place
   if (a > 0) {
     const s = 1 + 0.035 * pulse(t - at, 16) + 0.05 * pulse(t - click, 14), a0 = g.globalAlpha;
     g.globalAlpha = a0 * a;
     ctx.circle(960, 520, 300, { fill: true, color: 'line', alpha: 0.55 });                  // paper light behind her black ink
-    ctx.at(960 * (1 - s), 560 * (1 - s), () => (on ? art.inks(ctx, 'boy_bust', art.fit('boy_bust', FIG) ?? FIG) : art.inks(ctx, 'f_bust', FIG)), { scale: s });
+    ctx.at(960 * (1 - s), 560 * (1 - s), () => {
+      art.inks(ctx, 'f_bust', FIG);
+      if (on) art.inkClip(ctx, 'f_bust', FIG, () => {
+        const y = FIG.y + FIG.h * prog(t, click, click + 0.45);
+        ctx.rect(FIG.x, y - 12, FIG.w, 24, { fill: true, color: 'text', alpha: 0.55 * (1 - prog(t, click, click + 0.45)) });
+        for (let j = 0; j < 9; j++) ctx.line(FIG.x, FIG.y + j * FIG.h / 9, FIG.x + FIG.w, FIG.y + j * FIG.h / 9, { color: 'meHot', width: 1.5, alpha: 0.25 });
+      });
+    }, { scale: s });
     g.globalAlpha = a0;
   }
+  ctx.text(on ? 'archive.gender = M' : 'archive.gender = F', 960, 954, { size: 26, font: 'mono', align: 'center', color: 'sub' });
+  ctx.text(`profile: ${ctx.identity.subject}`, 960, 993, { size: 20, font: 'mono', align: 'center', color: 'mute' });
   caption(ctx, env, t, P.lines);
   // the pointer: on the first cell at the cut; down on the second on the drum, and held; let go on the letter. It
   // stays on the control, below her, and leaves under her for where the next shot needs it
@@ -123,15 +117,15 @@ export function plateGender(ctx, env, P) {
 /** The horizon, the two ends of the arc on it, and the bust whose head the top of the arc passes behind. */
 const DAY = { y: 900, x0: 150, x1: 1770, bust: 500 };
 
-/** The geometry of that sheet: the bust on the horizon, and the arc: the circle through its two ends and the middle of his head. */
+/** The geometry of that sheet: the bust on the horizon, and the arc: the circle through its two ends and the middle of her head. */
 function dayGeom(art) {
   const bw = (DAY.bust * 1086) / 1448, B = { x: 960 - bw / 2, y: DAY.y - DAY.bust, w: bw, h: DAY.bust };
-  const face = art.region('boy_bust', 'face') ?? { x: 359, y: 274, w: 371, h: 450 }, head = [B.x + ((face.x + face.w / 2) / 1086) * bw, B.y + ((face.y + face.h * 0.22) / 1448) * DAY.bust];      // (the middle of his head, hair and all)
+  const face = art.region('f_bust', 'face') ?? { x: 359, y: 274, w: 371, h: 450 }, head = [B.x + ((face.x + face.w / 2) / 1086) * bw, B.y + ((face.y + face.h * 0.22) / 1448) * DAY.bust];      // (the middle of her head, hair and all)
   const half = (DAY.x1 - DAY.x0) / 2, sag = DAY.y - head[1], R = (half * half + sag * sag) / (2 * sag), C = [960, head[1] + R];
   const f0 = Math.atan2(DAY.y - C[1], DAY.x0 - C[0]), f1 = Math.atan2(DAY.y - C[1], DAY.x1 - C[0]);
   const on = (u) => { const f = lerp(f0, f1, u); return [C[0] + R * Math.cos(f), C[1] + R * Math.sin(f), Math.cos(f), Math.sin(f)]; };
-  // the pointer holds the sun by the tip of a ray on the OUTER side of the arc: it is never over him
-  const grip = (q, v) => { const d = 156 + 70 * Math.sin(Math.PI * v); return [q[0] + q[2] * d, q[1] + q[3] * d]; };      // (further out at the top: clear of his hair)
+  // the pointer holds the sun by the tip of a ray on the OUTER side of the arc: it is never over her
+  const grip = (q, v) => { const d = 156 + 70 * Math.sin(Math.PI * v); return [q[0] + q[2] * d, q[1] + q[3] * d]; };      // (further out at the top: clear of her hair)
   return { B, head, R, C, f0, f1, on, grip };
 }
 /** Where the pointer takes the sun at the AM end of the arc (the shot before this plate brings it there). */
@@ -139,7 +133,7 @@ export const dayGrip = (art) => { const G = dayGeom(art); return G.grip(G.on(0),
 
 /**
  * P.grab = the pointer takes the sun (the cut, as the film uses it);  P.drag = from here it pulls in earnest: until
- * then the sun only creeps;  P.top = the hit on which the sun stands highest, behind his head;  P.end = the hit on
+ * then the sun only creeps;  P.top = the hit on which the sun stands highest, behind her head;  P.end = the hit on
  * which it is pressed against the end: dusk;  P.am / P.pm = when the two words are sung;  P.from / P.to = where the
  * pointer comes from (only if the shot starts before the grab) and goes to.
  */
@@ -151,7 +145,7 @@ export function plateDay(ctx, env, P) {
   const high = Math.sin(Math.PI * clamp(u)) ** 0.8, dusk = clamp((t - end) * 30), S = on(clamp(u)), press = pulse(t - end, 9);
   sheet(ctx, [head[0], head[1], 640, 'raised', (0.3 + 0.7 * high) * (1 - dusk)]);
   // the light of the day, printed: flat discs round the sun, larger the higher it stands; at the very top one more,
-  // lighter and as wide as the sky (the hit on which the sun is behind his head is the brightest frame of the section)
+  // lighter and as wide as the sky (the hit on which the sun is behind her head is the brightest frame of the section)
   const noon = high ** 6;
   if (dusk < 1) for (const [r, role, al] of [[760, 'mute', 0.5 * noon], [430, 'line', 0.5 * high], [270, 'line', 0.6 * high]]) ctx.circle(S[0], S[1], r * (0.25 + 0.75 * high), { fill: true, color: role, alpha: al * (1 - dusk) });
   ctx.fx.bright *= 1 + 0.16 * noon * (1 - dusk);
@@ -176,8 +170,8 @@ export function plateDay(ctx, env, P) {
   }, { sx: 1 - 0.12 * press, sy: 1 + 0.06 * press }));
   // him: small, whole, never touched. At dusk only a dark shape with a thin edge is left of him
   if (a > 0) {
-    if (dusk > 0.5) art.inks(ctx, 'boy_bust', B, { alpha: a, plates: [{ ink: 'all', role: 'bg' }], keyline: { color: 'line', width: 2 } });
-    else art.inks(ctx, 'boy_bust', B, { alpha: a });
+    if (dusk > 0.5) art.inks(ctx, 'f_bust', B, { alpha: a, plates: [{ ink: 'all', role: 'bg' }], keyline: { color: 'line', width: 2 } });
+    else art.inks(ctx, 'f_bust', B, { alpha: a });
   }
   caption(ctx, env, t, P.lines);
   // the pointer holds the sun by the tip of a ray on the outer side of the arc
@@ -257,10 +251,10 @@ export function plateRole(ctx, env, P) {
 const TR = { x: 660, y: 150, w: 600, h: 800 };
 
 /**
- * One plate of each of her three looks, laid over one another: the cream plate of f_bust, the orange plate of
- * boy_bust, the black plate of man_bust (a faint ghost, as black ink is). They drift slowly apart and turn about one
+ * One plate of each of her three memory plates, laid over one another: the cream plate of f_bust, the orange plate of
+ * f_bust, the black plate of f_bust (a faint ghost, as black ink is). They drift slowly apart and turn about one
  * another; P.steps = the two times the word is sung: a step further each time; over P.settle = [from, to] they come
- * into register, and what is in register is boy_bust: the look the settings were left at. P.log = the client's one line.
+ * into register, and what is in register is f_bust: the look the settings were left at. P.log = the client's one line.
  */
 export function plateTrance(ctx, env, P) {
   const { t, at } = P, { art } = env, a = flashIn(t, at);
@@ -269,8 +263,8 @@ export function plateTrance(ctx, env, P) {
   const turn = 0.4 * (t - at), off = (k, ph) => [d * k * Math.cos(turn + ph), d * k * Math.sin(turn + ph)];
   if (a > 0) {
     ctx.circle(960, 500, 330, { fill: true, color: 'line', alpha: 0.45 * a });
-    if (t >= P.settle[1]) art.inks(ctx, 'boy_bust', art.fit('boy_bust', TR) ?? TR, { alpha: a });
-    else for (const [name, ink, role, k, ph, al] of [['f_bust', 'cream', 'text', 1, 2.6, 1], ['boy_bust', 'orange', 'me', 0.8, 0.5, 1], ['man_bust', 'black', 'line', 0.9, -1.6, 0.8]]) {
+    if (t >= P.settle[1]) art.inks(ctx, 'f_bust', art.fit('f_bust', TR) ?? TR, { alpha: a });
+    else for (const [name, ink, role, k, ph, al] of [['f_bust', 'cream', 'text', 1, 2.6, 1], ['f_bust', 'orange', 'me', 0.8, 0.5, 1], ['f_bust', 'black', 'line', 0.9, -1.6, 0.8]]) {
       art.inks(ctx, name, art.fit(name, TR) ?? TR, { alpha: a, plates: [{ ink, role, exact: true, offset: off(k, ph), alpha: al }] });
     }
   }
@@ -284,7 +278,7 @@ export function labCards(env) {
   const card = (fn, P) => ({ palette: 'warm', render: (ctx) => fn(ctx, env, { at: 0, lines: [], ...P }) });
   const day = (t) => card(plateDay, { t, grab: 1, drag: 2, top: 3, end: 4, am: 2.5, pm: 3.4, values: v(1), from: [1470, 944], to: [1500, 600], until: 5 });
   const role = (t) => card(plateRole, { t, grab: 1, push: 1.5, s: 1.8, m: 2.5, land: 3, values: v(2), from: [1700, 800], to: [1700, 1000], until: 4 });
-  const trance = (t) => card(plateTrance, { t, steps: [1.2, 2.1], settle: [2.5, 2.9], log: 'loop: on' });
+  const trance = (t) => card(plateTrance, { t, steps: [1.2, 2.1], settle: [2.5, 2.9], log: 'recall: repeating' });
   return {
     pre2: [
       card(plateGender, { t: 0.3, click: 1, values: v(0) }), card(plateGender, { t: 1.4, click: 1, values: v(0) }),

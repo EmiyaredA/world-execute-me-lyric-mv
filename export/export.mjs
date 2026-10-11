@@ -23,7 +23,9 @@ import { ensureLyrics } from '../tools/fill_lyrics.mjs';
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'config.json'), 'utf8'));
 const features = JSON.parse(fs.readFileSync(path.join(ROOT, cfg.paths.features), 'utf8'));
 // the lyric lines come from your own lyric file (the repository has none); stop here, before any output is touched, if they cannot be had
-try { ensureLyrics({ quiet: true }); } catch (e) { console.error(e.message); process.exit(1); }
+const layoutOnly = process.argv.includes('--layout-only') || process.argv.includes('--lab');
+const silent = process.argv.includes('--silent');
+if (!layoutOnly) { try { ensureLyrics({ quiet: true }); } catch (e) { console.error(e.message); process.exit(1); } }
 
 // ---- arguments -------------------------------------------------------------------
 const argv = process.argv.slice(2);
@@ -33,8 +35,11 @@ const LAB = arg('lab', null);                         // --lab <set>: the check 
 const W = +arg('width', SHEET ? 960 : cfg.video.width), H = +arg('height', SHEET ? 540 : cfg.video.height), FPS = +arg('fps', cfg.video.fps);
 const PRE = cfg.safety?.preroll ?? 0;                 // seconds of film before the song
 const START = Math.max(-PRE, +arg('start', LAB ? 0 : -PRE)), END = Math.min(+arg('end', features.meta.duration), features.meta.duration);
-const OUT = path.resolve(ROOT, SHEET || arg('out', `out/export_${W}x${H}_${FPS}.mp4`));
+const OUT = path.resolve(ROOT, SHEET || arg('out', `out/${cfg.identity.name.toLowerCase()}_${W}x${H}_${FPS}.mp4`));
 const firstFrame = Math.round(START * FPS), lastFrame = Math.round(END * FPS);   // [first, last)
+if (!Number.isFinite(W) || !Number.isFinite(H) || W <= 0 || H <= 0 || !Number.isFinite(FPS) || FPS <= 0) throw new Error('Invalid video dimensions or frame rate');
+if (!SHEET && layoutOnly && !silent) throw new Error('Placeholder video requires --silent; it is not a finished lyric MV.');
+if (!SHEET && !silent && !fs.existsSync(path.join(ROOT, cfg.paths.audio))) throw new Error(`Audio missing: ${cfg.paths.audio}. Supply your original audio before exporting.`);
 if (W % 2 || H % 2) throw new Error('width/height must be even for yuv420p');
 
 let times = null;                                    // sheet mode: explicit list of timestamps
@@ -92,6 +97,7 @@ if (SHEET) {
     '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-color_range', 'tv',
     ...cfg.export.audio, '-shortest', '-movflags', '+faststart', OUT,
   ];
+  if (silent) ffArgs = [...rawIn, '-framerate', String(FPS), '-i', 'pipe:0', '-metadata', `comment=mv_start=${(firstFrame / FPS).toFixed(6)};layout_only=${layoutOnly}`, '-vf', 'scale=out_color_matrix=bt709:out_range=limited,format=yuv420p', '-c:v', CODEC, ...(CODEC === 'h264_nvenc' ? quality(cfg.export.nvenc, '-cq') : quality(cfg.export.x264, '-crf')), '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-color_range', 'tv', '-movflags', '+faststart', OUT];
 }
 const ff = spawn(FFMPEG, ffArgs, { stdio: ['pipe', 'inherit', 'inherit'] });
 const ffDone = new Promise((res, rej) => ff.on('exit', (c) => (c === 0 ? res() : rej(new Error('ffmpeg exit ' + c)))));
@@ -108,7 +114,8 @@ const onUpgrade = frameSocketHandler({
 
 // ---- browser ---------------------------------------------------------------------
 const { server, url } = await startServer({ port: 5180, onUpgrade });
-const gpuArgs = ['--ignore-gpu-blocklist', '--enable-gpu', '--use-angle=d3d11', '--force_high_performance_gpu',
+const gpuArgs = ['--ignore-gpu-blocklist', '--enable-gpu',
+  ...(process.platform === 'win32' ? ['--use-angle=d3d11', '--force_high_performance_gpu'] : process.platform === 'darwin' ? ['--use-angle=metal'] : []),
   '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows'];
 let browser;
 for (const channel of [cfg.export.browserChannel, 'chrome', 'msedge', undefined]) {
@@ -119,9 +126,13 @@ if (!browser) throw new Error('No Chrome/Edge found for Playwright (set export.b
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   page.on('pageerror', (e) => { failed = e; console.error('[page error]', e.message); });
-  page.on('console', (m) => { if (m.type() === 'error') console.error('[page]', m.text()); });
-  await page.goto(`${url}/?mode=export&w=${W}&h=${H}${LAB ? `&lab=${encodeURIComponent(LAB)}` : ''}`);
+  page.on('console', (m) => {
+    if (m.type() === 'error') console.error('[page]', m.text());
+    if (/^\[(shot |scenes)/.test(m.text())) failed = new Error(m.text());
+  });
+  await page.goto(`${url}/?mode=export&w=${W}&h=${H}${LAB ? `&lab=${encodeURIComponent(LAB)}` : ''}${layoutOnly ? '&layoutOnly=1' : ''}`);
   await page.waitForFunction(() => window.__mv && window.__mv.ready, null, { timeout: 60000 });
+  if (failed) throw failed;
   const renderer = await page.evaluate(() => window.__mv.renderer);
   if (/swiftshader|llvmpipe|basic render/i.test(renderer)) console.warn('[export] WARNING: software WebGL - GPU not in use');
 

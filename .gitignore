@@ -13,6 +13,9 @@
 # renders (the videos carry the song)
 /out/
 
+# downloaded reference videos
+/downloads/
+
 # the maker's source pictures and older versions: not part of the repository
 /圖片/
 /backup/

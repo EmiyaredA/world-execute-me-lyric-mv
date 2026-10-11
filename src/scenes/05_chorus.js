@@ -74,7 +74,7 @@ export function chorusShots(env) {
     art.inks(ctx, 'f_reach', r, { alpha, roles: { cream: 'sub' }, reveal: { orange: k[0], black: k[1], cream: k[2] } });
   }
   /** The palm of her reaching hand, inside a picture drawn into r (source px of f_reach: region `palm`). */
-  const palmOf = (r) => { const p = art.region('f_reach', 'palm') ?? { x: 290, y: 1100 }; return [r.x + (p.x / 1086) * r.w, r.y + (p.y / 1448) * r.h]; };
+  const palmOf = (r) => art.point('f_reach', 'palm', r);
 
   /** The page of the conversation seen close: the warm room behind the glass, a pool of her light, the motif. */
   function page(ctx, t, { light = [960, 540], lightA = 0.42, motif = null, hot = heat(t) } = {}) {

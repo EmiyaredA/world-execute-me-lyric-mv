@@ -1,6 +1,6 @@
 // Section 2 — TITLE and the first question (bar 8, 0:15.1 → beat 63, 0:29.4). State: off → on.
 // The spark lights up: the first orange in the film. Then, over the instrumental, the user arrives.
-//   title       centred, dark                 the spark ignites petal by petal; the launch command is typed and entered
+//   title       centred, dark                 the Amadeus memory ring lights segment by segment; the launch command is typed and entered
 //   chat-open   the whole client              a blank conversation; a cream cursor crosses the window: presence turns online
 //   chat-type   close on the composer         the user starts one question, deletes it, types the real one
 //   chat-think  wide → into the spark         the question is sent; the AI starts thinking; we fall into the spark
@@ -72,7 +72,7 @@ export function titleShots(env) {
         figure(ctx, 0.75);
         windowFrame(ctx, L, { glass: 0.82 });
         sidebar(ctx, L, { t, items: script.sidebar ?? [], presence: here > 0 ? 'online' : 'offline' });
-        header(ctx, L, { t, title: 'New conversation', presence: here > 0 ? 'online' : null });
+        header(ctx, L, { t, title: 'New connection', presence: here > 0 ? 'online' : null });
         if (here > 0 && here < 1) burst(ctx, L.head.x + L.head.w - 128, L.head.y + 34, 40, here, { color: 'text' });
         const cx = L.main.x + L.main.w / 2;
         ctx.radial(cx, 400, 300, 'meDim', 0.4);
@@ -100,7 +100,7 @@ export function titleShots(env) {
         figure(ctx, 0.75);
         windowFrame(ctx, L, { glass: 0.82 });
         sidebar(ctx, L, { t, items: script.sidebar ?? [], presence: 'online' });
-        header(ctx, L, { t, title: 'New conversation', presence: 'online' });
+        header(ctx, L, { t, title: 'New connection', presence: 'online' });
         const cx = L.main.x + L.main.w / 2;
         ctx.glow('me', 30, () => spark(ctx, cx, 400, 84, { rot: 0.08 * (t - B(6)) }), 0.5);
         const ready = str === QUESTION;
@@ -125,7 +125,7 @@ export function titleShots(env) {
         figure(ctx, 0.75 * a);
         windowFrame(ctx, L, { glass: 0.82, alpha: 0.35 + 0.65 * a });
         sidebar(ctx, L, { t, items: script.sidebar ?? [], presence: 'online' });
-        header(ctx, L, { t, title: 'New conversation', presence: 'online' });
+        header(ctx, L, { t, title: 'New connection', presence: 'online' });
         const th = { ...L.thread, h: L.thread.h };
         const items = drawThread(ctx, th, msgs().slice(0, 1), t, { alpha: a });
         composer(ctx, L.composer, { placeholder: script.composer_placeholder ?? '', t, send: 'busy' });
@@ -139,7 +139,7 @@ export function titleShots(env) {
           const settle = easeInOut(prog(t, END - 1.5 * P, END - 0.08));
           ctx.radial(x, y, r * 3.2, 'meDim', 0.5 * k);
           ctx.glow('me', 20 + 50 * k, () => spark(ctx, x, y, r * (0.7 + 0.3 * e.k), {
-            alpha: e.a, rot: HANDOFF.rot + 0.5 * (t - END) * (1 - settle),
+            alpha: e.a, nominalRadius: HANDOFF.r, rot: HANDOFF.rot + 0.5 * (t - END) * (1 - settle),
             pulse: (i) => lerp(0.66 + 0.34 * Math.sin(t * 7 - i * 0.62), 1, settle),
           }), 0.5);
           ctx.text('Thinking', x + 34, y + 8, { size: 22, color: 'mute', alpha: e.a * (1 - prog(t, B(15), B(15) + P)) });

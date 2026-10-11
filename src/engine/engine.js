@@ -13,6 +13,7 @@ import { loadArt, ART_NAMES } from './art.js';
 import { buildPalettes, mixPal } from './palette.js';
 import { resolveTransition } from './transitions.js';
 import { clamp } from './util.js';
+import { registerCharacter } from '../scenes/shared.js';
 import { buildScenes } from '../scenes/index.js';
 
 /** Load every font before the first frame, so text never renders in a fallback face. `step` is told of each one. */
@@ -47,7 +48,7 @@ async function loadFonts(cfg, step) {
 
 /** How many things createEngine reports to `onStep` while it loads: every font, every silhouette, the scenes. */
 export function loadSteps(cfg) {
-  let n = (cfg.fonts.cjk || []).length + ART_NAMES.length + 1;
+  let n = (cfg.fonts.cjk || []).length + (cfg.character?.names ?? ART_NAMES).length + 1;
   for (const key of ['mono', 'serif', 'sans']) n += cfg.fonts[key].weights.length + (cfg.fonts[key].italic || []).length;
   return n;
 }
@@ -60,6 +61,7 @@ export async function createEngine({ canvas, width, height, cfg, featuresData, l
   const step = onStep ?? (() => {});
   const [, art, script, errors] = await Promise.all([loadFonts(cfg, step), loadArt(cfg, step), getJson(cfg.paths.script), getJson(cfg.paths.errors)]);
 
+  registerCharacter(art);
   const palettes = buildPalettes(cfg.palettes);
   const mk = (alpha) => new Ctx(document.createElement('canvas'), cfg, palettes, { alpha });
   const layerA = mk(false), layerB = mk(false), over = mk(true);
@@ -68,7 +70,8 @@ export async function createEngine({ canvas, width, height, cfg, featuresData, l
   const features = new Features(featuresData, cfg);
   const lyrics = new Lyrics(lyricsData, cfg, features);
   // env: what every section file receives. art = character illustrations, script / errors = the written conversation.
-  const all = await buildScenes({ cfg, features, lyrics, art, script: script ?? {}, errors: errors ?? {} }, { lab });
+  const env = { cfg, features, lyrics, art, script: script ?? {}, errors: errors ?? {} };
+  const all = await buildScenes(env, { lab });
   await step('scenes');
   // in cut order (not by `start`: a lead-in may begin before the cut of the shot it follows), so of two live
   // shots the later one is always the incoming one
@@ -167,6 +170,12 @@ export async function createEngine({ canvas, width, height, cfg, featuresData, l
     over.pal = pal; over.clear();
     for (const sc of overlays) if (tv >= sc.start && tv < sc.end) drawScene(over, sc, tv, f);
 
+    if (lyricsData.placeholder && !lab) {
+      fx.hud = 1; // Layout status must remain visible even in plate-only scenes.
+      over.rrect(28, 22, 850, 42, 8, { fill: 'bg' });
+      over.text('LAYOUT PREVIEW / placeholder text / audio & lyrics pending', 44, 51, { size: 22, font: 'mono', color: 'sub' });
+    }
+
     const n = (c) => c.map((v) => v / 255);
     // What the bloom has to know about each shot, because during an overlap every pixel still belongs to one of
     // them: its background (only what is brighter than it glows), its bloom tint, and how strongly it glows
@@ -180,7 +189,7 @@ export async function createEngine({ canvas, width, height, cfg, featuresData, l
   }
 
   return {
-    renderFrame, resize, features, lyrics, scenes: all, palettes, post, art,
+    renderFrame, resize, features, lyrics, placeholder: !!lyricsData.placeholder, errors: () => [...broken], scenes: all, palettes, post, art,
     duration: features.duration,
     /** The film starts this many seconds BEFORE the song (the warning page); t in renderFrame(t) is song time. */
     preroll: lab ? 0 : cfg.safety.preroll ?? 0,

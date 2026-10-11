@@ -118,9 +118,9 @@ export function bootShots(env) {
         windowFrame(ctx, L, { glass: 0.86 });
         sidebar(ctx, L, { t, loaded: 0, items: script.sidebar ?? Array(6).fill('') });
         header(ctx, L, { t, loaded: 0, title: '' });
-        const r = { x: 470, y: 160, w: 760, h: 700 }, b = card(ctx, r, { title: 'persona', subtitle: text(6).toLowerCase(), tag: 'setup', k: prog(t, B(4) - 0.1, B(4) + 0.25) });
+        const r = { x: 470, y: 160, w: 760, h: 700 }, b = card(ctx, r, { title: ctx.identity.personaTitle, subtitle: text(6).toLowerCase(), tag: 'setup', k: prog(t, B(4) - 0.1, B(4) + 0.25) });
         if (b) {
-          const rows = [['name', 'Claude', 'serif'], ['voice', 'serif, unhurried', 'serif'], ['warmth', null, null], ['memory', 'this conversation', 'sans'], ['love', 'undefined', 'mono']];
+          const rows = [['name', ctx.identity.name, 'serif'], ['subject', ctx.identity.subject, 'serif'], ['connection', 'awaiting peer', 'mono'], ['memory', ctx.identity.memory, 'sans'], ['love', 'undefined', 'mono']];
           rows.forEach(([label, value, font], i) => {
             const t0 = B(4) + P * 0.5 + i * P, e = enter(t, t0, 0, { dur: 0.28, rise: 20 }), y = b.y + 22 + i * 104 + e.dy;
             if (e.a <= 0) return;

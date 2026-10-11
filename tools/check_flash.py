@@ -17,6 +17,7 @@ Usage:  .venv\\Scripts\\python tools/check_flash.py out/preview_1080p.mp4
 """
 import re
 import subprocess
+import platform
 import sys
 from pathlib import Path
 
@@ -27,7 +28,7 @@ FF = "ffmpeg"
 try:
     subprocess.run([FF, "-version"], capture_output=True, check=True)
 except Exception:
-    FF = str(ROOT / "node_modules" / "ffmpeg-static" / "ffmpeg.exe")
+    FF = str(ROOT / "node_modules" / "ffmpeg-static" / ("ffmpeg.exe" if platform.system() == "Windows" else "ffmpeg"))
 W, H, AREA = 64, 36, 0.25
 
 
