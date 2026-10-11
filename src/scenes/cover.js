@@ -10,6 +10,7 @@
 // her memory ring, the title) stands inside the middle 4:3 of the frame (x 240 … 1680), and the title's capitals are
 // about a tenth of the frame's height.
 import { marks } from '../components/plate.js';
+import { spark } from '../components/motif.js';
 import { PAL, expose, inkScreen, livePlates, world } from './climax.js';
 import { EYE } from './shared.js';
 
@@ -17,7 +18,7 @@ const FULL = { x: 0, y: 0, w: 1920, h: 1080 };
 /**
  * Her face is closer than the film ever shows it in this shot (Z times the registration of shared.js EYE: drawn as
  * paths, so it stays sharp), and her eye stands at AT_EYE: left of the middle, where a thumbnail is looked at first.
- * Her flower comes in from the top left corner.
+ * The twelve-segment Amadeus mark enters from the top left corner.
  */
 const Z = 1.32, AT_EYE = [610, 640];
 const FACE = { x: AT_EYE[0] - (EYE.eye[0] - EYE.x) * Z, y: AT_EYE[1] - (EYE.eye[1] - EYE.y) * Z, w: EYE.w * Z, h: EYE.h * Z }, IRIS = { x: AT_EYE[0], y: AT_EYE[1], r: (EYE.irisRadius ?? 44) * Z };
@@ -47,25 +48,24 @@ function tear(ctx) {
 
 /**
  * The title: the call itself, in the system's mono, three rows on strips of black paper with their shadow plate; under
- * the cream type a thin red plate out of register (the print is broken, the title is not); her orange caret after it.
- * Under it, small, the line the film ends on.
+ * the cream type a thin red plate out of register (the print is broken, the title is not); her red caret after it.
+ * Under it, small, the Amadeus adaptation signature.
  */
 function title(ctx) {
-  ctx.rect(974, 91, 684, 154, { fill: true, color: 'panel', alpha: 0.94 });
-  ctx.text(ctx.identity.name.toUpperCase(), 1000, 172, { size: 80, weight: 800, font: 'sans', color: 'text', spacing: 5 });
-  ctx.text('KURISU / MEMORY ARCHIVE', 1000, 221, { size: 27, font: 'mono', color: 'sub', spacing: 1.5 });
-  const ROWS = ['world.', 'execute', '(me);'], SIZE = 144, LH = 178, X = 1000, Y = 400, PAD = 28, cw = ctx.cw(SIZE), o = { size: SIZE, font: 'mono', weight: 800 };
+  // Match the reference's thumbnail hierarchy: face first, three cream rows on
+  // black strips second. The adaptation name stays a quiet signature below.
+  const ROWS = ['world.', 'execute', '(me);'], SIZE = 150, LH = 178, X = 1000, Y = 398, PAD = 28, cw = ctx.cw(SIZE), o = { size: SIZE, font: 'mono', weight: 800 };
   const strip = (x, y, w, h) => { ctx.rect(x + 12, y + 12, w, h, { fill: true, color: 'bg', alpha: 0.55 }); ctx.rect(x, y, w, h, { fill: true, color: 'panel' }); };
   ROWS.forEach((str, i) => {
     const y = Y + i * LH, w = str.length * cw + (i === 2 ? cw * 0.9 : 0);
     strip(X - PAD, y - SIZE * 0.86, w + 2 * PAD, SIZE * 1.16);
-    ctx.text(str, X + 7, y + 4, { ...o, color: 'err' });
+    ctx.text(str, X + 3, y + 2, { ...o, color: 'meHot' });
     ctx.text(str, X, y, { ...o, color: 'text' });
   });
-  ctx.rect(X + ROWS[2].length * cw + 12, Y + 2 * LH - SIZE * 0.76, cw * 0.62, SIZE * 0.92, { fill: true, color: 'me' });      // the caret: her orange
-  const note = '> archive saved / reply unread', ns = 34, ny = Y + 2 * LH + 104;
-  strip(X - PAD, ny - ns * 1.05, note.length * ctx.cw(ns) + 2 * PAD, ns * 1.6);
-  ctx.text(note, X, ny, { size: ns, font: 'mono', color: 'sub' });
+  ctx.rect(X + ROWS[2].length * cw + 12, Y + 2 * LH - SIZE * 0.76, cw * 0.62, SIZE * 0.92, { fill: true, color: 'me' });
+  strip(X - PAD, 835, 660, 116);
+  ctx.text(ctx.identity.name.toUpperCase(), X, 890, { size: 48, weight: 800, font: 'sans', color: 'text', spacing: 5 });
+  ctx.text('KURISU / MEMORY ARCHIVE', X, 929, { size: 23, font: 'mono', color: 'sub', spacing: 1 });
 }
 
 export function labCards(env) {
@@ -83,6 +83,7 @@ export function labCards(env) {
         glint(ctx, IRIS.x - IRIS.r * 0.34, IRIS.y - IRIS.r * 0.36);
         marks(ctx, { color: 'mute' });
         tear(ctx);
+        spark(ctx, 190, 140, 205, { color: 'text', off: 'text', alpha: 0.85, rot: -0.2 });
         title(ctx);
         expose(ctx, 2, { at: [IRIS.x, IRIS.y], glow: 0.12 });
         ctx.fx.rays = 0.14; ctx.fx.streak = 0.2; ctx.fx.bloomAll = 0.2; ctx.fx.zoom = 1;

@@ -21,7 +21,15 @@ npm run lyrics
 它會告訴你有幾行與製作時的歌詞完全相同、哪些行被重新分行、你的檔案裡哪幾列不是片中的歌詞(署名、翻譯)而被略過;
 如果片中有某幾行在你的檔案裡找不到,它會列出行號與歌曲時間,並停下來。
 
-沒有音檔時預覽仍然可以無聲播放(頁面下方的 `sound` 一行會說明原因);導出影片則一定需要音檔。
+当前 Amadeus 版本缺少歌词时自动进入带 `LAYOUT PREVIEW` 标记的占位预览；缺少音源时仍可无声播放。`npm run preview:layout` 可显式打开该模式。占位文本仅用于检查构图与节奏，不能验收歌词排版或音画同步。
+
+正式导出 `npm run export:preview` 需要补齐音源和歌词，输出 `out/amadeus_1080p60.mp4`。音源开头留白不同，先调整 `timing.offset`；若剪辑或速度不同，需要重新分析时间轴。需要完整无声检查版时，显式运行：
+
+```sh
+node export/export.mjs --layout-only --silent --width 1920 --height 1080 --fps 60 --cq 26 --out out/amadeus_layout_1080p60.mp4
+```
+
+两种导出都包含歌曲前五秒警告页。完整说明见 [主 README](../README.md#中文)。
 
 ## English
 
@@ -45,4 +53,6 @@ It reports how many lines are identical to the text the film was made with, whic
 file are no line of the film (credits, translations) and were passed over. If lines of the film cannot be found in your file,
 it lists their numbers and song times and stops.
 
-Without an audio file the preview still plays, silently (the `sound` line under the picture says why); exporting a video does need the audio.
+The Amadeus version automatically uses a labeled `LAYOUT PREVIEW` when lyrics are missing and plays silently when audio is missing. `npm run preview:layout` selects this mode explicitly. Placeholder previews are for visual structure and pacing, not final lyric layout or audiovisual sync.
+
+The normal `npm run export:preview` needs both audio and lyrics and writes `out/amadeus_1080p60.mp4`. Use the explicit `--layout-only --silent` command above to export a complete silent check as `out/amadeus_layout_1080p60.mp4`. Both include the five-second warning before the song. Adjust `timing.offset` for different leading silence; a different edit or speed needs a timing review. See the [main README](../README.md#english).

@@ -1,4 +1,4 @@
-# 提示詞與製作文件 · Prompts and production documents
+# Amadeus 制作文件与历史记录 · Production documents
 
 当前版本：**[Amadeus v5 改编与验证记录](AMADEUS.md)**。角色生成提示词见 [assets/amadeus/prompts.json](../assets/amadeus/prompts.json)。下面的 v3／v4 文档保留原工程的历史；其中的角色、颜色和验收结果不代表当前版本。
 
@@ -12,7 +12,25 @@
 
 ## 中文
 
-這支影片的程式碼由 AI 撰寫。這個資料夾收的是製作過程裡人與 AI 之間來回的文件:製作者提出的要求、據此定下的規則、每一輪做完之後的紀錄。
+### 当前 Amadeus 版本
+
+本分支为红莉栖／Amadeus 红色版。启动、Vision、日期回溯、十二次执行和关机采用记忆实验室与时间循环的视觉线索；全片马赛克替换为变暗与扫描干扰。新封面采用角色眼部特写和三行代码标题。
+
+| 文件 | 内容 |
+| --- | --- |
+| [AMADEUS.md](AMADEUS.md) | 角色、线稿、记忆仪器和封面改编记录；当前验证结果及尚待补齐的音源／歌词 |
+| [../assets/amadeus/prompts.json](../assets/amadeus/prompts.json) | 六张透明角色素材的生成提示词与修复记录 |
+| [../assets/amadeus/](../assets/amadeus/) | 角色、标志和封面参考，区域测量及完整／简化线稿 SVG |
+| [../data/amadeus_chat.json](../data/amadeus_chat.json)、[../data/amadeus_errors.json](../data/amadeus_errors.json) | 当前聊天、记忆与连接主题文案 |
+| [../STORYBOARD.md](../STORYBOARD.md) | 当前 87 个镜头的分镜表，覆盖 129 行时间轴 |
+| [images/amadeus_cover.png](images/amadeus_cover.png) | 当前 1920×1080 封面 |
+| [../CREDITS.md](../CREDITS.md) | 当前改编与原工程的来源、作者及授权说明 |
+
+当前完整无声预览、修改前后联系表、单帧和检查报告输出到本地 `out/`，不随 Git 提交。真实歌词排版与音画同步尚未验收。运行与导出方法见 [主 README](../README.md#中文)。
+
+### 原工程的历史文件
+
+下面收录的是原作者使用 Claude／Claude Code 制作第三、第四版时的文件：制作要求、据此定下的规则、每轮完成后的记录。当前改编保留这些文件的原貌；历史画面与验证结论不代表当前 Amadeus 版本。
 
 ### 提示詞:製作者給 AI 的要求
 
@@ -41,7 +59,7 @@
 | [v4/PROGRESS.md](v4/PROGRESS.md) | 第四版的進度與交付:做完了什麼、量到的數字、每一處沒有照要求做的地方及原因(簡體中文,約 4 萬字) |
 | [v4/maps/](v4/maps/) | 動手做第四版之前,對第三版逐段所做的分析:鏡頭清單、關鍵詞與重鼓點的實測時間、剪影的逐張測量、引擎的能力與缺口 |
 | [v4/WANTED_ART.md](v4/WANTED_ART.md)、[v3/WANTED_ART.md](v3/WANTED_ART.md) | 做完之後列出的「還想要的圖」:因為沒有那張圖而只能繞過去的地方 |
-| [../STORYBOARD.md](../STORYBOARD.md) | 逐鏡頭分鏡表,由 `npm run storyboard` 從程式裡的鏡頭清單自動生成 |
+| [v4/STORYBOARD_original.md](v4/STORYBOARD_original.md) | 第四版原始分镜表；当前版本见上面的 `../STORYBOARD.md` |
 
 ### 片中的文案
 
@@ -57,14 +75,19 @@
   在公開前改成了 `[lyric]`。倉庫裡沒有歌詞文本,行號對應的是你用自己的歌詞檔生成的 `data/lyrics.json`(見上層 README)。
 - 文件裡提到的 `out/`(導出檔、縮圖表、量測輸出)、`backup/`(舊版備份)、`圖片/`(剪影原檔)以及音頻與 LRC,都只在製作者的本機,不在倉庫內。
 - `v4/maps/` 裡的 `<scratchpad>` 是當時那次對話的暫存資料夾;放在那裡的檢查圖沒有保留。
-- 各文件的語言不一致是製作過程留下的原貌:給 AI 的要求與進度紀錄是簡體中文,規則是英文,對外的說明(README、CREDITS、分鏡表)是繁體中文。
+- 历史文件的语言保留制作时的原貌：要求和进度记录为简体中文，规则为英文，对外说明为繁体中文。当前 Amadeus 说明以简体中文为主。
 
 ---
 
 ## English
 
-The code of this film was written by AI. This folder holds the documents that went back and forth between the maker and the
-AI while it was made: what the maker asked for, the rules drawn from that, and the record of what each round built.
+### Current Amadeus adaptation
+
+See [AMADEUS.md](AMADEUS.md) for the Kurisu assets, transparent Amadeus outline, memory instruments, scan interference, cover revision, validation results, and remaining audio/lyric work. [Character prompts](../assets/amadeus/prompts.json), [current storyboard](../STORYBOARD.md), [cover](images/amadeus_cover.png), and [credits](../CREDITS.md) are included in this branch. Generated videos, contact sheets, full-size stills, and reports stay in local `out/` and are not committed. The current video is a silent layout check; final lyrics and audiovisual sync still require local audio and lyrics.
+
+### Original production history
+
+The following files preserve the original author's Claude / Claude Code production history for versions 3 and 4: requirements, rules, and records of what each round built. Their designs and validation claims apply to the historical versions.
 
 ### The prompts: what the maker asked the AI for
 
@@ -110,7 +133,7 @@ Three things to know about them:
 | [v4/PROGRESS.md](v4/PROGRESS.md) | Progress and delivery of version 4: what was built, the measured numbers, every place that departs from the prompt and why (Simplified Chinese, about 40,000 characters) |
 | [v4/maps/](v4/maps/) | The analysis of version 3 made before version 4 was started: shot lists, measured times of keywords and drum hits, measurements of every silhouette, what the engine could and could not do (in English) |
 | [v4/WANTED_ART.md](v4/WANTED_ART.md), [v3/WANTED_ART.md](v3/WANTED_ART.md) | Pictures the film would still have liked to have: places that had to be worked around for lack of one |
-| [../STORYBOARD.md](../STORYBOARD.md) | The shot-by-shot storyboard, generated from the shot list in the code by `npm run storyboard` |
+| [v4/STORYBOARD_original.md](v4/STORYBOARD_original.md) | The original version 4 storyboard; the current adaptation uses `../STORYBOARD.md` above |
 
 ### The words on screen
 
@@ -127,5 +150,4 @@ Three things to know about them:
 - `out/` (exports, contact sheets, measurements), `backup/` (older versions), `圖片/` (the source files of the silhouettes),
   the audio and the LRC that the documents mention exist only on the maker's machine, not in the repository.
 - `<scratchpad>` in `v4/maps/` was the temporary folder of the conversation of that time; the check images kept there were not preserved.
-- The mix of languages is how the documents were made: requirements and progress log in Simplified Chinese, rules in English,
-  outward-facing pages (README, CREDITS, storyboard) in Traditional Chinese.
+- Historical language choices are preserved: requirements and progress logs in Simplified Chinese, rules in English, and original outward-facing pages in Traditional Chinese. Current Amadeus notes mainly use Simplified Chinese.
