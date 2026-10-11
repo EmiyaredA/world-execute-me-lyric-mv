@@ -2,6 +2,7 @@
 // check card (lab.js), so it is made of exactly what the film is made of.
 //
 //   node export/export.mjs --lab cover --sheet out/cover/cover_16x9.png --times 0 --cols 1 --width 3840 --height 2160
+//   node export/export.mjs --lab coverPortrait --sheet out/amadeus_cover_portrait.png --times 0 --cols 1 --width 1080 --height 1920
 //
 // The picture: her face full bleed (f_eye, the frame the last chorus opens on), out of register, one eye looking
 // straight out, the world turning in her iris; the sheet torn in three bands; and the title of the song as a call
@@ -39,10 +40,10 @@ function glint(ctx, x, y) {
 }
 
 /** The sheet as drawn so far, torn: each band of TEAR moved sideways (in the layer itself, as climax.js tearSheet does). */
-function tear(ctx) {
+function tear(ctx, bands = TEAR) {
   const g = ctx.g, c = ctx.canvas, s = ctx.scale, W = c.width;
   g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
-  for (const [y, h, dx] of TEAR) g.drawImage(c, 0, Math.round(y * s), W, Math.round(h * s), Math.round(dx * s), Math.round(y * s), W, Math.round(h * s));
+  for (const [y, h, dx] of bands) g.drawImage(c, 0, Math.round(y * s), W, Math.round(h * s), Math.round(dx * s), Math.round(y * s), W, Math.round(h * s));
   g.restore();
 }
 
@@ -68,6 +69,50 @@ function title(ctx) {
   ctx.text('KURISU / MEMORY ARCHIVE', X, 929, { size: 23, font: 'mono', color: 'sub', spacing: 1 });
 }
 
+/** Portrait cover is composed in its own 1080x1920 space, using the same ink assets. */
+function portrait(ctx, art) {
+  const g = ctx.g, originalScale = ctx.scale, factor = 1920 / 1080;
+  g.save(); g.scale(factor, factor);
+  ctx.scale = ctx.canvas.width / 1080;
+  try {
+    const eye = [470, 730], zoom = 1.55, iris = (EYE.irisRadius ?? 44) * zoom;
+    const face = {
+      x: eye[0] - (EYE.eye[0] - EYE.x) * zoom,
+      y: eye[1] - (EYE.eye[1] - EYE.y) * zoom,
+      w: EYE.w * zoom, h: EYE.h * zoom,
+    };
+    ctx.rect(-10, -10, 1100, 1940, { fill: true, color: 'raised' });
+    const lie = livePlates(ctx, art, EYE.name, face, AT, { m: 12, flip: EYE.flip });
+    inkScreen(ctx, art, EYE.name, face, AT, { rect: { x: 0, y: 0, w: 1080, h: 1920 }, size: 15, colW: 350, offset: lie.black, flip: EYE.flip, alpha: 0.55 });
+    ctx.circle(...eye, iris, { fill: true, color: 'bg' });
+    world(ctx, { cx: eye[0], cy: eye[1], r: iris - 2, t: AT, energy: 0.85, size: 11, cage: 0, hot: true });
+    ctx.circle(...eye, iris, { color: 'meHot', width: 3 });
+    glint(ctx, eye[0] - iris * 0.34, eye[1] - iris * 0.36);
+    tear(ctx, [[105, 30, 70], [406, 17, -44], [980, 32, -86]]);
+    spark(ctx, 190, 172, 184, { color: 'text', off: 'text', alpha: 0.85, rot: -0.2 });
+
+    const x = 126, y = 1255, size = 180, lh = 210, pad = 25, rows = ['world.', 'execute', '(me);'];
+    const strip = (sx, sy, w, h) => {
+      ctx.rect(sx + 10, sy + 10, w, h, { fill: true, color: 'bg', alpha: 0.55 });
+      ctx.rect(sx, sy, w, h, { fill: true, color: 'panel' });
+    };
+    rows.forEach((str, i) => {
+      const baseline = y + i * lh, w = (str.length + (i === 2 ? 0.9 : 0)) * ctx.cw(size);
+      strip(x - pad, baseline - size * 0.86, w + 2 * pad, size * 1.16);
+      const type = { size, font: 'mono', weight: 800 };
+      ctx.text(str, x + 3, baseline + 2, { ...type, color: 'meHot' });
+      ctx.text(str, x, baseline, { ...type, color: 'text' });
+    });
+    ctx.rect(x + rows[2].length * ctx.cw(size) + 12, y + 2 * lh - size * 0.76, ctx.cw(size) * 0.62, size * 0.92, { fill: true, color: 'me' });
+    strip(x - pad, 1763, 805, 112);
+    ctx.text(ctx.identity.name.toUpperCase(), x, 1815, { size: 52, weight: 800, font: 'sans', color: 'text', spacing: 5 });
+    ctx.text('KURISU / MEMORY ARCHIVE', x, 1854, { size: 25, font: 'mono', color: 'sub', spacing: 1 });
+    // Ray coordinates in the film use a landscape virtual frame; retain the ink
+    // finish here without that directional effect so the portrait remains centered.
+    ctx.fx.rays = 0; ctx.fx.streak = 0.12; ctx.fx.bloomAll = 0.15; ctx.fx.zoom = 1;
+  } finally { ctx.scale = originalScale; g.restore(); }
+}
+
 export function labCards(env) {
   const { art } = env;
   return {
@@ -89,5 +134,6 @@ export function labCards(env) {
         ctx.fx.rays = 0.14; ctx.fx.streak = 0.2; ctx.fx.bloomAll = 0.2; ctx.fx.zoom = 1;
       },
     }],
+    coverPortrait: [{ palette: PAL, render(ctx) { portrait(ctx, art); } }],
   };
 }

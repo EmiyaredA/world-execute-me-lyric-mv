@@ -18,6 +18,7 @@
     "check": "node tools/python.mjs tools/check_flash.py out/amadeus_1080p60.mp4 && node tools/python.mjs tools/check_sync.py out/amadeus_1080p60.mp4",
     "preview:layout": "node export/server.mjs --layout-only --open",
     "cover": "node export/export.mjs --lab cover --sheet out/amadeus_cover.png --times 0 --cols 1 --width 1920 --height 1080",
+    "cover:portrait": "node export/export.mjs --lab coverPortrait --sheet out/amadeus_cover_portrait.png --times 0 --cols 1 --width 1080 --height 1920",
     "check:amadeus": "node tools/check_amadeus.mjs"
   },
   "dependencies": {

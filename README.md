@@ -43,12 +43,13 @@ npm run preview
 
 ```sh
 npm run cover
+npm run cover:portrait
 npm run check:amadeus
 node tools/check_memory_lab.mjs
 node tools/storyboard.mjs --layout-only
 ```
 
-封面输出 `out/amadeus_cover.png`，尺寸为 1920×1080；README 使用的副本位于 [`docs/images/amadeus_cover.png`](docs/images/amadeus_cover.png)。角色墨版可通过 `?lab=inks&layoutOnly=1` 查看；档案变化检查用 `?lab=pre2&layoutOnly=1`，标志检查用 `?lab=marks&layoutOnly=1`。
+横版封面输出 `out/amadeus_cover.png`，尺寸为 1920×1080；README 使用的副本位于 [`docs/images/amadeus_cover.png`](docs/images/amadeus_cover.png)。`npm run cover:portrait` 输出重新排版的 1080×1920 [竖版封面](docs/images/amadeus_cover_portrait.png)，路径为 `out/amadeus_cover_portrait.png`。角色墨版可通过 `?lab=inks&layoutOnly=1` 查看；档案变化检查用 `?lab=pre2&layoutOnly=1`，标志检查用 `?lab=marks&layoutOnly=1`。
 
 ### 补齐音源与导出
 
@@ -106,7 +107,7 @@ The palette is vermilion, cream, and near-black. A reference-derived Amadeus out
 
 ### Run and export
 
-Use Node.js 20+ and Chrome or Edge. Clone the `Amadeus` branch, run `npm install`, then `npm run preview`. Missing lyrics automatically select a labeled layout preview; `npm run preview:layout` selects it explicitly. `npm run cover` renders a 1920×1080 PNG.
+Use Node.js 20+ and Chrome or Edge. Clone the `Amadeus` branch, run `npm install`, then `npm run preview`. Missing lyrics automatically select a labeled layout preview; `npm run preview:layout` selects it explicitly. `npm run cover` renders a 1920×1080 PNG; `npm run cover:portrait` renders a recomposed 1080×1920 [portrait cover](docs/images/amadeus_cover_portrait.png).
 
 Supply your own audio and lyrics in [`音頻&歌詞/`](音頻&歌詞/README.md), following `config.json`. Run `npm run lyrics`, then `npm run export:preview` for `out/amadeus_1080p60.mp4` (1080p/60fps, H.264/AAC). The lyric file is fitted to the existing timing table. Adjust `timing.offset` if the audio has different leading silence; different edits or playback speeds need a new timing review.
 
