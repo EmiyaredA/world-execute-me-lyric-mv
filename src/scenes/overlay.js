@@ -1,10 +1,9 @@
 // What the film says about itself, outside the conversation:
-//   - the photosensitivity warning: (v4) a full page BEFORE the song, at negative song time (prerollShot), and, as in
-//     v3, a small system toast during the calm opening seconds
+//   - the photosensitivity warning: a full page BEFORE the song, at negative song time (prerollShot)
 //   - the credit note on black after the power-down
-// The toast and the credits live on the overlay layer, above every transition; v3 has no debug HUD (no frame
+// The credits live on the overlay layer, above every transition; v3 has no debug HUD (no frame
 // counter, BPM, line counter, meters) and neither has v4.
-import { room, toast } from '../components/chat.js';
+import { room } from '../components/chat.js';
 import { clamp, easeOut, prog } from '../engine/util.js';
 
 /** m:ss of a film time (song time + pre-roll), for what viewers are told. */
@@ -80,13 +79,6 @@ export function overlayScene({ cfg, features }) {
   return {
     id: 'overlay', overlay: true, z: 100, start: -1e9, end: 1e9,
     render(ctx, t) {
-      const wEnd = cfg.safety.warningSeconds;
-      if (t > 0.9 && t < wEnd) {
-        toast(ctx, { x: 960 - 300, y: 24, w: 600, h: 58 }, {
-          title: 'This video contains flashing images', tone: 'info', icon: '!',
-          k: prog(t, 0.9, 1.3), out: easeOut(prog(t, wEnd - 0.5, wEnd)),
-        });
-      }
       const a = prog(t, T_OFF + 1.6, T_OFF + 2.4) * (1 - prog(t, features.duration - 0.6, features.duration - 0.1));
       if (a > 0) NOTE.forEach(([s, col], i) => ctx.text(s, 960, 502 + i * 46, { size: 26, color: col, alpha: a, align: 'center', weight: i ? 400 : 500 }));
     },

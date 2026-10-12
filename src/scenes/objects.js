@@ -1,14 +1,14 @@
 // OBJECTS (v4): the concrete things verse 2 asks the AI to be, as code-symbol pictures.
 // Each is a GLYPH PLATE (engine/ascii.js): a clean cut-paper outline, a flat under-colour so that the whole shape
 // reads on the first frame, and inside it the object's own data set in characters, in two or three steps of its
-// spot colour (config.json -> spot). The calyx / stem is the film's spark, in the AI's orange with a black
+// spot colour (config.json -> spot). The calyx / stem keeps its own lobed shape, with a themed fill and a light
 // outline: whatever the object is, it is her playing it. Every object has three states:
 //
 //   whole      the first frame: one outline, calyx and stem on it (decode < 1: its characters are still settling)
 //   open       0..1: cut through; the pieces part and the cut face shows, in the lighter step of the spot colour and black
 //   give       seconds since it was GIVEN AWAY (-1 = not yet): the spot colour leaves the object row by row towards the
 //              user's side (the right). What is still inside the outline keeps its colour; what has left it is cream.
-//              The object is left as a hollow outline; calyx and stem stay orange: she is still there.
+//              The object is left as a hollow outline; its calyx and stem remain.
 //
 //   eggplant(ctx, env, { cx, cy, s, open, give, decode, t })      s = half its length
 //   tomato(ctx, env, { cx, cy, s, open, give, decode, t })        s = half its width
@@ -16,12 +16,23 @@
 // Pure functions of their arguments. Verse 2 (plates_verse2.js) is where they are used; lab set `glyph` shows them alone:
 //   node export/export.mjs --lab glyph --sheet out/chk_glyph.png --times 0,1,2,3,4,5,6 --cols 2 --width 1920 --height 1080
 import { ground } from '../components/plate.js';
-import { sparkOutline } from '../components/motif.js';
 import { glyphPlate } from '../engine/ascii.js';
 import { rand } from '../engine/prng.js';
 import { clamp, easeOut, lerp } from '../engine/util.js';
 
 const TAU = Math.PI * 2;
+
+/** Original seven-lobed vegetable calyx; independent of the current brand mark. */
+export function calyxOutline({ rot = Math.PI / 7, n = 168, inner = 0.5 } = {}) {
+  const lengths = [1, 0.8, 0.94, 0.74, 0.98, 0.82, 0.9];
+  return Array.from({ length: n }, (_, k) => {
+    const u = k / n * 7, i = Math.floor(u), f = u - i;
+    const radius = inner + (lengths[i] * (1 - f) + lengths[(i + 1) % 7] * f - inner)
+      * Math.abs(Math.cos(f * Math.PI)) ** 1.6;
+    const a = rot + k / n * TAU - Math.PI / 2;
+    return [Math.cos(a) * radius, Math.sin(a) * radius];
+  });
+}
 
 /** Smooth interpolation through (x, y) pairs sorted by x (Catmull-Rom, clamped at the ends). */
 function curve(pairs) {
@@ -100,12 +111,12 @@ function piece(ctx, pts, field, { SP, glyph, key, inks, decode = null, give = -1
   ctx.poly(pts, { close: true, color: SP.light, width: edgeW });                                         // the cut-paper edge: what is left when the colour has gone
 }
 
-/** The calyx and stem of an object: the spark's own shape as a cap, flat orange inside a black outline, with its shadow. */
-function cap(ctx, shapes, SH, lw) {
+/** The calyx and stem use the vegetable's own spot ink and a separate lobed outline. */
+function cap(ctx, shapes, SH, lw, color) {
   for (const pts of shapes) {
     ctx.poly(pts.map(([x, y]) => [x + SH[0] * 0.6, y + SH[1] * 0.6]), { close: true, fill: true, color: 'bg' });
     ctx.poly(pts, { close: true, color: 'bg', width: lw * 2 });
-    ctx.poly(pts, { close: true, fill: true, color: 'me' });
+    ctx.poly(pts, { close: true, fill: true, color });
   }
 }
 
@@ -214,13 +225,13 @@ export function eggplant(ctx, env, { cx = 960, cy = 540, s = 400, tilt = TILT, o
     ctx.line(a[0], a[1], b[0], b[1], { color: SP.light, width: 5, alpha: 1 - k });
   }
 
-  // ---- calyx and stem: the spark as a cap, flat orange, black outline (drawn last: it sits on the shoulder of the fruit).
+  // ---- calyx and stem: a lobed cap (drawn last: it sits on the shoulder of the fruit).
   // Its petals are the spark's own, but the ones that lie on the fruit are long and the ones behind the stem short.
   const at = (x, y) => { const X = SPINE(Y0) + x, Y = Y0 + 0.03 + y; return [cx + (X * cs - (Y - 0.1) * sn) * s, cy + (X * sn + (Y - 0.1) * cs) * s]; };
   const top = at(0, 0);
-  const cal = sparkOutline(0, 0, 1, { rot: Math.PI / 7, n: 168, rays: 7, inner: 0.5 }).map(([x, y]) => { const down = Math.max(0, y) ** 0.8; return at(x * (0.3 + 0.12 * down), y * (0.2 + 0.36 * down) - 0.03); });
+  const cal = calyxOutline({ inner: 0.5 }).map(([x, y]) => { const down = Math.max(0, y) ** 0.8; return at(x * (0.3 + 0.12 * down), y * (0.2 + 0.36 * down) - 0.03); });
   const stem = [[-0.07, -0.02], [-0.085, -0.2], [-0.05, -0.36], [0.06, -0.43], [0.15, -0.38], [0.1, -0.3], [0.07, -0.2], [0.075, -0.02]].map(([x, y]) => at(x, y));
-  cap(ctx, [stem, cal], SH, Math.max(4, s * 0.014));
+  cap(ctx, [stem, cal], SH, Math.max(4, s * 0.014), SP.calyx);
   g.globalAlpha = a0;
   return { hull: bodyPts().map(([x, y]) => toScreen(x, y)), top };
 }
@@ -325,10 +336,10 @@ export function tomato(ctx, env, { cx = 960, cy = 540, s = 320, open = 0, give =
 
   // ---- calyx and stem (on the lid): the spark seen from the side, its near petals lying long over the shoulders
   const at = (x, y) => toScreen(x, -0.735 + y, k > 0);
-  const cal = sparkOutline(0, 0, 1, { rot: Math.PI / 7, n: 168, rays: 7, inner: 0.42 }).map(([x, y]) => { const dn = Math.max(0, y) ** 0.8; return at(x * (0.5 + 0.1 * dn), y * (0.12 + 0.2 * dn) + 0.02); });
+  const cal = calyxOutline({ inner: 0.42 }).map(([x, y]) => { const dn = Math.max(0, y) ** 0.8; return at(x * (0.5 + 0.1 * dn), y * (0.12 + 0.2 * dn) + 0.02); });
   const stem = [[-0.06, 0.0], [-0.07, -0.14], [-0.03, -0.27], [0.07, -0.31], [0.13, -0.26], [0.08, -0.2], [0.06, -0.12], [0.065, 0.0]].map(([x, y]) => at(x, y));
   const top = at(0, 0);
-  cap(ctx, [stem, cal], SH, Math.max(4, s * 0.015));
+  cap(ctx, [stem, cal], SH, Math.max(4, s * 0.015), SP.calyx);
   g.globalAlpha = a0;
   return { hull: whole, top };
 }

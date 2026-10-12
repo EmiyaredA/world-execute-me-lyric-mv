@@ -10,9 +10,16 @@ import { layoutLyrics } from '../src/engine/placeholder.js';
 import { registerCharacter, EYE, REACH_CROP, REACH_PALM } from '../src/scenes/shared.js';
 import { buildShots } from '../src/scenes/index.js';
 import { markSvg } from '../src/components/sensetime-mark.js';
+import { calyxOutline } from '../src/scenes/objects.js';
 
 const read = p => JSON.parse(fs.readFileSync(p, 'utf8'));
 const cfg = read('config.json'), regions = read(`${cfg.paths.art}/regions.json`);
+for (const inner of [0.5, 0.42]) {
+  const radii = calyxOutline({ inner }).map(([x, y]) => Math.hypot(x, y));
+  const lobes = radii.filter((r, i) => r > inner + 0.1 && radii[(i + 1) % radii.length] <= inner + 0.1);
+  assert.equal(lobes.length, 7, 'Vegetable calyx must keep seven lobes, not the brand ring');
+  assert(Math.max(...radii) - Math.min(...radii) > 0.45, 'Calyx collapsed into a round cap');
+}
 const art = Object.create(Art.prototype);
 art.regions = regions; art.dim = {};
 for (const name of cfg.character.names) {

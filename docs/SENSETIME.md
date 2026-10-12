@@ -70,10 +70,22 @@
 
 此次仅重新渲染覆盖日期段的文件帧区间 `[3201,3857)`（歌曲48.35至59.283333秒），在原流关键帧处拼接，其他区间保留原H.264流；七个区间外边界／抽查帧解码哈希一致，AAC包逐字节一致。拼接验证 `out/sensetime_record_splice_check.json`，日期段实际成片抽帧 `out/sensetime_record_video_frame.png`。修正前文件保留为 `out/sensetime_before_record_fix_1080p60.mp4`。
 
-### 当前交付：移除结尾状态面板
+### 移除结尾状态面板（开头与果萼修正前）
 
 按用户框选范围，完整移除结尾右下角的会话状态面板，包括 `SESSION SAVED / CONNECTION CLOSED`、六位计数器、信号线和面板边框；不增加滚动动画。该面板在最后消息及身份参数镜头中的绘制调用均已删除。分镜文字同步更新，四张检查图为 `out/sensetime_shutdown_clean.png`，实际成片抽帧为 `out/sensetime_shutdown_clean_video_frame.png`。
 
-当前 `out/sensetime_1080p60.mp4` 为1920×1080／60fps、13017帧、216.95秒、270752294字节；SHA-256：`520284a5fe2d61eb2481a58d1ed466a281bca45aedba658fa5021b8f62644ad5`。完整解码、色彩标签、全部129行歌词抽帧和原工程闪光检查通过；一般闪光最高每秒3.0次，红闪光0次，无单帧突跳；音轨偏移+0.00 ms。
+当次 `out/sensetime_1080p60.mp4` 为1920×1080／60fps、13017帧、216.95秒、270752294字节；SHA-256：`520284a5fe2d61eb2481a58d1ed466a281bca45aedba658fa5021b8f62644ad5`。完整解码、色彩标签、全部129行歌词抽帧和原工程闪光检查通过；一般闪光最高每秒3.0次，红闪光0次，无单帧突跳；音轨偏移+0.00 ms。
 
 仅重新渲染文件帧 `[11782,12505)`（歌曲191.366667至203.416667秒）并在关键帧处拼接。七个区间外抽查／边界帧解码哈希一致，AAC包完全相同；报告 `out/sensetime_shutdown_splice_check.json`。移除前文件保留为 `out/sensetime_before_shutdown_panel_removal.mp4`。渲染检查的330个提示点附近帧及13组严格跳转一致性检查通过，当前／历史记录卡检查继续通过。
+
+### 当前交付：开头提示条与水果造型修正
+
+移除正式画面开头0.9至6.5秒叠加的重复提示条，保留原有五秒独立提示页、倒计时及片尾来源信息。`overlayScene` 仅绘制片尾信息，删除失效的 `warningSeconds` 配置。
+
+水果果萼原先使用品牌 `sparkOutline`，在SenseTime标志轮廓改成圆环后退化为圆块。现将七瓣果萼轮廓独立到 `objects.js` 的 `calyxOutline`，茄子和番茄各自保留原版的变形、茎、开切与给出状态；色彩按用户最新确认沿用视频风格：果萼紫色 `#8b5cdf`，茄子皮 `#7B52AB`，番茄皮 `#D4432F`。
+
+两个168点果萼轮廓与原第四版 `2073b0c` 的原轮廓坐标完全一致（最大坐标误差0），报告 `out/sensetime_calyx_geometry_check.json`。新增几何回归检查，验证七个突出叶瓣及径向起伏，防止再变为品牌圆环。完整渲染检查继续通过。实际成片水果抽帧联系图为 `out/sensetime_fruit_final.png`，开头抽帧为 `out/sensetime_opening_fixed_video_frame.png`；全状态检查图为 `out/sensetime_opening_fruit_fix.png`。
+
+当前成片 `out/sensetime_1080p60.mp4`：1920×1080／60fps、13017帧、216.95秒、270512391字节；SHA-256：`5269320ac280a9d48c69b4f22448fb42c8298d1e7c86f1d55c630a51298093f2`。完整解码、BT.709标签、129行歌词抽帧检查通过；一般闪光最高每秒3次、红闪光0次、无单帧突跳，音轨偏移+0.00 ms。
+
+本次重新渲染文件帧 `[310,764)` 与 `[4752,5223)`，其余视频流保留；九个区间外边界／抽查帧解码哈希一致，AAC包完全相同。报告 `out/sensetime_opening_fruit_splice_check.json`。修正前文件保留为 `out/sensetime_before_opening_fruit_fix.mp4`。此前历史记录卡恢复及结尾状态面板移除均继续保留。

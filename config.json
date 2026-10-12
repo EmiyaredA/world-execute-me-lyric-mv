@@ -232,12 +232,14 @@
     "eggplant": {
       "base": "#7B52AB",
       "light": "#A886D8",
-      "dark": "#452C68"
+      "dark": "#452C68",
+      "calyx": "#8b5cdf"
     },
     "tomato": {
       "base": "#D4432F",
       "light": "#EC6B4F",
-      "dark": "#8C2A1E"
+      "dark": "#8C2A1E",
+      "calyx": "#8b5cdf"
     }
   },
   "fonts": {
@@ -344,15 +346,14 @@
     "flashStrength": 0.5
   },
   "safety": {
-    "_doc": "Photosensitivity guard. maxFlash caps every full-screen flash. preroll = seconds of silent warning page BEFORE the song (v4): the film starts at song time -preroll; every time in the code is song time (audio start = 0), so no cue moves. flashRange = the stretch the warning names, in SONG seconds; whatever is shown to viewers (the warning page, README, storyboard) adds preroll to it. warningLine = the Chinese line of the warning page (its characters must also be in fonts.cjk -> tcSans -> text, or they are not loaded). The small warning toast is still shown until warningSeconds of song time. tools/check_flash.py measures an exported file (use a 60 fps export).",
+    "_doc": "Photosensitivity guard. maxFlash caps every full-screen flash. preroll = seconds of silent warning page BEFORE the song (v4): the film starts at song time -preroll; every time in the code is song time (audio start = 0), so no cue moves. flashRange = the stretch the warning names, in SONG seconds; whatever is shown to viewers (the warning page, README, storyboard) adds preroll to it. warningLine = the Chinese line of the warning page (its characters must also be in fonts.cjk -> tcSans -> text, or they are not loaded). The dedicated preroll page is the only opening warning; there is no toast over the boot scene. tools/check_flash.py measures an exported file (use a 60 fps export).",
     "maxFlash": 0.7,
     "preroll": 5.0,
     "flashRange": [
       148.04,
       192.34
     ],
-    "warningLine": "本片含有閃爍畫面與強光，光敏感者請留意",
-    "warningSeconds": 6.5
+    "warningLine": "本片含有閃爍畫面與強光，光敏感者請留意"
   },
   "reactive": {
     "_doc": "Beat/onset mapping. strongOnset = minimum onset strength (0..1) that may trigger a secondary accent.",
