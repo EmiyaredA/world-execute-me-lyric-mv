@@ -48,6 +48,7 @@ const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; 
 /** `step(label)` is told of each silhouette once it is separated (the preview's progress bar; it may ask for a pause). */
 export async function loadArt(cfg, step = () => {}) {
   const dir = cfg.paths.art, art = new Art(cfg.character);
+  try { art.regions = await (await fetch(`/${dir}/regions.json`)).json(); } catch { art.regions = {}; }
   await Promise.all((cfg.character?.names ?? ART_NAMES).map(async (name) => {
     const img = new Image();
     img.src = `/${dir}/${name}.png`;
@@ -55,13 +56,13 @@ export async function loadArt(cfg, step = () => {}) {
     art._prepareInk(name, img);
     await step(`silhouette  ${name}`);
   }));
-  try { art.regions = await (await fetch(`/${dir}/regions.json`)).json(); } catch { art.regions = {}; }
   return art;
 }
 
 export class Art {
   constructor(character = {}) {
     this.sourceInks = character.sourceInks ?? INK_RGB;
+    this.sourceAccents = character.sourceAccents ?? false;
     this.sil = {}; this.lum = {}; this.regions = {};
     this.ink = {}; this.dim = {}; this.walls = {};
     this.tmpA = mk(8, 8); this.tmpB = mk(8, 8); this.tmpC = mk(8, 8);
@@ -86,6 +87,15 @@ export class Art {
     const px = sg.getImageData(0, 0, W, H).data;                     // the only read-back, once, at load
     const A = new Uint8Array(N), C1 = new Uint8Array(N), C2 = new Uint8Array(N);
     for (let i = 0; i < N; i++) { const a = px[i * 4 + 3]; A[i] = a < 16 ? 0 : a >= 250 ? 255 : a; }
+    // The mandatory red/gold hair ornament is independently traced as vector spot ink.
+    // Remove those pixels from taupe/brown classification; white wool underprints them.
+    const accentCover = [new Uint8Array(N), new Uint8Array(N)];
+    const clip = this.region(name, 'hairclip');
+    if (this.sourceAccents && clip) for (let y = Math.floor(clip.y); y < clip.y + clip.h; y++) for (let x = Math.floor(clip.x); x < clip.x + clip.w; x++) {
+      const i = y * W + x, r = px[i * 4], g = px[i * 4 + 1], b = px[i * 4 + 2];
+      const k = r > 150 && r > g * 1.45 && r > b * 1.5 ? 0 : r > 175 && g > 110 && b < 170 && r > b * 1.3 ? 1 : -1;
+      if (k >= 0) accentCover[k][i] = A[i];
+    }
 
     // the three inks of THIS image: mean of the solid pixels nearest to each seed
     const ink = this.sourceInks.map((c) => [...c]), sum = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
@@ -113,6 +123,7 @@ export class Art {
     };
     for (let i = 0; i < N; i++) {
       if (A[i] < 128) continue;
+      if (accentCover[0][i] || accentCover[1][i]) continue;
       const s = split(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]);
       C1[i] = s[0]; C2[i] = s[1];
     }
@@ -160,7 +171,8 @@ export class Art {
     this.lum[name] = { L, A: LA, hasAlpha: true, w: mw, h: mh };
     this.dim[name] = { w: W, h: H };
     this.sil[name] = mask[0];                                       // art.silhouette(): the whole figure as one flat shape
-    this.ink[name] = { w: W, h: H, mask, path, exact, label, lw, lh, rgb: ink };
+    const accentPaths = accentCover.map(cv => smoothPath(outline(cv, W, H, { eps: 0.25, minArea: 4 }), new Path2D()));
+    this.ink[name] = { w: W, h: H, mask, path, exact, label, lw, lh, rgb: ink, accentPaths };
   }
 
   size(name) { const d = this.dim[name]; return { w: d.w, h: d.h }; }
@@ -406,6 +418,31 @@ export class Art {
     if (flip) { g.translate(dst.w, 0); g.scale(-1, 1); }
     g.scale(dst.w / c.w, dst.h / c.h); g.translate(-c.x, -c.y);
   }
+
+  /** The clip shares the wool plate's registration, reveal and source-space crop. */
+  _hairclip(ctx, name, dst, { crop, flip, alpha, list }) {
+    const clip = this.region(name, 'hairclip');
+    const plate = list.find(p => p.ink === 'cream' || p.ink === 'all');
+    if (!clip || !plate || clip.w <= 0) return;
+    const K = this._ink(name), g = ctx.g, c = crop ?? { x: 0, y: 0, w: K.w, h: K.h };
+    const offset = plate.offset ?? [0, 0], reveal = plate.reveal;
+    const k = reveal == null ? 1 : clamp(reveal.k ?? reveal), dir = reveal?.dir ?? 'down';
+    const r = k >= 1 ? dst : dir === 'up' ? { ...dst, y: dst.y + dst.h * (1 - k), h: dst.h * k }
+      : dir === 'right' ? { ...dst, w: dst.w * k } : dir === 'left' ? { ...dst, x: dst.x + dst.w * (1 - k), w: dst.w * k }
+      : { ...dst, h: dst.h * k };
+    g.save();
+    g.beginPath(); g.rect(r.x + offset[0], r.y + offset[1], r.w, r.h); g.clip();
+    this._onto(g, c, dst, flip, ...offset);
+    g.beginPath(); g.rect(c.x, c.y, c.w, c.h); g.clip();
+    g.clip(K.path[0], 'evenodd');
+    g.globalAlpha *= alpha * (plate.alpha ?? 1);
+    const monochrome = !['text', 'sub', 'meHot'].includes(plate.role);
+    K.accentPaths.forEach((path, i) => {
+      g.fillStyle = ctx.col(monochrome ? plate.role : i === 0 ? 'brandRed' : 'brandGold');
+      g.fill(path, 'evenodd');
+    });
+    g.restore();
+  }
   /** Run fn with drawing clipped to one plate of the figure as it would be drawn into dst. */
   inkClip(ctx, name, dst, fn, { ink = 'all', exact = false, crop = null, flip = false } = {}) {
     const K = this._ink(name), g = ctx.g;
@@ -486,7 +523,9 @@ export class Art {
         g.fill((p.exact && p.ink !== 'all' ? K.exact : K.path)[k], 'evenodd');
         g.restore();
       }
-      g.globalAlpha = a0; ctx._font = '';
+      g.globalAlpha = a0;
+      this._hairclip(ctx, name, dst, { crop, flip, alpha, list });
+      ctx._font = '';
       return;
     }
 
@@ -527,7 +566,9 @@ export class Art {
       g.drawImage(G, 0, 0, G.width, G.height, -pad / sx, -pad / sy, G.width / sx, G.height / sy);
       g.restore();
     }
-    g.globalAlpha = a0; ctx._font = '';
+    g.globalAlpha = a0;
+    this._hairclip(ctx, name, dst, { crop, flip, alpha, list });
+    ctx._font = '';
   }
 
   _tmp(c, w, h) { const W = Math.max(2, Math.round(w)), H = Math.max(2, Math.round(h)); if (c.width !== W || c.height !== H) { c.width = W; c.height = H; } return c; }

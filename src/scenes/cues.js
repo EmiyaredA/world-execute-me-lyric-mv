@@ -52,7 +52,7 @@ export const CUES = {
   //      In these two lines the VOICE is the event (a letter appears, fills, hits); the drums are for the hand getting
   //      ready and for the aftershock. These four are the times to correct by ear (fix round).
   letterF:        [90.80, 'analysis', 'line 57, its first letter (= bar 49, beat 196). The gender plate cuts in on that bar line; the letter stands solid from the cut, or from this time if it is later'],
-  letterM57:      [91.72, 'analysis', 'line 57, its second letter (= beat 198): the held cell is let go, the bust becomes the saved archive, the letter is printed. Less certain than the other three: the other candidate is 91.48'],
+  letterM57:      [91.72, 'analysis', 'line 57, its second letter (= beat 198): the held cell is let go, the bust becomes the session record, the letter is printed. Less certain than the other three: the other candidate is 91.48'],
   letterAM:       [94.52, 'measured', 'line 59 (onset 94.517, strength 0.79; brief: 94.50)'],
   letterPM:       [95.19, 'measured', 'line 59 (onset 95.190, strength 0.82; brief: 95.16)'],
   letterS:        [98.19, 'analysis', 'line 61, its first letter (= bar 53, beat 212): the switch is at the top, the heavy letter is printed, the sheet jolts and is a step lighter'],

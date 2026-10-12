@@ -54,7 +54,7 @@ function inkCards({ art }) {
         put(C(2), 'reveal .6 / .4 / .2', { reveal: { cream: 0.6, orange: 0.4, black: 0.2 } });
         put(C(3), 'vector, flip', { vector: true, flip: true });
         ctx.withPal('off', () => put(C(4), 'state off', {}));
-        // registration: f_bust under the saved archive under cat_bust, outlines only
+        // registration: f_bust under the session record under cat_bust, outlines only
         const R = { x: 1470, y: 250, w: 420, h: 560 };
         for (const [n, role] of [['f_bust', 'text'], ['f_bust', 'me'], ['cat_bust', 'sub']]) art.inks(ctx, n, art.fit(n, R), { plates: [{ ink: 'black', role, alpha: 0.5 }] });
         label(ctx, 'black plates registered', R.x - 60, R.y - 20);
@@ -97,7 +97,7 @@ function markCards() {
     render(ctx, t) {
       ctx.fx.glow = 0.2;
       const color = palette === 'error' ? 'err' : 'me';
-      ctx.text(`AMADEUS / REFERENCE LINE ART / ${palette}`, 80, 90, { size: 30, color: 'text' });
+      ctx.text(`SENSETIME / REFERENCE LINE ART / ${palette}`, 80, 90, { size: 30, color: 'text' });
       spark(ctx, 420, 380, 220, { color, rot: 0.6, lit: card === 3 ? 0 : 1, offAlpha: 0.9 });
       ctx.text('full / upright, ring rotated', 420, 650, { size: 26, align: 'center', color: 'sub' });
       spark(ctx, 420, 830, 110, { color, nominalRadius: 15 });

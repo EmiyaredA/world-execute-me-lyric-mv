@@ -1,4 +1,4 @@
-// Amadeus memory instruments. Pure drawings: clocks and fixed seeds come from the shot.
+// SenseTime memory instruments. Pure drawings: clocks and fixed seeds come from the shot.
 import { rand } from '../engine/prng.js';
 import { clamp } from '../engine/util.js';
 import { trace } from '../engine/shapes.js';
@@ -39,7 +39,7 @@ export function scanField(ctx, r, t, { strength = 1, dim = 0.3, seed = 0, moving
   });
 }
 
-/** Oscilloscope-like neural signal; stopped input becomes a flat trace. */
+/** Oscilloscope-like sensor signal; stopped input becomes a flat trace. */
 export function signalTrace(ctx, r, t, { alpha = 1, color = 'text', activity = 1, running = true, seed = 0 } = {}) {
   const phase = running ? t * 1.6 : 0, points = [];
   for (let i = 0; i <= 120; i++) {
@@ -77,7 +77,7 @@ export function archiveStrip(ctx, art, scroll, gy, stops, { scale = 0.86, alpha 
     const r = { x: cx - 158, y: gy - 332, w: 316, h: 310 };
     if (r.x > 1980 || r.x + r.w < -60) return;
     ctx.rrect(r.x, r.y, r.w, r.h, 10, { fill: 'panel', fillAlpha: 0.45, stroke: valid ? 'sub' : 'line', alpha, width: 2 });
-    ctx.text(valid ? 'CURRENT ARCHIVE' : 'NO RECORD', cx, r.y + 34, { size: 21, font: 'mono', align: 'center', color: valid ? 'text' : 'sub', alpha });
+    ctx.text(valid ? 'CURRENT OBSERVATION' : 'NO RECORD', cx, r.y + 34, { size: 21, font: 'mono', align: 'center', color: valid ? 'text' : 'sub', alpha });
     if (valid) {
       art.inks(ctx, 'f_bust', { x: cx - 77, y: r.y + 46, w: 154, h: 205 }, { alpha: alpha * 0.75, plates: [{ ink: 'all', role: 'meDim' }, { ink: 'black', role: 'panel', alpha: 1 }] });
       signalTrace(ctx, { x: r.x + 16, y: r.y + 256, w: r.w - 32, h: 34 }, 0, { color: 'text', alpha: alpha * 0.65, seed: index, running: false });
@@ -85,7 +85,7 @@ export function archiveStrip(ctx, art, scroll, gy, stops, { scale = 0.86, alpha 
       ctx.g.save(); ctx.g.setLineDash([9, 10]);
       ctx.line(r.x + 26, r.y + 164, r.x + r.w - 26, r.y + 164, { color: 'sub', width: 1.5, alpha: alpha * 0.5 });
       ctx.g.restore();
-      ctx.text('outside saved memory', cx, r.y + 262, { size: 16, font: 'mono', align: 'center', color: 'mute', alpha });
+      ctx.text('outside observed data', cx, r.y + 262, { size: 16, font: 'mono', align: 'center', color: 'mute', alpha });
     }
   };
   box(scroll + 90 * scale, true, 0);

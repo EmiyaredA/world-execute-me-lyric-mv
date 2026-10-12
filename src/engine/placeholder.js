@@ -6,8 +6,8 @@ export function layoutLyrics(timing) {
     placeholder: true,
     sections: timing.sections,
     lines: timing.lines.map((line, i) => {
-      let text = line.emphasis ? 'PENDING09' : `ARCHIVE ${String(i).padStart(3, '0')} / TEXT PENDING`;
-      if (letters[i]) text = `ARCHIVE ${letters[i][0]} FIELD ${letters[i][1]}`;
+      let text = line.emphasis ? 'PENDING09' : `SENSOR ${String(i).padStart(3, '0')} / TEXT PENDING`;
+      if (letters[i]) text = `SENSOR ${letters[i][0]} FIELD ${letters[i][1]}`;
       const { words, letters: count, h, x, ...timed } = line;
       return { ...timed, text };
     }),

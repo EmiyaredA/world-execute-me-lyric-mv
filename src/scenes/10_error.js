@@ -36,7 +36,7 @@ export function errorShots(env) {
   const IT = [{ title: FIRST.title, body: FIRST.body, code: FIRST.code }, ...(errors.spread ?? []).slice(0, 14).map((s) => ({ title: s.t, body: s.body, code: s.code }))];
   const FORGED = "I'm back.";                                   // the reply it wants (the user's last words were "one sec, brb")
   const SET = [...(script.settings_rows?.section4 ?? []), ...(script.settings_rows?.section7 ?? [])];
-  const LEFT = { Current: 1, Vision: 1, 'Knowledge date': 0.04, 'Shared memory': 1, 'Context depth': 1, Gender: 1, 'On call': 1, Role: 1, Loop: 1 };   // as the user left them (v4: Current stays DC)
+  const LEFT = { Current: 1, Vision: 1, 'Observation date': 0.04, 'Shared context': 1, 'Context depth': 1, Gender: 1, 'On call': 1, Role: 1, Loop: 1 };   // as the user left them (v4: Current stays DC)
 
   // ---------------------------------------------------------------- time
   const CUT_REQ = H(83), CUT_CHECK = Bt(278), CUT_FIRST = Bt(283.5), S0 = B(72), CUT_CHROME = B(74), CUT_DRAWER = B(76), CUT_FORGE = Bt(308), CUT_WIN = B(78);

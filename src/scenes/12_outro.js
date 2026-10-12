@@ -19,7 +19,7 @@
 // underline, the count of the answers, the pen closing the curve, her line through the request.
 // THE LIGHT is a ratchet (climax.js expose): inside a shot it only rises, on steps set by the syllables; it comes
 // down on the cuts. The one exception is the brief's own: the lesson opens on the WHITE-OUT the fall ended in (the
-// whole frame, held for five frames: a transition, not a picture), which then closes into the saved memory at her collar for
+// whole frame, held for five frames: a transition, not a picture), which then closes into the observed data at her collar for
 // two beats, only ever downwards, before the light climbs. Fix round: the light is a step stronger throughout
 // (climax.js expose), its bloom breathes with the bass, and nothing here runs at a lowered frame rate any more.
 // THE LAST WORD: first syllable = her black and orange plates; second = the cream plate, and within three frames
@@ -67,7 +67,7 @@ export function outroShots(env) {
         plateLesson(ctx, env, { t, said: SAID, marked: [385, 386, 387, 388, 388.5].map(Bt), again: replay(t, at), word: text(118), at, pass: passOf(t, at) });
         caption(ctx, env, t, 116, 117);
         // the fall ended in a frame of white. It is still the whole frame at the cut and stays so for five frames; then it
-        // sinks for two beats, only ever downwards: it closes into the saved memory at her collar (the light she fell into is
+        // sinks for two beats, only ever downwards: it closes into the observed data at her collar (the light she fell into is
         // the ornament she wears)
         const HOLD = 5 / 60, k = 1 - (1 - prog(t, START + HOLD, START + 2 * P)) ** 2.4;      // (it lets go of the frame at once, and closes slowly)
         if (k < 1) {

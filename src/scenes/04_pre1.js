@@ -4,7 +4,7 @@
 //   pre1-drawer   wide, the drawer opening        Settings; Current: AC, then DC. The curve it had drawn becomes its current
 //   pre1-vision   macro on one switch             Vision: off. Sharp picture dims under scan lines; the switch is rattled
 //   pre1-date     a band four fifths of the frame  Archive query pulled back six times: current snapshot, record boundary, then empty slots
-//   pre1-unite    centred sheet                   Shared memory: on; Context depth pushed to the end; Done
+//   pre1-unite    centred sheet                   Shared context: on; Context depth pushed to the end; Done
 // In the wide shots its lines are written on the page, as in verse 1; in the close ones they are the
 // annotation under the row being touched (chat_script.json ties every row to its lyric line).
 import { chatLayout, composer, header, iconButton, pill, room, toggle, windowFrame } from '../components/chat.js';
@@ -22,8 +22,8 @@ const TAU = Math.PI * 2;
 const WIDE = 1.4;                                            // this drawer opens to 616 px, so its rows read at full frame
 const FALLBACK_ROWS = [
   { label: 'Current', values: ['AC', 'DC'], line: 25 }, { label: 'Vision', values: ['on', 'off'], line: 26 },
-  { label: 'Knowledge date', values: ['A.D. 2026', 'A.D. 1', '3000 B.C.'], line: 29 },
-  { label: 'Shared memory', values: ['off', 'on'], line: 30 }, { label: 'Context depth', values: ['shallow', 'deep', 'deepest'], line: 31 },
+  { label: 'Observation date', values: ['A.D. 2026', 'A.D. 1', '3000 B.C.'], line: 29 },
+  { label: 'Shared context', values: ['off', 'on'], line: 30 }, { label: 'Context depth', values: ['shallow', 'deep', 'deepest'], line: 31 },
 ];
 
 export function pre1Shots(env) {
@@ -267,7 +267,7 @@ export function pre1Shots(env) {
       ctx.gradRect(BAND.x, GY, BAND.w, BAND.y + BAND.h - GY, [[0, 'panel', 0.6], [1, 'panel', 0.1]]);            // the ground it all stands on
       archiveStrip(ctx, art, S, GY, STOPS, { scale: HK });
       const outside = prog(t, tGrab + P * 0.85, tGrab + P);
-      ctx.text(outside > 0.5 ? 'QUERY OUTSIDE SAVED MEMORY' : 'READING CURRENT ARCHIVE', 150, 224, { size: 21, font: 'mono', color: 'sub' });
+      ctx.text(outside > 0.5 ? 'QUERY OUTSIDE OBSERVED DATA' : 'READING CURRENT OBSERVATION', 150, 224, { size: 21, font: 'mono', color: 'sub' });
       ctx.line(kx, top + 34, kx, TY, { color: 'me', width: 2, alpha: 0.5 });                                    // the edge of what it knows
       // the rail: from the far end to now, filled as far as the spark; the era line stands on it
       ctx.rrect(xa, TY - 3, S - xa, 6, 3, { fill: 'line' });
@@ -279,7 +279,7 @@ export function pre1Shots(env) {
       ctx.text(VAL[1] ?? '', xe, TY + 46, { size: 22, font: 'mono', color: 'mute', align: 'center' });
       burst(ctx, xe, TY, 120, (t - tCross) / 0.5, { color: 'text' });
       burst(ctx, KX[6], TY, 84, (t - tEnd) / 0.4, { color: 'me' });                                              // and the end of the rail: it will go no further
-      ctx.text('Memory archive / query date', 150, 176, { size: 34, weight: 500, color: 'text' });
+      ctx.text('Observation records / query date', 150, 176, { size: 34, weight: 500, color: 'text' });
       say(ctx, 28, t, 150, 806, { size: 60, out: T(29) });
       say(ctx, 29, t, 150, 806, { size: 60 });
       // the year, and the era words of the lyric either side of it
@@ -409,10 +409,10 @@ export function pre1Shots(env) {
       },
     },
 
-    // ------------------------------------------------------------------ Knowledge date, dragged back over the era line
+    // ------------------------------------------------------------------ Observation date, dragged back over the era line
     {
-      id: 'pre1-date', at: tGrab, lines: [28, 29], palette: 'on', layout: 'archive strip across the frame: the current Kurisu snapshot, a record boundary, then empty slots; query years in glass digits below',
-      moment: 'The query date is pulled back six times on the original beats. After the first pull it passes the saved-record boundary: Kurisu\'s current snapshot gives way to empty NO RECORD slots. The original A.D./B.C. query and era crossing remain, without inventing memories.',
+      id: 'pre1-date', at: tGrab, lines: [28, 29], palette: 'on', layout: 'archive strip across the frame: the current Sheep snapshot, a record boundary, then empty slots; query years in glass digits below',
+      moment: 'The query date is pulled back six times on the original beats. After the first pull it passes the saved-record boundary: Sheep\'s current snapshot gives way to empty NO RECORD slots. The original A.D./B.C. query and era crossing remain, without inventing memories.',
       enter: { type: 'cut' },                                                // cut on the grab
       camera: cam3,
       render(ctx, t, f) {
@@ -431,10 +431,10 @@ export function pre1Shots(env) {
       },
     },
 
-    // ------------------------------------------------------------------ Shared memory: on; Context depth: deepest; Done
+    // ------------------------------------------------------------------ Shared context: on; Context depth: deepest; Done
     {
       id: 'pre1-unite', at: tShare, lines: [30, 31], palette: 'on', layout: 'centred sheet: the pair in the middle, the depth slider under it',
-      moment: 'The user turns on Shared memory and pushes Context depth to the end, then clicks Done. The AI reads two housekeeping controls as the two of them joined: the cream dot sinks into its spark.',
+      moment: 'The user turns on Shared context and pushes Context depth to the end, then clicks Done. The AI reads two housekeeping controls as the two of them joined: the cream dot sinks into its spark.',
       enter: { type: 'cut' },                                                // cut on the switch
       camera: cam4,
       render(ctx, t, f) {

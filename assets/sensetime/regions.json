@@ -1,0 +1,337 @@
+{
+  "f_bust": {
+    "chin": [
+      542,
+      593
+    ],
+    "tie": [
+      552,
+      800,
+      36
+    ],
+    "face": [
+      383,
+      375,
+      310,
+      225
+    ],
+    "hairclip": [
+      590,
+      190,
+      210,
+      140
+    ],
+    "crops": {
+      "avatar": [
+        260,
+        95,
+        620,
+        620
+      ],
+      "bust": [
+        0,
+        0,
+        1086,
+        1448
+      ]
+    },
+    "notes": "Front sheep bust; dark face until the eye reveal. Reference infinity ribbon is present in source.",
+    "size": [
+      1086,
+      1448
+    ],
+    "figure": [
+      33,
+      16,
+      1017,
+      1432
+    ],
+    "cut": []
+  },
+  "f_profile": {
+    "chin": [
+      430,
+      611
+    ],
+    "nose": [
+      317,
+      505
+    ],
+    "tie": [
+      447,
+      801,
+      35
+    ],
+    "face": [
+      302,
+      367,
+      245,
+      256
+    ],
+    "hairclip": [
+      492,
+      231,
+      214,
+      140
+    ],
+    "crops": {
+      "avatar": [
+        190,
+        130,
+        610,
+        610
+      ]
+    },
+    "notes": "Left-facing sheep profile with preserved infinity ribbon.",
+    "size": [
+      1086,
+      1448
+    ],
+    "figure": [
+      149,
+      17,
+      798,
+      1428
+    ],
+    "cut": []
+  },
+  "f_reach": {
+    "chin": [
+      672,
+      596
+    ],
+    "tie": [
+      733,
+      790,
+      36
+    ],
+    "palm": [
+      279,
+      1179
+    ],
+    "hand": [
+      17,
+      1023,
+      485,
+      420
+    ],
+    "chestHand": [
+      838,
+      764
+    ],
+    "face": [
+      467,
+      350,
+      321,
+      253
+    ],
+    "hairclip": [
+      722,
+      198,
+      187,
+      123
+    ],
+    "cut": [
+      "bottom",
+      "right"
+    ],
+    "crops": {
+      "avatar": [
+        365,
+        70,
+        620,
+        620
+      ],
+      "band": [
+        0,
+        837,
+        1086,
+        611
+      ]
+    },
+    "notes": "Open receiving palm foreground lower left; human fingers and wool cuff.",
+    "size": [
+      1086,
+      1448
+    ],
+    "figure": [
+      13,
+      7,
+      1073,
+      1441
+    ]
+  },
+  "f_eye": {
+    "eye": [
+      739,
+      648
+    ],
+    "iris": [
+      739,
+      648,
+      54
+    ],
+    "mouth": [
+      534,
+      879
+    ],
+    "chin": [
+      598,
+      974
+    ],
+    "tie": [
+      727,
+      1145,
+      35
+    ],
+    "face": [
+      390,
+      513,
+      467,
+      471
+    ],
+    "hairclip": [
+      763,
+      220,
+      367,
+      240
+    ],
+    "cut": [
+      "top",
+      "bottom",
+      "right"
+    ],
+    "crops": {},
+    "notes": "One open eye with brown iris; mirrored consistently in final shout and climax; infinity clip retained.",
+    "size": [
+      1254,
+      1254
+    ],
+    "figure": [
+      12,
+      0,
+      1242,
+      1254
+    ]
+  },
+  "cat_bust": {
+    "chin": [
+      542,
+      616
+    ],
+    "tie": [
+      553,
+      802,
+      36
+    ],
+    "face": [
+      376,
+      385,
+      312,
+      235
+    ],
+    "hairclip": [
+      606,
+      237,
+      194,
+      125
+    ],
+    "ears": [
+      [
+        265,
+        65,
+        190,
+        201
+      ],
+      [
+        631,
+        63,
+        177,
+        190
+      ]
+    ],
+    "crops": {},
+    "notes": "Temporary cat-ear headband; original sheep ears, hair, ribbon clip and wool costume remain.",
+    "size": [
+      1086,
+      1449
+    ],
+    "figure": [
+      30,
+      13,
+      1025,
+      1433
+    ],
+    "cut": [],
+    "register": [
+      1,
+      0,
+      -23
+    ]
+  },
+  "cat_paws": {
+    "chin": [
+      575,
+      625
+    ],
+    "tie": [
+      565,
+      794,
+      36
+    ],
+    "face": [
+      399,
+      412,
+      323,
+      222
+    ],
+    "hairclip": [
+      627,
+      264,
+      188,
+      120
+    ],
+    "ears": [
+      [
+        325,
+        49,
+        199,
+        217
+      ],
+      [
+        650,
+        101,
+        184,
+        207
+      ]
+    ],
+    "paws": [
+      [
+        371,
+        688
+      ],
+      [
+        826,
+        828
+      ]
+    ],
+    "crops": {},
+    "notes": "Raised human hands and cat-ear headband; infinity clip and sheep ears remain; no tail.",
+    "size": [
+      1086,
+      1448
+    ],
+    "figure": [
+      112,
+      7,
+      860,
+      1437
+    ],
+    "cut": [],
+    "register": [
+      1,
+      -33,
+      -32
+    ]
+  }
+}

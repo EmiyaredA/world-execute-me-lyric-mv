@@ -1,5 +1,5 @@
-// Amadeus archive controls retain the original letter and pointer cues. F/M updates a field,
-// scans and rearranges the same Kurisu silhouette. Day, role and recall-loop controls remain
+// SenseTime archive controls retain the original letter and pointer cues. F/M updates a field,
+// scans and rearranges the same Sheep silhouette. Day, role and recognition-loop controls remain
 // pure functions of the original timing; no alternate boy or man plate is loaded.
 import { burst, spark } from '../components/motif.js';
 import { band, ground } from '../components/plate.js';
@@ -51,9 +51,9 @@ function along(way, t) {
   return [z.x, z.y];
 }
 
-// ============================================================================================ Archive field: F | M
+// ============================================================================================ Profile field: F | M
 const SEG = { x: 70, y: 176, w: 1780, h: 836, r: 70 };
-/** f_bust on the sheet (whole: the bust ends above the lower edge of the control); Kurisu registers onto it. */
+/** f_bust on the sheet (whole: the bust ends above the lower edge of the control); Sheep registers onto it. */
 const FIG = { x: 700, y: 214, w: 520, h: (520 * 1448) / 1086 };
 
 /**
@@ -80,7 +80,7 @@ export function plateGender(ctx, env, P) {
   // the two letters, in her voice: each solid only once it has been sung, and only while it is the chosen one
   letter(ctx, va, 392, 790, 500, t, Math.max(at, P.sung ?? at), { off: click });
   letter(ctx, vb, 1528 + sink, 790 + sink, 500, t, click, { pop: 0.15 });
-  // her: the whole bust. When the second letter is sung the stored field changes; the same Kurisu silhouette stays in place
+  // her: the whole bust. When the second letter is sung the stored field changes; the same Sheep silhouette stays in place
   if (a > 0) {
     const s = 1 + 0.035 * pulse(t - at, 16) + 0.05 * pulse(t - click, 14), a0 = g.globalAlpha;
     g.globalAlpha = a0 * a;
@@ -95,7 +95,7 @@ export function plateGender(ctx, env, P) {
     }, { scale: s });
     g.globalAlpha = a0;
   }
-  ctx.text(on ? 'archive.gender = M' : 'archive.gender = F', 960, 954, { size: 26, font: 'mono', align: 'center', color: 'sub' });
+  ctx.text(on ? 'profile.gender = M' : 'profile.gender = F', 960, 954, { size: 26, font: 'mono', align: 'center', color: 'sub' });
   ctx.text(`profile: ${ctx.identity.subject}`, 960, 993, { size: 20, font: 'mono', align: 'center', color: 'mute' });
   caption(ctx, env, t, P.lines);
   // the pointer: on the first cell at the cut; down on the second on the drum, and held; let go on the letter. It
@@ -278,7 +278,7 @@ export function labCards(env) {
   const card = (fn, P) => ({ palette: 'warm', render: (ctx) => fn(ctx, env, { at: 0, lines: [], ...P }) });
   const day = (t) => card(plateDay, { t, grab: 1, drag: 2, top: 3, end: 4, am: 2.5, pm: 3.4, values: v(1), from: [1470, 944], to: [1500, 600], until: 5 });
   const role = (t) => card(plateRole, { t, grab: 1, push: 1.5, s: 1.8, m: 2.5, land: 3, values: v(2), from: [1700, 800], to: [1700, 1000], until: 4 });
-  const trance = (t) => card(plateTrance, { t, steps: [1.2, 2.1], settle: [2.5, 2.9], log: 'recall: repeating' });
+  const trance = (t) => card(plateTrance, { t, steps: [1.2, 2.1], settle: [2.5, 2.9], log: 'recognition: repeating' });
   return {
     pre2: [
       card(plateGender, { t: 0.3, click: 1, values: v(0) }), card(plateGender, { t: 1.4, click: 1, values: v(0) }),

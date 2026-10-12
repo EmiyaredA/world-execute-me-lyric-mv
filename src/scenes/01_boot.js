@@ -29,7 +29,7 @@ export function bootShots(env) {
     if (slip > 0.01) scanField(ctx, { x: 1060 + dx, y: 120, w: 850, h: 800 }, settle * 5, { strength: slip * 0.6, dim: 0.03 });
   };
   const readClock = (ctx, t, a = 1) => {
-    ctx.text('MEMORY READ / SESSION CLOCK', 1360, 156, { size: 18, font: 'mono', color: 'sub', alpha: a });
+    ctx.text('SENSOR INPUT / SESSION CLOCK', 1360, 156, { size: 18, font: 'mono', color: 'sub', alpha: a });
     nixieDigits(ctx, 1360, 228, t * 100, { size: 52, digits: 6, alpha: a });
     signalTrace(ctx, { x: 1360, y: 260, w: 320, h: 70 }, t, { alpha: 0.65 * a });
   };
@@ -49,7 +49,7 @@ export function bootShots(env) {
     // ------------------------------------------------------------------ power / protection
     {
       id: 'boot-power', at: 0, lines: [0, 2], palette: 'off', layout: 'wide: dark room, the window opening from a hairline',
-      moment: 'Power reaches the memory client: the window opens, a session clock and neural signal wake, and Kurisu\'s grey plates scan into register.',
+      moment: 'Power reaches the perception client: the window opens, a session clock and sensor signal wake, and Sheep\'s grey plates scan into register.',
       render(ctx, t, f) {
         const grow = easeOut(prog(t, tPower, tPower + 0.3)), open = easeInOut(prog(t, tPower + 0.32, tPower + 1.05)), hot = pulse(t - tPower, 3.5);
         room(ctx, { light: [960, 540], dim: 0.85 - 0.35 * open, motif: open, t });
@@ -124,7 +124,7 @@ export function bootShots(env) {
     // ------------------------------------------------------------------ parameters → initialization
     {
       id: 'boot-params', at: B(4), lines: [6, 7], palette: 'off', layout: 'close-up: persona card left, loader right',
-      moment: 'Kurisu\'s saved identity is read field by field; love stays undefined. The memory ring, glass digits and neural trace verify the archive while her plates settle.',
+      moment: 'Sheep\'s saved identity is read field by field; love stays undefined. The sensor ring, glass digits and input trace verify sensor input while her plates settle.',
       enter: { type: 'zoom', dur: P, x: 0.5, y: 0.5 },
       camera: (t) => ({ zoom: 1.16 + 0.04 * prog(t, B(4), B(6)), x: lerp(-170, 60, easeInOut(prog(t, T(7) - 0.15, T(7) + 0.35))), y: -8 }),
       render(ctx, t, f) {
@@ -136,7 +136,7 @@ export function bootShots(env) {
         header(ctx, L, { t, loaded: 0, title: '' });
         const r = { x: 470, y: 160, w: 760, h: 700 }, b = card(ctx, r, { title: ctx.identity.personaTitle, subtitle: text(6).toLowerCase(), tag: 'setup', k: prog(t, B(4) - 0.1, B(4) + 0.25) });
         if (b) {
-          const rows = [['name', ctx.identity.name, 'serif'], ['subject', ctx.identity.subject, 'serif'], ['connection', 'awaiting peer', 'mono'], ['memory', ctx.identity.memory, 'sans'], ['love', 'undefined', 'mono']];
+          const rows = [['name', ctx.identity.name, 'serif'], ['subject', ctx.identity.subject, 'serif'], ['connection', 'awaiting peer', 'mono'], ['sensors', ctx.identity.memory, 'sans'], ['love', 'undefined', 'mono']];
           rows.forEach(([label, value, font], i) => {
             const t0 = B(4) + P * 0.5 + i * P, e = enter(t, t0, 0, { dur: 0.28, rise: 20 }), y = b.y + 22 + i * 104 + e.dy;
             if (e.a <= 0) return;
@@ -153,7 +153,7 @@ export function bootShots(env) {
           const x = 1500, y = 440, a = clamp(init * 5);
           ctx.radial(x, y, 330, 'raised', 0.9 * a);
           spark(ctx, x, y, 190, { lit: init, color: 'text', off: 'mute', alpha: a });
-          ctx.text('MEMORY CHECK / %', x, y + 258, { size: 20, font: 'mono', color: 'sub', align: 'center', alpha: a });
+          ctx.text('SENSOR CHECK / %', x, y + 258, { size: 20, font: 'mono', color: 'sub', align: 'center', alpha: a });
           nixieDigits(ctx, x - ctx.cw(64) * 2, y + 345, init * 100, { size: 64, alpha: a });
           signalTrace(ctx, { x: x - 160, y: y + 390, w: 320, h: 60 }, t, { alpha: a * 0.65 });
         }
@@ -183,7 +183,7 @@ export function bootShots(env) {
         const c2 = enter(t, B(6) + 2 * P, 0, { dur: 0.45 });
         composer(ctx, { ...L.composer, y: 610 + c2.dy }, { placeholder: script.composer_placeholder ?? '', t, k: c2.raw, send: 'off' });
         signalTrace(ctx, { x: L.main.x + 38, y: 772, w: 680, h: 84 }, t, { alpha: 0.45 * load });
-        ctx.text('ARCHIVE VERIFIED / PEER CONNECTION PENDING', L.main.x + 38, 886, { size: 19, font: 'mono', color: 'sub', alpha: load });
+        ctx.text('INPUT VERIFIED / PEER CONNECTION PENDING', L.main.x + 38, 886, { size: 19, font: 'mono', color: 'sub', alpha: load });
         if (sim > 0) pill(ctx, L.head.x + L.head.w - 34, L.head.y + 34, `${text(10).toLowerCase()} · ready`, { align: 'right', font: 'mono', size: 17, alpha: sim, color: 'text' });
         ctx.camera();
         keyBand(ctx, t, 10, 925);

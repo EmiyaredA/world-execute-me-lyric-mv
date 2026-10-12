@@ -61,7 +61,7 @@ function pool(ctx, x, y, r, n) {
 }
 
 /**
- * The light round the curve, FLAT: bars of ink standing off the line like the petals of her memory-ring motif (and of
+ * The light round the curve, FLAT: bars of ink standing off the line like the petals of her sensor-ring motif (and of
  * the spark), uneven as if cut by hand; the long ones in the full orange, the short ones a step darker. Never a soft
  * glow, and never wedges that fan out to the edges of the sheet. k 0..1 = how far they have grown out of the curve.
  */

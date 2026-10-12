@@ -1,6 +1,6 @@
 // Section 2 — TITLE and the first question (bar 8, 0:15.1 → beat 63, 0:29.4). State: off → on.
 // The spark lights up: the first orange in the film. Then, over the instrumental, the user arrives.
-//   title       centred, dark                 the Amadeus memory ring lights segment by segment; the launch command is typed and entered
+//   title       centred, dark                 the SenseTime sensor ring lights segment by segment; the launch command is typed and entered
 //   chat-open   the whole client              a blank conversation; a cream cursor crosses the window: presence turns online
 //   chat-type   close on the composer         the user starts one question, deletes it, types the real one
 //   chat-think  wide → into the spark         the question is sent; the AI starts thinking; we fall into the spark

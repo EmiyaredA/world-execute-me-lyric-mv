@@ -56,7 +56,7 @@ export function executionShots(env) {
     codeGround(ctx);
     const routeProgress = clamp((t - tR(S.i)) / (2 * P - 0.08));
     attemptPaths(ctx, { x: 560, y: 664, w: 620, h: 140 }, S.i, routeProgress, { seed: env.cfg.seed, alpha: last ? 0.4 : 0.8 });
-    ctx.text('RECALL / ATTEMPT PATHS', 560, 648, { size: 20, font: 'mono', color: 'sub', alpha: last ? 0.35 : 0.7 });
+    ctx.text('CONNECT / ATTEMPT PATHS', 560, 648, { size: 20, font: 'mono', color: 'sub', alpha: last ? 0.35 : 0.7 });
     if (!last) {
       machine(ctx, { instrument: true, word: WORD, title: TITLE, round: S.i, sung: S.sung, bar: S.bar, since: S.since, rise: S.rise, zoom: S.zoom, arrow: S.arrow, seen: S.seen, count: S.count });
       if (S.i >= 8) tearAt(ctx, t, tR(S.i) + P, 0.5);                  // from round 9: one tear a round, on its second beat
@@ -80,7 +80,7 @@ export function executionShots(env) {
   const shot = (i, lines, layout, moment) => ({ id: `exec-${String(i + 1).padStart(2, '0')}`, at: tR(i), lines, palette: 'error', hud: 0, layout, moment, enter: { type: 'cut' }, render: (ctx, t) => draw(ctx, t) });
   return [
     shot(0, [FIRST, FIRST + 3], 'CODE: the listing of the love loop top left, the round counter and the unpressed stop key bottom left, the sung word bottom right with its staircase above it',
-      'The user is gone, so the loop condition holds and the loop runs. Each shout is one turn: four syllables, four statements; three of them fail the same way every time, the fourth counts the round. Each recall attempt takes a distinct path back to the same unavailable reply node; glass digits count its attempts. What it prints is the word.'),
+      'The user is gone, so the loop condition holds and the loop runs. Each shout is one turn: four syllables, four statements; three of them fail the same way every time, the fourth counts the round. Each connection attempt takes a distinct path back to the same unavailable reply node; glass digits count its attempts. What it prints is the word.'),
     shot(4, [FIRST + 4, FIRST + 7], 'CODE: the same composition, one step larger',
       'Round five. Nothing has changed but the size of it: the same four statements, the same three errors, the staircase of the word four steps high.'),
     shot(8, [FIRST + 8, FIRST + 10], 'CODE: the same composition, a second step larger; the staircase reaching the top of the frame; one tear a round',

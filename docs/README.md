@@ -1,6 +1,6 @@
-# Amadeus 制作文件与历史记录 · Production documents
+# SenseTime 制作文件与历史记录 · Production documents
 
-当前版本：**[Amadeus v5 改编与验证记录](AMADEUS.md)**。角色生成提示词见 [assets/amadeus/prompts.json](../assets/amadeus/prompts.json)。下面的 v3／v4 文档保留原工程的历史；其中的角色、颜色和验收结果不代表当前版本。
+当前版本：**[SenseTime v6 制作与验证记录](SENSETIME.md)**。角色生成提示词见 [assets/sensetime/prompts.json](../assets/sensetime/prompts.json)。下面的 v3／v4 文档保留原工程的历史；其中的角色、颜色和验收结果不代表当前版本。
 
 **[中文](#中文)** | **[English](#english)**
 
@@ -12,25 +12,27 @@
 
 ## 中文
 
-### 当前 Amadeus 版本
+### 当前 SenseTime 版本
 
-本分支为红莉栖／Amadeus 红色版。启动、Vision、日期回溯、十二次执行和关机采用记忆实验室与时间循环的视觉线索；全片马赛克替换为变暗与扫描干扰。新封面采用角色眼部特写和三行代码标题。
+本分支为商汤羊角色／SenseTime 版。所有六张最终角色素材保留红金无限符号发饰。启动、Vision、观测记录、十二次连接尝试和关机采用感知与连接主题；新封面采用羊角色眼部特写和三行代码标题。
 
 | 文件 | 内容 |
 | --- | --- |
-| [AMADEUS.md](AMADEUS.md) | 角色、线稿、记忆仪器和封面改编记录；当前验证结果及尚待补齐的音源／歌词 |
-| [../assets/amadeus/prompts.json](../assets/amadeus/prompts.json) | 六张透明角色素材的生成提示词与修复记录 |
-| [../assets/amadeus/](../assets/amadeus/) | 角色、标志和封面参考，区域测量及完整／简化线稿 SVG |
-| [../data/amadeus_chat.json](../data/amadeus_chat.json)、[../data/amadeus_errors.json](../data/amadeus_errors.json) | 当前聊天、记忆与连接主题文案 |
+| [SENSETIME.md](SENSETIME.md) | 羊角色、红金发饰、感知仪器和封面改编记录；当前验证结果及尚待补齐的音源／歌词 |
+| [../assets/sensetime/prompts.json](../assets/sensetime/prompts.json) | 六张透明角色素材的生成提示词与修复记录 |
+| [../assets/sensetime/](../assets/sensetime/) | 角色、标志和封面参考，区域测量及完整／简化线稿 SVG |
+| [../data/sensetime_chat.json](../data/sensetime_chat.json)、[../data/sensetime_errors.json](../data/sensetime_errors.json) | 当前聊天、感知与连接主题文案 |
 | [../STORYBOARD.md](../STORYBOARD.md) | 当前 87 个镜头的分镜表，覆盖 129 行时间轴 |
-| [images/amadeus_cover.png](images/amadeus_cover.png) | 当前 1920×1080 封面 |
+| [images/sensetime_cover.png](images/sensetime_cover.png) | 当前 1920×1080 封面 |
 | [../CREDITS.md](../CREDITS.md) | 当前改编与原工程的来源、作者及授权说明 |
 
 当前完整无声预览、修改前后联系表、单帧和检查报告输出到本地 `out/`，不随 Git 提交。真实歌词排版与音画同步尚未验收。运行与导出方法见 [主 README](../README.md#中文)。
 
 ### 原工程的历史文件
 
-下面收录的是原作者使用 Claude／Claude Code 制作第三、第四版时的文件：制作要求、据此定下的规则、每轮完成后的记录。当前改编保留这些文件的原貌；历史画面与验证结论不代表当前 Amadeus 版本。
+此前 Amadeus 改编的记录保留在 [AMADEUS.md](AMADEUS.md)，其素材与验证结果属于历史版本。
+
+下面收录的是原作者使用 Claude／Claude Code 制作第三、第四版时的文件：制作要求、据此定下的规则、每轮完成后的记录。当前改编保留这些文件的原貌；历史画面与验证结论不代表当前 SenseTime 版本。
 
 ### 提示詞:製作者給 AI 的要求
 
@@ -81,9 +83,9 @@
 
 ## English
 
-### Current Amadeus adaptation
+### Current SenseTime adaptation
 
-See [AMADEUS.md](AMADEUS.md) for the Kurisu assets, transparent Amadeus outline, memory instruments, scan interference, cover revision, validation results, and remaining audio/lyric work. [Character prompts](../assets/amadeus/prompts.json), [current storyboard](../STORYBOARD.md), [cover](images/amadeus_cover.png), and [credits](../CREDITS.md) are included in this branch. Generated videos, contact sheets, full-size stills, and reports stay in local `out/` and are not committed. The current video is a silent layout check; final lyrics and audiovisual sync still require local audio and lyrics.
+See [SENSETIME.md](SENSETIME.md) for the sheep assets, preserved red/gold hairclip, infinity ribbon, perception instruments, covers, validation results, and remaining audio/lyric work. [Character prompts](../assets/sensetime/prompts.json), [current storyboard](../STORYBOARD.md), [cover](images/sensetime_cover.png), and [credits](../CREDITS.md) are included in this branch. Generated videos, contact sheets, full-size stills, and reports stay in local `out/` and are not committed. The current video is a silent layout check; final lyrics and audiovisual sync still require local audio and lyrics.
 
 ### Original production history
 

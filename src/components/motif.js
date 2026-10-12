@@ -1,7 +1,7 @@
-// Amadeus: upright reference-derived line art inside a twelve-segment memory ring.
+// SenseTime: upright reference-derived line art inside a twelve-segment sensor ring.
 // Keep the spark API so existing musical match cuts share this mark.
 import { clamp } from '../engine/util.js';
-import { amadeusMark } from './amadeus-mark.js';
+import { sensetimeMark } from './sensetime-mark.js';
 const TAU = Math.PI * 2;
 export const RAYS = 12;
 
@@ -19,8 +19,8 @@ export function spark(ctx, cx, cy, r, { rays = RAYS, rot = 0, color = 'me', off 
       g.strokeStyle = ctx.col(color, alpha); g.stroke();
     }
   }
-  // No center fill: the diagonal mark and wordmark remain transparent line art.
-  if (core > 0) amadeusMark(ctx, cx, cy, radius, { nominalRadius,
+  // The infinity ribbon stays upright while the sensor ring turns.
+  if (core > 0) sensetimeMark(ctx, cx, cy, radius, { nominalRadius,
     color: lit > 0 ? color : off, alpha: alpha * (lit > 0 ? 1 : offAlpha) });
   g.restore();
 }

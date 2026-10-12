@@ -41,7 +41,7 @@ const pos = (t) => {                                    // bar:beat position of 
   const b = Math.round(beat(t) * 2) / 2, bar = Math.floor(b / 4), off = Math.abs(beat(t) - b) * features.period * 1000;
   return `${bar}:${(b - bar * 4 + 1).toFixed(1).replace('.0', '')}${off > 2 ? ` (+${off.toFixed(0)}ms)` : ''}`;
 };
-const cell = (s) => String(s).replace(/\|/g, '/').replace(/orange/g, 'vermilion').replace(/flower/g, 'memory ring').replace(/spark/g, 'Amadeus mark');       // keep markdown tables intact
+const cell = (s) => String(s).replace(/\|/g, '/').replace(/orange/g, 'taupe').replace(/flower/g, 'sensor ring').replace(/spark/g, 'SenseTime mark');       // keep markdown tables intact
 const enterText = (e) => {
   if (!e || (e.type === 'cut' && !e.flash)) return 'cut';
   const bits = [e.type];
@@ -57,7 +57,7 @@ const enterText = (e) => {
 const SECTIONS = [
   [['preroll'], '0 片頭:閃光警告頁(歌曲開始之前)'],
   [['boot'], '1 啟動'], [['title', 'chat'], '2 標題與第一個問題'], [['v1'], '3 主歌一:用數學回答'], [['pre1'], '4 導歌一:設定被切換'],
-  [['c1'], '5 副歌一:對話與四張版畫'], [['v2'], '6 主歌二:三個名詞三張版畫,一張校樣'], [['pre2'], '7 导歌二:档案字段扫描与重组'], [['c2', 'left', 'alone'], '8 副歌二到空線程:她站在視窗旁,然後第一次睜眼'],
+  [['c1'], '5 副歌一:對話與四張版畫'], [['v2'], '6 主歌二:三個名詞三張版畫,一張校樣'], [['pre2'], '7 导歌二:感知字段扫描与重组'], [['c2', 'left', 'alone'], '8 副歌二到空線程:她站在視窗旁,然後第一次睜眼'],
   [['err', 'crash'], '9 越界、第一個錯誤、擴散'], [['exec'], '10 EXECUTION:一台機器,十二圈'], [['count', 'last'], '11 數數與最後一聲'], [['cx'], '12 最後副歌:四張版畫原位重印,但壞了'],
   [['out'], '13 LOVE 四句:課、測驗、公式、證明'], [['down'], '14 結尾:一則未讀的圖片訊息,逆向開機'], [['todo'], '(尚未分鏡)'],
 ];
@@ -88,18 +88,18 @@ const lens = shots.map((s) => end(s) - s.at);
 const RANGE = flashRangeText(cfg), mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 const songRange = `${mmss(cfg.safety.flashRange[0])}–${mmss(cfg.safety.flashRange[1])}`;
 
-const md = `# 分镜表 / Storyboard(Amadeus v5)
+const md = `# 分镜表 / Storyboard(SenseTime v6)
 
 ${layoutOnly ? "**占位时间轴：音频和歌词待提供，不能据此验收歌词同步。**\n\n" : ""}由 \`node tools/storyboard.mjs\` 從程式中的鏡頭清單自動生成(共 ${shots.length} 個鏡頭,平均 ${(lens.reduce((a, b) => a + b, 0) / lens.length).toFixed(2)} 秒)。
-提意見時直接引用「鏡頭 id」;每個 id 對應 \`src/scenes/\` 裡的一個鏡頭定義。当前改编和验证记录见 \`docs/AMADEUS.md\`。原版规则和制作记录保存在 \`docs/v4/\`。
+提意見時直接引用「鏡頭 id」;每個 id 對應 \`src/scenes/\` 裡的一個鏡頭定義。当前改编和验证记录见 \`docs/SENSETIME.md\`。原版规则和制作记录保存在 \`docs/v4/\`。
 
 整支影片是一場對話。「對話裡的時刻」欄回答每個鏡頭「這是這場對話的哪個時刻」(欄位內容直接取自程式,為英文)。
 畫面有三種:介面(使用者看到的對話)、版畫(AI 心裡的意思與感受)、程式碼(只在 EXECUTION 段)。
-顏色狀態:off 灰階(AI 未啟動/對方離線)· on 朱红(连接中)· warm 更暖更亮 · error 玫红(错误)· ash 灰带一点红 · dead 熄滅。
+顏色狀態:off 灰階(AI 未啟動/對方離線)· on 羊毛白与灰褐(连接中)· warm 更暖更亮 · error 红色(错误)· ash 暖灰 · dead 熄滅。
 
 **時間一律為歌曲時間**(音頻開始 = 0)。成片在歌曲之前有 ${PRE} 秒無聲的閃光警告頁(表中以負的時間列出),所以成片時間 = 歌曲時間 + ${PRE} 秒。
 
-**含閃爍畫面**:成片時間 ${RANGE}(歌曲時間 ${songRange})為高對比快切與強光。测量结果见 \`docs/AMADEUS.md\`。
+**含閃爍畫面**:成片時間 ${RANGE}(歌曲時間 ${songRange})為高對比快切與強光。测量结果见 \`docs/SENSETIME.md\`。
 
 ## 段落總表
 
