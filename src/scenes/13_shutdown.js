@@ -15,7 +15,6 @@
 // SHE: the grey bust behind the glass (kit.js glassFigure, where the boot had her) comes back with the interface in
 // the bridge and stays until the window has closed: the first to be there at the boot, the last to leave.
 import { card, chatLayout, composer, header, room, sidebar, slider, windowFrame } from '../components/chat.js';
-import { nixieDigits, signalTrace } from '../components/memory-instruments.js';
 import { burst, spark } from '../components/motif.js';
 import { lerpRect } from '../engine/layout.js';
 import { place } from '../engine/shapes.js';
@@ -45,15 +44,6 @@ export function shutdownShots(env) {
   /** She, behind the glass, as at the boot (two greys). */
   const figure = (ctx, a, dx = 0) => glassFigure(ctx, art, a, { dx });
 
-  const instruments = (ctx, t, a = 1) => {
-    const g = ctx.g; g.save(); g.setTransform(ctx.scale, 0, 0, ctx.scale, 0, 0);
-    ctx.rrect(1260, 748, 490, 240, 16, { fill: 'panel', fillAlpha: 0.65, stroke: 'line', alpha: a, width: 1.5 });
-    const stopped = t >= A0 + P, lit = 1 - prog(t, B0 + 0.75 * P, B0 + 2.75 * P);
-    ctx.text('SESSION SAVED / CONNECTION CLOSED', 1280, 792, { size: 18, font: 'mono', color: 'sub', alpha: a });
-    nixieDigits(ctx, 1360, 884, A0 * 100, { size: 52, digits: 6, lit, alpha: a });
-    signalTrace(ctx, { x: 1280, y: 922, w: 360, h: 52 }, t, { activity: stopped ? 0 : 1 - prog(t, A0, A0 + P), running: !stopped, alpha: a * 0.65 });
-    g.restore(); ctx._font = '';
-  };
   // ---- the bridge: where the last plate ends up, as her picture message in the thread
   const TH = L.thread, PIC = { x: TH.x + 54, y: TH.y + 22, w: 704, h: 396 }, CAP = { x: PIC.x, y: PIC.y + PIC.h + 80, size: 66 };
   const tShrink = A0 + 2 * P, tDown = A0 + 4 * P, tWord = A0 + 2.5 * P, tHeart = cue('heartZero'), tLog = cue('lastUnread');
@@ -99,7 +89,6 @@ export function shutdownShots(env) {
           }, { scale: 0.5 + 0.5 * e, alpha: clamp(e * 3) });
           burst(ctx, cx, cy, 90, prog(t, tHeart, tHeart + 0.45), { color: 'sub' });
         }
-        instruments(ctx, t, prog(t, tDown, tDown + 0.3));
         sysLine(ctx, 'last message: unread', t, tLog, CAP.x + 4, CAP.y + 62, { size: 27, prefix: '> ', color: 'text' });
       },
     },
@@ -107,7 +96,7 @@ export function shutdownShots(env) {
     // ------------------------------------------------------------------ the persona card (boot-params, backwards)
     {
       id: 'down-params', at: B0, palette: ash, state: 'ash > dead', layout: 'close-up: loader right, the persona card; then closer still, on its last row: love',
-      moment: 'The loader un-lights petal by petal and the persona card comes back. Its last field, love, undefined at the boot, now holds the one word she learned. The view closes in on that row; the value is deleted in three strokes, as it was sung in three, and the field is undefined again. The session signal stops, the glass digits and sensor ring go dark, and the runtime fields unload bottom up. The session record remains intact.',
+      moment: 'The loader un-lights petal by petal and the persona card comes back. Its last field, love, undefined at the boot, now holds the one word she learned. The view closes in on that row; the value is deleted in three strokes, as it was sung in three, and the field is undefined again. The sensor ring goes dark and the runtime fields unload bottom up.',
       enter: { type: 'scan', dur: P, dir: 1, align: 'start' },         // (it opens on the cut, so that the bridge stays whole and quiet to its last frame)
       camera: (t) => {
         const s = beat(t, B0), near = easeInOut(prog(s, 1.6, 3.2)) * (1 - easeInOut(prog(s, 5.3, 6.4)));      // in on the love row, and back
@@ -154,7 +143,6 @@ export function shutdownShots(env) {
             } else slider(ctx, { x: b.x + 216, y, w: b.w - 256, h: 64 }, 0.62 * (1 - easeInOut(del)), { fill: 'sub', alpha: a });
           });
         }
-        instruments(ctx, t, 1 - prog(s, 6.6, 7.6));
         const lit = 1 - prog(s, 0.75, 2.75), la = 1 - prog(s, 5.2, 6.2);       // the loader: twelve petals going out one after another; it stays, stopped, beside the card
         if (la > 0) {
           const x = 1500, y = 440;
@@ -167,7 +155,7 @@ export function shutdownShots(env) {
     // ------------------------------------------------------------------ the pieces (boot-layout, backwards)
     {
       id: 'down-layout', at: C0, palette: ash, state: 'ash > dead', layout: 'tilted exploded view of the client, seen from above',
-      moment: 'The client comes apart into the pieces it was assembled from, and thread, header and sidebar are lifted out one by one. The composer is not: it settles in the middle of the empty window. The session record badge stays while the runtime unloads.',
+      moment: 'The client comes apart into the pieces it was assembled from, and thread, header and sidebar are lifted out one by one. The composer is not: it settles in the middle of the empty window.',
       enter: { type: 'zoom', dur: P, out: true, x: 0.5, y: 0.5 },
       render(ctx, t) {
         const g = ctx.g, s = beat(t, C0);
