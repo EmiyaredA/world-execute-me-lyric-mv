@@ -94,6 +94,30 @@ try {
     assert.equal(c.names.includes('male_bust'), c.songTime >= 91.72 && c.songTime < 92.65,
       `Male variant escaped the F/M shot at ${c.songTime}`);
   }
+  // Verify record content while the archive moves, including both A.D. and B.C. views.
+  const recordChecks = await page.evaluate(async () => {
+    const { Ctx } = await import('/src/engine/draw.js');
+    const original = Ctx.prototype.text, checks = [];
+    try {
+      for (const songTime of [52.15, 52.7, 53.2, 53.65, 54.1, 54.7]) {
+        const labels = new Set();
+        Ctx.prototype.text = function(text, ...args) {
+          labels.add(text); return original.call(this, text, ...args);
+        };
+        qa.engine.renderFrame(songTime);
+        checks.push({ songTime, labels: [...labels].filter(s => /RECORD|TOWERS|SPIRES|COLONNADE|STEPPED TEMPLE|PYRAMIDS/.test(s)) });
+      }
+    } finally { Ctx.prototype.text = original; }
+    return checks;
+  });
+  for (const c of recordChecks) {
+    assert(c.labels.includes('HISTORICAL RECORD'), `Record cards missing at ${c.songTime}`);
+    assert(!c.labels.includes('NO RECORD'), `Empty records returned at ${c.songTime}`);
+  }
+  const recordLabels = new Set(recordChecks.flatMap(c => c.labels));
+  for (const label of ['CURRENT RECORD', 'TOWERS', 'SPIRES', 'COLONNADE', 'STEPPED TEMPLE', 'PYRAMIDS']) {
+    assert(recordLabels.has(label), `Record content missing: ${label}`);
+  }
   const samples = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/memory_lab_samples.json'), 'utf8'));
   // Export raw frames via the same engine/readPixels used by the MP4 exporter, top row first.
   const stills = [];
@@ -132,7 +156,7 @@ try {
   assert.deepEqual(cueFrames.sceneErrors, []);
   assert.deepEqual(errors, []);
   const result = { passed: true, shotTimingUnchanged: true, shots: timings(current).length, distinctAttemptPaths: 12, allAttemptsEndAtNoReply: true,
-    realLyrics, cueFrames, seekChecks, spotChecks, genderChecks, stills, renderer: await page.evaluate(() => qa.engine.rendererInfo()), errors };
+    realLyrics, cueFrames, seekChecks, spotChecks, genderChecks, recordChecks, stills, renderer: await page.evaluate(() => qa.engine.rendererInfo()), errors };
   fs.writeFileSync(path.join(ROOT, realLyrics ? 'out/sensetime_render_lyrics_check.json' : 'out/sensetime_render_check.json'), JSON.stringify(result, null, 2) + '\n');
   console.log(`SenseTime render passed: unchanged shot grid, 12 paths, ${cueFrames.frames} cue frames, ${seekChecks.length} deterministic seek checks, ${stills.length} full-size stills.`);
 } finally { await browser?.close(); await new Promise(res => server.close(res)); }

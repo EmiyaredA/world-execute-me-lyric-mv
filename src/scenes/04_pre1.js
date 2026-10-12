@@ -3,7 +3,7 @@
 // every cut lands ON one of its clicks; the AI can only narrate what is being done to it (serif, orange).
 //   pre1-drawer   wide, the drawer opening        Settings; Current: AC, then DC. The curve it had drawn becomes its current
 //   pre1-vision   macro on one switch             Vision: off. Sharp picture dims under scan lines; the switch is rattled
-//   pre1-date     a band four fifths of the frame  Archive query pulled back six times: current snapshot, record boundary, then empty slots
+//   pre1-date     a band four fifths of the frame  Archive query pulled back six times: current snapshot and historical record cards
 //   pre1-unite    centred sheet                   Shared context: on; Context depth pushed to the end; Done
 // In the wide shots its lines are written on the page, as in verse 1; in the close ones they are the
 // annotation under the row being touched (chat_script.json ties every row to its lyric line).
@@ -246,7 +246,7 @@ export function pre1Shots(env) {
 
   // ---------------------------------------------------------------- shot 3: the timeline, opened across the window (v4)
   // The original slider, six pulls, era crossing and signed years remain. The strip now contains
-  // a current snapshot and a record boundary at STOPS[1]; all earlier queries are empty archives.
+  // a current snapshot and historical record cards using the original five landmarks.
   const BAND = { x: -40, y: 108, w: 2000, h: 864 }, GY = 640, TY = 706, HK = 0.86;
   const KX = [1560, 1540, 1440, 1350, 1260, 1170, 1090];                // where the spark is in the frame at the end of each pull: it gives way to the left as more lies behind it
   const snatch = (t) => { const [, p] = pull(t); return t <= tGrab || t >= tEnd ? 0 : p < 0.16 ? easeOut(p / 0.16) : 1 - easeInOut((p - 0.16) / 0.84); };   // the hand jerks ahead of the picture; the picture catches up
@@ -275,7 +275,7 @@ export function pre1Shots(env) {
       ctx.gradRect(BAND.x, GY, BAND.w, BAND.y + BAND.h - GY, [[0, 'panel', 0.6], [1, 'panel', 0.1]]);            // the ground it all stands on
       archiveStrip(ctx, art, S, GY, STOPS, { scale: HK });
       const outside = prog(t, tGrab + P * 0.85, tGrab + P);
-      ctx.text(outside > 0.5 ? 'QUERY OUTSIDE OBSERVED DATA' : 'READING CURRENT OBSERVATION', 150, 224, { size: 21, font: 'mono', color: 'sub' });
+      ctx.text(outside > 0.5 ? 'READING HISTORICAL RECORDS' : 'READING CURRENT RECORD', 150, 224, { size: 21, font: 'mono', color: 'sub' });
       ctx.line(kx, top + 34, kx, TY, { color: 'me', width: 2, alpha: 0.5 });                                    // the edge of what it knows
       // the rail: from the far end to now, filled as far as the spark; the era line stands on it
       ctx.rrect(xa, TY - 3, S - xa, 6, 3, { fill: 'line' });
@@ -419,8 +419,8 @@ export function pre1Shots(env) {
 
     // ------------------------------------------------------------------ Observation date, dragged back over the era line
     {
-      id: 'pre1-date', at: tGrab, lines: [28, 29], palette: 'on', layout: 'archive strip across the frame: the current Sheep snapshot, a record boundary, then empty slots; query years in glass digits below',
-      moment: 'The query date is pulled back six times on the original beats. After the first pull it passes the saved-record boundary: Sheep\'s current snapshot gives way to empty NO RECORD slots. The original A.D./B.C. query and era crossing remain, without inventing memories.',
+      id: 'pre1-date', at: tGrab, lines: [28, 29], palette: 'on', layout: 'archive strip across the frame: current Sheep record and five historical landmark records; query years in glass digits below',
+      moment: 'The query date is pulled back six times on the original beats. The current Sheep record gives way to historical record cards showing the original towers, spires, colonnade, stepped temple and pyramids. The original A.D./B.C. query and era crossing remain.',
       enter: { type: 'cut' },                                                // cut on the grab
       camera: cam3,
       render(ctx, t, f) {

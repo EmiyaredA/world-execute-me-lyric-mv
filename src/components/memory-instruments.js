@@ -2,6 +2,7 @@
 import { rand } from '../engine/prng.js';
 import { clamp } from '../engine/util.js';
 import { trace } from '../engine/shapes.js';
+import { ERAS } from '../scenes/history.js';
 
 /** Nixie-style glass digits; numeric fractions roll without changing the clock or flickering. */
 export function nixieDigits(ctx, x, y, value, { digits = 4, size = 72, color = 'text', alpha = 1, lit = 1, overflow = 0 } = {}) {
@@ -71,26 +72,30 @@ export function attemptPaths(ctx, r, round, progress, { seed = 20161011, alpha =
   ctx.text('NO REPLY', x, y + r.h * 0.5 + 23, { size: 19, font: 'mono', color: 'sub', align: 'right', alpha });
 }
 
-/** Archive strip uses the original seven spatial stops, but only the current end has records. */
+/** Current observation and the original five historical landmarks, stored as record cards. */
 export function archiveStrip(ctx, art, scroll, gy, stops, { scale = 0.86, alpha = 1 } = {}) {
-  const box = (cx, valid, index) => {
+  const box = (cx, era, index) => {
+    const current = !era;
     const r = { x: cx - 158, y: gy - 332, w: 316, h: 310 };
     if (r.x > 1980 || r.x + r.w < -60) return;
-    ctx.rrect(r.x, r.y, r.w, r.h, 10, { fill: 'panel', fillAlpha: 0.45, stroke: valid ? 'sub' : 'line', alpha, width: 2 });
-    ctx.text(valid ? 'CURRENT OBSERVATION' : 'NO RECORD', cx, r.y + 34, { size: 21, font: 'mono', align: 'center', color: valid ? 'text' : 'sub', alpha });
-    if (valid) {
+    ctx.rrect(r.x, r.y, r.w, r.h, 10, { fill: 'panel', fillAlpha: 0.65, stroke: 'sub', alpha, width: 2 });
+    ctx.text(current ? 'CURRENT RECORD' : 'HISTORICAL RECORD', cx, r.y + 34, { size: 21, font: 'mono', align: 'center', color: 'text', alpha });
+    if (current) {
       art.inks(ctx, 'f_bust', { x: cx - 77, y: r.y + 46, w: 154, h: 205 }, { alpha: alpha * 0.75, plates: [{ ink: 'all', role: 'meDim' }, { ink: 'black', role: 'panel', alpha: 1 }] });
       signalTrace(ctx, { x: r.x + 16, y: r.y + 256, w: r.w - 32, h: 34 }, 0, { color: 'text', alpha: alpha * 0.65, seed: index, running: false });
     } else {
-      ctx.g.save(); ctx.g.setLineDash([9, 10]);
-      ctx.line(r.x + 26, r.y + 164, r.x + r.w - 26, r.y + 164, { color: 'sub', width: 1.5, alpha: alpha * 0.5 });
-      ctx.g.restore();
-      ctx.text('outside observed data', cx, r.y + 262, { size: 16, font: 'mono', align: 'center', color: 'mute', alpha });
+      const points = era.parts.flatMap(([, pts]) => pts);
+      const left = Math.min(...points.map(p => p[0])), right = Math.max(...points.map(p => p[0]));
+      const height = -Math.min(...points.map(p => p[1]));
+      const fit = Math.min(264 / (right - left), 180 / height);
+      for (const [ink, pts] of era.parts) ctx.poly(pts.map(([x, y]) => [cx + (x - (left + right) / 2) * fit, r.y + 232 + y * fit]),
+        { close: true, fill: true, color: ink === 'k' ? 'text' : ink === 'c' ? 'panel' : 'me', alpha });
+      ctx.text(era.name.toUpperCase(), cx, r.y + 274, { size: 17, font: 'mono', align: 'center', color: 'sub', alpha });
     }
   };
-  box(scroll + 90 * scale, true, 0);
-  for (let i = 2; i < stops.length; i++) box(scroll + stops[i] * scale, false, i);
+  box(scroll + 90 * scale, null, 0);
+  ERAS.forEach((era, i) => box(scroll + era.x * scale, era, i + 1));
   const edge = scroll + stops[1] * scale;
   ctx.line(edge, gy - 362, edge, gy + 18, { color: 'me', width: 2, alpha });
-  ctx.text('RECORD LIMIT', edge - 12, gy - 350, { size: 18, font: 'mono', color: 'sub', align: 'right', alpha });
+  ctx.text('CURRENT / HISTORY', edge - 12, gy - 350, { size: 18, font: 'mono', color: 'sub', align: 'right', alpha });
 }
