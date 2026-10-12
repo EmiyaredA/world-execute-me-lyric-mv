@@ -71,26 +71,38 @@ export function attemptPaths(ctx, r, round, progress, { seed = 20161011, alpha =
   ctx.text('NO REPLY', x, y + r.h * 0.5 + 23, { size: 19, font: 'mono', color: 'sub', align: 'right', alpha });
 }
 
-/** Archive strip uses the original seven spatial stops, but only the current end has records. */
-export function archiveStrip(ctx, art, scroll, gy, stops, { scale = 0.86, alpha = 1 } = {}) {
-  const box = (cx, valid, index) => {
+/** Personal memory at the current end; distinct historical image cards further back. */
+export function archiveStrip(ctx, art, scroll, gy, stops, { scale = 0.86, alpha = 1, eras = [] } = {}) {
+  const box = (cx, era, index) => {
     const r = { x: cx - 158, y: gy - 332, w: 316, h: 310 };
     if (r.x > 1980 || r.x + r.w < -60) return;
-    ctx.rrect(r.x, r.y, r.w, r.h, 10, { fill: 'panel', fillAlpha: 0.45, stroke: valid ? 'sub' : 'line', alpha, width: 2 });
-    ctx.text(valid ? 'CURRENT ARCHIVE' : 'NO RECORD', cx, r.y + 34, { size: 21, font: 'mono', align: 'center', color: valid ? 'text' : 'sub', alpha });
-    if (valid) {
+    const labels = { towers: 'CITY ARCHIVE', spires: 'OLD TOWN', colonnade: 'COLUMN HALL', 'stepped temple': 'STEPPED TEMPLE', pyramids: 'PYRAMIDS' };
+    ctx.rrect(r.x, r.y, r.w, r.h, 10, { fill: 'panel', fillAlpha: 0.65, stroke: 'sub', strokeAlpha: 0.65, alpha, width: 2 });
+    ctx.text(era ? labels[era.name] : 'CURRENT MEMORY', cx, r.y + 34, { size: 21, font: 'mono', align: 'center', color: 'text', alpha });
+    if (!era) {
       art.inks(ctx, 'f_bust', { x: cx - 77, y: r.y + 46, w: 154, h: 205 }, { alpha: alpha * 0.75, plates: [{ ink: 'all', role: 'meDim' }, { ink: 'black', role: 'panel', alpha: 1 }] });
       signalTrace(ctx, { x: r.x + 16, y: r.y + 256, w: r.w - 32, h: 34 }, 0, { color: 'text', alpha: alpha * 0.65, seed: index, running: false });
     } else {
-      ctx.g.save(); ctx.g.setLineDash([9, 10]);
-      ctx.line(r.x + 26, r.y + 164, r.x + r.w - 26, r.y + 164, { color: 'sub', width: 1.5, alpha: alpha * 0.5 });
-      ctx.g.restore();
-      ctx.text('outside saved memory', cx, r.y + 262, { size: 16, font: 'mono', align: 'center', color: 'mute', alpha });
+      // Fit the original cut-paper architecture into a stable archive frame.
+      // These are historical query images, separate from Kurisu's personal memories.
+      const xs = era.parts.flatMap(([, pts]) => pts.map(([x]) => x));
+      const ys = era.parts.flatMap(([, pts]) => pts.map(([, y]) => y));
+      const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys);
+      const k = Math.min(264 / (x1 - x0), 182 / -y0), base = r.y + 240;
+      ctx.clip({ x: r.x + 16, y: r.y + 50, w: r.w - 32, h: 194 }, () => {
+        ctx.circle(cx + 88, r.y + 85, 24, { fill: true, color: 'meDim', alpha: alpha * 0.4 });
+        for (const [ink, pts] of era.parts) {
+          const shape = pts.map(([x, y]) => [cx + (x - (x0 + x1) / 2) * k, base + y * k]);
+          ctx.poly(shape, { close: true, fill: true, color: ink === 'k' ? 'meDim' : ink === 'c' ? 'text' : 'me', alpha: alpha * 0.9 });
+        }
+        ctx.line(r.x + 20, base, r.x + r.w - 20, base, { color: 'me', width: 2, alpha: alpha * 0.65 });
+      });
+      ctx.text('HISTORICAL IMAGE', cx, r.y + 278, { size: 17, font: 'mono', align: 'center', color: 'sub', alpha });
     }
   };
-  box(scroll + 90 * scale, true, 0);
-  for (let i = 2; i < stops.length; i++) box(scroll + stops[i] * scale, false, i);
+  box(scroll + 90 * scale, null, 0);
+  eras.forEach((era, i) => box(scroll + era.x * scale, era, i + 1));
   const edge = scroll + stops[1] * scale;
   ctx.line(edge, gy - 362, edge, gy + 18, { color: 'me', width: 2, alpha });
-  ctx.text('RECORD LIMIT', edge - 12, gy - 350, { size: 18, font: 'mono', color: 'sub', align: 'right', alpha });
+  ctx.text('HISTORY INDEX', edge - 12, gy - 350, { size: 18, font: 'mono', color: 'sub', align: 'right', alpha });
 }

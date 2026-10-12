@@ -10,9 +10,17 @@ import { layoutLyrics } from '../src/engine/placeholder.js';
 import { registerCharacter, EYE, REACH_CROP, REACH_PALM } from '../src/scenes/shared.js';
 import { buildShots } from '../src/scenes/index.js';
 import { markSvg } from '../src/components/amadeus-mark.js';
+import { calyxOutline } from '../src/scenes/objects.js';
 
 const read = p => JSON.parse(fs.readFileSync(p, 'utf8'));
 const cfg = read('config.json'), regions = read(`${cfg.paths.art}/regions.json`);
+// A fruit calyx must have pointed lobes, even when the brand motif is a circle.
+for (const inner of [0.42, 0.5]) {
+  const radii = calyxOutline({ inner }).map(([x, y]) => Math.hypot(x, y));
+  assert(Math.max(...radii) / Math.min(...radii) > 1.7, 'Fruit calyx became a circular brand ring');
+  const peaks = radii.filter((r, i) => r > radii[(i + radii.length - 1) % radii.length] && r > radii[(i + 1) % radii.length]);
+  assert.equal(peaks.length, 7, 'Fruit calyx must retain seven distinct pointed leaves');
+}
 const art = Object.create(Art.prototype);
 art.regions = regions; art.dim = {};
 for (const name of cfg.character.names) {

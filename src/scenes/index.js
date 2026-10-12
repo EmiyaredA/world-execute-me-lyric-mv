@@ -1,7 +1,7 @@
 // Scene registry. The film is ONE conversation (docs/v4/PLAN.md); sections are listed in story order.
 // Each section file returns shot definitions (see shot.js); sequence() turns them into engine
 // scenes { id, start, end, render, enter } and derives the overlaps that drive the transitions.
-// The overlay (warning toast, credits) is a separate scene on its own layer. Before the song (negative song time)
+// The overlay (credits) is a separate scene on its own layer. Before the song (negative song time)
 // stands the warning page (overlay.js prerollShot): every other time in the film is unchanged by it.
 //
 // Sections are loaded one by one: a section that is missing or fails to load is replaced by a

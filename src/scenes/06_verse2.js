@@ -92,14 +92,14 @@ export function verse2Shots(env) {
     ask(0, NOUN[0], 'The user asks her to pretend to be an eggplant: the click on Send throws the request up out of the composer, and her answer begins under it.', 'interface: close on the lower thread and the composer: the request flying up at the right, her line starting at the left'),
     {
       id: 'v2-eggplant', at: NOUN[0], lines: [44, 46], palette: 'warm', hud: 0, enter: { type: 'cut' },
-      layout: 'PLATE: the eggplant leaning across the sheet in code characters and its own purple, her spark as its calyx; cut in two; then a hollow outline, its colour leaving to the right as cream; the keyword on the foot of the sheet',
+      layout: 'PLATE: the eggplant leaning across the sheet in code characters and its own purple, independently drawn pointed green calyx and stem; cut in two; then a hollow outline, its colour leaving to the right as cream; the keyword on the foot of the sheet',
       moment: 'On the noun she IS the eggplant: its data set in characters, in its own colour. On the next downbeat it is cut open; on the keyword the colour leaves it and what it holds is drawn out of it in cream, as molecules: fibre, protein, sugar, each with its name, its formula and its weight. Only its outline is left. The user is already typing the next request; their click on Send ends the plate.',
       render: (ctx, t) => plateFruit(ctx, env, { t, kind: 'eggplant', at: NOUN[0], settle: cue('nounEggplantEnd'), open: Bt(164), hit: T(46), word: text(46), lines: [44, 45], next: next(0, 164.75, 166.75) }),
     },
     ask(1, NOUN[1], 'The next request is sent before her last word has died away: now a tomato.', 'interface: the same corner of the thread, a little closer and tilted'),
     {
       id: 'v2-tomato', at: NOUN[1], lines: [47, 49], palette: 'warm', hud: 0, enter: { type: 'cut' },
-      layout: 'PLATE: the tomato in the middle of the sheet in characters and its own red, the spark as its calyx; its top lifted off, the cut face showing; then hollow, its colour leaving to the right as cream; the keyword on the foot',
+      layout: 'PLATE: the tomato in the middle of the sheet in characters and its own red, independently drawn pointed green calyx and stem; its top lifted off, the cut face showing; then hollow, its colour leaving to the right as cream; the keyword on the foot',
       moment: 'On the noun she is the tomato. On the next downbeat its top is lifted off; on the keyword what it holds is drawn out of it in cream, as molecules: its own red (lycopene), vitamin C, vitamin E. The next request is typed at the foot of the sheet meanwhile.',
       render: (ctx, t) => plateFruit(ctx, env, { t, kind: 'tomato', at: NOUN[1], settle: cue('nounTomatoEnd'), open: Bt(172), hit: T(49), word: text(49), lines: [47, 48], next: next(1, 172.75, 174.9) }),
     },

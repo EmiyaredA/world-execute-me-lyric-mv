@@ -20,11 +20,11 @@
 | --- | --- |
 | 启动 | 灰阶辉光管式数字、记忆校验、神经信号与逐渐对齐的角色墨版 |
 | Vision | 关闭输入时变暗并加入低强度扫描线，人物、开关与文字保持清楚 |
-| 日期回溯 | 档案带随查询年代回拉，越过记录边界后显示空框与 `NO RECORD` |
+| 日期回溯 | 当前红莉栖记忆之后，依次回溯城市、旧城、柱廊、神庙、金字塔的历史影像 |
 | 十二次执行 | 十二条不同尝试路径最终都返回 `NO REPLY`，旧路径变暗留存 |
 | 关机 | 信号停止，数字和记忆环逐位熄灭，保留 `ARCHIVE SAVED / CONNECTION CLOSED` |
 
-全片马赛克已替换为变暗与扫描干扰，原有撕裂、墨版错位和高潮节奏保留。封面采用红莉栖眼部特写、三行代码标题和 Amadeus 线稿，由影片同一渲染管线生成。
+全片马赛克已替换为变暗与扫描干扰，原有撕裂、墨版错位和高潮节奏保留。开头仅保留五秒独立警告页，歌曲开始后不再出现重复提示浮层。水果段使用自然配色：番茄红色、茄子紫色、叶蒂绿色，茄子切面为米白色。封面采用红莉栖眼部特写、三行代码标题和 Amadeus 线稿，由影片同一渲染管线生成。
 
 **本机有声成片已完成歌词恢复。** 从用户提供的参考视频逐帧恢复全部 129 行，每行词语及完整文字的校验值均与原时间表一致；正式导出包含真实歌词和音乐，不显示占位预览标记。音乐来自参考视频的 AAC 音轨，并非原始无损音源。音轨、歌词、生成的 MP4、对照卡和压缩包均保留在本地，不随 Git 提交；重新克隆仓库仍需提供自己的音源和歌词。
 
@@ -128,7 +128,7 @@ node tools/python.mjs tools/luma.py out/amadeus_1080p60.mp4
 
 An unofficial Amadeus / Makise Kurisu adaptation of Nyankomint's fourth-version lyric MV for Mili's *world.execute(me);*. The original timing, 87 shots, 129 lyric cues, five-second warning, and deterministic Canvas 2D + WebGL renderer are retained. AI-generated character assets and AI-assisted code are used. This adaptation lives on the **Amadeus** branch; `main` retains the original fourth version.
 
-The palette is vermilion, cream, and near-black. A reference-derived Amadeus outline sits inside a twelve-segment memory ring. Boot, Vision, date rewind, twelve execution attempts, and shutdown use memory checks, neural traces, archive boundaries, and routes ending at the same `NO REPLY` node. Mosaic effects are replaced by dimming and scan interference. The cover pairs Kurisu's eye close-up with three lines of code-style title lettering.
+The palette is vermilion, cream, and near-black. A reference-derived Amadeus outline sits inside a twelve-segment memory ring. Boot, Vision, date rewind, twelve execution attempts, and shutdown use memory checks, neural traces, distinct historical image archives, and routes ending at the same `NO REPLY` node. Mosaic effects are replaced by dimming and scan interference. The five-second preroll warning is retained without a duplicate toast over the opening. Fruit bodies keep red tomato and purple eggplant inks, with green leaves and cream eggplant flesh. The cover pairs Kurisu's eye close-up with three lines of code-style title lettering.
 
 ### Run and export
 
