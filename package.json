@@ -21,7 +21,12 @@
     "cover:portrait": "node export/export.mjs --lab coverPortrait --sheet out/sensetime_cover_portrait.png --times 0 --cols 1 --width 1080 --height 1920",
     "check:sensetime": "node tools/check_sensetime.mjs",
     "check:render": "node tools/check_sensetime_render.mjs",
-    "export:layout": "node export/layout.mjs"
+    "export:layout": "node export/layout.mjs",
+    "check:layout": "node tools/check_layout_video.mjs",
+    "check:restored-lyrics": "node tools/check_restored_lyrics.mjs",
+    "check:render:lyrics": "node tools/check_sensetime_render.mjs --real-lyrics",
+    "export:final": "node export/layout.mjs --real-lyrics",
+    "check:final": "node tools/check_layout_video.mjs --real-lyrics"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",

@@ -1,7 +1,5 @@
 # 分镜表 / Storyboard(SenseTime v6)
 
-**占位时间轴：音频和歌词待提供，不能据此验收歌词同步。**
-
 由 `node tools/storyboard.mjs` 從程式中的鏡頭清單自動生成(共 87 個鏡頭,平均 2.49 秒)。
 提意見時直接引用「鏡頭 id」;每個 id 對應 `src/scenes/` 裡的一個鏡頭定義。当前改编和验证记录见 `docs/SENSETIME.md`。原版规则和制作记录保存在 `docs/v4/`。
 

@@ -12,6 +12,7 @@ import { cursorAt, pointer, sinceClick } from '../components/cursor.js';
 import { archiveStrip, nixieDigits, scanField, signalTrace } from '../components/memory-instruments.js';
 import { burst, spark, sparkOutline } from '../components/motif.js';
 import { lerpRect } from '../engine/layout.js';
+import { parseHex } from '../engine/palette.js';
 import { clamp, easeBack, easeIn, easeInOut, easeOut, lerp, prog, pulse, window01 } from '../engine/util.js';
 import { cue } from './cues.js';
 import { ERA_LINE, STOPS } from './history.js';
@@ -222,13 +223,20 @@ export function pre1Shots(env) {
   // ---------------------------------------------------------------- cameras (also needed inside render, to come back from screen space)
   const cam1 = (t) => { const k = easeInOut(prog(t, tSet, tSet + 1.5)); return { zoom: 1 + 0.06 * k + 0.012 * prog(t, tAC, tOff), x: 50 * k, y: 0 }; };
   const KICKS = [[tOn1, 1], [tOff2, -1], [tOn2, 1], [tOff3, -1], [tOn3, 1]];
+  const bg = parseHex(env.cfg.palettes.on.bg);
+  const lightSurface = 0.2126 * bg[0] + 0.7152 * bg[1] + 0.0722 * bg[2] > 200;
   const cam2 = (t) => {
+    // Dark text on the pale macro view crosses a large area during a camera kick.
+    // Keep the click response and seasick roll, with less travel on light surfaces.
+    const motion = lightSurface ? 0.2 : 1;
     let rot = 0, dx = 0;
     for (const [tk, s] of KICKS) { const a = t - tk; if (a > 0) { const e = Math.exp(-3.2 * a); rot += s * 0.032 * e * Math.sin(11 * a); dx += s * 11 * e * Math.sin(9 * a + 0.6); } }
     const dz = window01(t, T(27) - 0.15, b(15.4), 0.5, 0.7), a = t - T(27);                 // and a slow, seasick roll under the whole of line 27
-    const pan = easeInOut(prog(t, b(14.5), b(15.8))), zoom = 2.96 * (1 + 0.025 * prog(t, tOff, tGrab));   // then down to the next row,
+    // Start the pale view's pan earlier, while the final clicks remain in view.
+    // This spreads the passage of dark row labels across more than a second.
+    const pan = easeInOut(prog(t, b(lightSurface ? 12 : 14.5), b(15.8))), zoom = 2.96 * (1 + 0.025 * prog(t, tOff, tGrab));   // then down to the next row,
     const kn = A.date(1), ex = kn[0] - (kn[0] - 960) / zoom, ey = kn[1] - (kn[1] - 540) / zoom;           // until its knob sits where the next shot has it (match cut on the grab)
-    return { x: lerp(1492, ex, pan) - 960 + dx + 7 * dz * Math.sin(a * 2.7), y: lerp(353, ey, pan) - 540 + 4 * dz * Math.cos(a * 3.3), zoom, rot: rot + 0.02 * dz * Math.sin(a * 4.1) };
+    return { x: lerp(1492, ex, pan) - 960 + motion * (dx + 7 * dz * Math.sin(a * 2.7)), y: lerp(353, ey, pan) - 540 + motion * 4 * dz * Math.cos(a * 3.3), zoom, rot: motion * (rot + 0.02 * dz * Math.sin(a * 4.1)) };
   };
   const cam3 = (t) => ({ zoom: 1 + 0.035 * easeInOut(prog(t, tGrab, tDrop)) - 0.035 * easeInOut(prog(t, tDrop, tDrop + 0.5)) });
   const cam4 = (t) => {

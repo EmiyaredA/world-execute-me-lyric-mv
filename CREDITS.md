@@ -10,6 +10,7 @@
 - **标志与专色**：SenseTime 界面标志采用 [CompaniesLogo 公共矢量参考](https://companieslogo.com/img/orig/0020.HK-698fa2fb.svg) 的填充飘带路径，并与 [SenseTime 官网 PNG](https://sensetime.com/assets/logo-frame10.png) 对照；这不是官方发布的 SVG。保留原有开口卷曲端部、带宽和红金渐变，小尺寸版本减少阴影层，大小两种 SVG 与 Canvas 共用几何路径。原始参考及来源记录保存于 `assets/sensetime/logo-*`，标志不纳入代码 MIT 许可；角色素材中的发饰红金专色独立提取并追踪为矢量墨版，以保持缩放、裁切及镜像中的贴合。
 - **封面与感知仪器**：使用本工程 Canvas／WebGL 渲染流程制作。输入信号、观测边界、扫描和十二条连接路径为代码绘制，沿用原工程的匿名对话与歌曲时间结构。
 - **音乐与歌词**：Mili《world.execute(me);》及相关权利人所有，仓库不包含歌曲或歌词文本。本机音源、歌词及视频通过 `.gitignore` 排除。
+- **本地歌词与音轨同步**：2026-10-12 从 Amadeus `509caed` 工作树同步恢复的129行歌词、LRC与float32 WAV，原时间表及完整文字校验值一致。音轨来自用户提供的参考视频 AAC 解码，五秒片头已在源 WAV 中移除，成片导出时加入一次警告与音频延迟。来源及同步校验保存在本地 `out/sensetime_lyric_sync.json`。
 - **字体**：JetBrains Mono、Source Serif 4、Inter 及原工程 Noto 中韩字体，来源及 SIL Open Font License 1.1 声明见 [第四版来源记录](docs/v4/CREDITS_original.md)。
 - **历史素材**：`assets/character/` 的原版角色素材保留原作者 CC BY-NC-SA 4.0 声明；当前版本不加载历史角色。
 

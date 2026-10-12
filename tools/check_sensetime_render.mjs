@@ -8,6 +8,7 @@ import { attemptRoute } from '../src/components/memory-instruments.js';
 import { execFileSync } from 'node:child_process';
 
 const routes = Array.from({ length: 12 }, (_, i) => attemptRoute(i));
+const realLyrics = process.argv.includes('--real-lyrics');
 assert.equal(new Set(routes.map(JSON.stringify)).size, 12);
 assert(routes.every(r => JSON.stringify(r.at(-1)) === '[1,0.5]'));
 const baseline = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/amadeus_shot_grid.json'), 'utf8'));
@@ -25,15 +26,15 @@ try {
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
   page.on('console', m => { if (/^\[(shot |scenes|text)/.test(m.text())) errors.push(m.text()); });
-  await page.goto(`${url}/?layoutOnly=1&w=960&h=540`);
+  await page.goto(`${url}/?${realLyrics ? '' : 'layoutOnly=1&'}w=960&h=540`);
   await page.waitForFunction(() => document.getElementById('loading').hidden, null, { timeout: 60000 });
-  await page.evaluate(async () => {
+  await page.evaluate(async real => {
     const { createEngine } = await import('/src/engine/engine.js');
     const { layoutLyrics } = await import('/src/engine/placeholder.js');
     const get = async p => (await fetch('/' + p)).json();
     const cfg = await get('config.json');
     const engine = await createEngine({ canvas: document.createElement('canvas'), width: 1920, height: 1080, flipY: true,
-      cfg, featuresData: await get(cfg.paths.features), lyricsData: layoutLyrics(await get('data/lyric_timing.json')) });
+      cfg, featuresData: await get(cfg.paths.features), lyricsData: real ? await get(cfg.paths.lyrics) : layoutLyrics(await get('data/lyric_timing.json')) });
     window.qa = { engine, buf: new Uint8Array(1920 * 1080 * 4) };
     window.frameHash = t => {
       engine.renderFrame(t); engine.readPixels(qa.buf);
@@ -41,7 +42,7 @@ try {
       for (let i = 0; i < qa.buf.length; i++) h = Math.imul(h ^ qa.buf[i], 16777619);
       return h >>> 0;
     };
-  });
+  }, realLyrics);
   const spotChecks = await page.evaluate(async () => {
     const { Ctx } = await import('/src/engine/draw.js');
     const cfg = await (await fetch('/config.json')).json();
@@ -131,7 +132,7 @@ try {
   assert.deepEqual(cueFrames.sceneErrors, []);
   assert.deepEqual(errors, []);
   const result = { passed: true, shotTimingUnchanged: true, shots: timings(current).length, distinctAttemptPaths: 12, allAttemptsEndAtNoReply: true,
-    cueFrames, seekChecks, spotChecks, genderChecks, stills, renderer: await page.evaluate(() => qa.engine.rendererInfo()), errors };
-  fs.writeFileSync(path.join(ROOT, 'out/sensetime_render_check.json'), JSON.stringify(result, null, 2) + '\n');
+    realLyrics, cueFrames, seekChecks, spotChecks, genderChecks, stills, renderer: await page.evaluate(() => qa.engine.rendererInfo()), errors };
+  fs.writeFileSync(path.join(ROOT, realLyrics ? 'out/sensetime_render_lyrics_check.json' : 'out/sensetime_render_check.json'), JSON.stringify(result, null, 2) + '\n');
   console.log(`SenseTime render passed: unchanged shot grid, 12 paths, ${cueFrames.frames} cue frames, ${seekChecks.length} deterministic seek checks, ${stills.length} full-size stills.`);
 } finally { await browser?.close(); await new Promise(res => server.close(res)); }
