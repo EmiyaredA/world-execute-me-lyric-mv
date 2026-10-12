@@ -26,7 +26,7 @@ import { outline, smoothPath } from './trace.js';
 import { clamp } from './util.js';
 
 /** The silhouettes (assets/character/<key>.png; sources and what each shows: docs/v4/PLAN.md §4). All the art there is. */
-export const INK_NAMES = ['f_bust', 'f_profile', 'f_reach', 'f_eye', 'cat_bust', 'cat_paws'];
+export const INK_NAMES = ['f_bust', 'f_profile', 'f_reach', 'f_eye', 'cat_bust', 'cat_paws', 'male_bust'];
 export const ART_NAMES = INK_NAMES;
 
 const LUM_H = 240;                              // working resolution of the luminance maps: the longer side
@@ -63,6 +63,7 @@ export class Art {
   constructor(character = {}) {
     this.sourceInks = character.sourceInks ?? INK_RGB;
     this.sourceAccents = character.sourceAccents ?? false;
+    this.inkRoles = character.inkRoles ?? {};
     this.sil = {}; this.lum = {}; this.regions = {};
     this.ink = {}; this.dim = {}; this.walls = {};
     this.tmpA = mk(8, 8); this.tmpB = mk(8, 8); this.tmpC = mk(8, 8);
@@ -436,7 +437,7 @@ export class Art {
     g.beginPath(); g.rect(c.x, c.y, c.w, c.h); g.clip();
     g.clip(K.path[0], 'evenodd');
     g.globalAlpha *= alpha * (plate.alpha ?? 1);
-    const monochrome = !['text', 'sub', 'meHot'].includes(plate.role);
+    const monochrome = !['text', 'sub', 'meHot', 'wool'].includes(plate.role);
     K.accentPaths.forEach((path, i) => {
       g.fillStyle = ctx.col(monochrome ? plate.role : i === 0 ? 'brandRed' : 'brandGold');
       g.fill(path, 'evenodd');
@@ -492,6 +493,8 @@ export class Art {
         { ink: 'black', role: rb, exact: true, offset: offset.black, reveal: rv('black') },
       ];
     }
+    const standard = { cream: 'text', orange: 'me', black: 'panel' };
+    list = list.map(p => ({ ...p, role: p.role === standard[p.ink] ? this.inkRoles[p.ink] ?? p.role : p.role }));
     list = list.filter((p) => p.role && (p.alpha ?? 1) > 0.003 && !(p.reveal != null && (p.reveal.k ?? p.reveal) <= 0));
     if (!list.length) return;
     const m = g.getTransform(), mag = (dst.w / c.w) * (Math.hypot(m.a, m.b) / ctx.scale) * 2;       // source magnification in a 4K frame

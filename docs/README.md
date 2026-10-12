@@ -14,13 +14,13 @@
 
 ### 当前 SenseTime 版本
 
-本分支为商汤羊角色／SenseTime 版。所有六张最终角色素材保留红金无限符号发饰。启动、Vision、观测记录、十二次连接尝试和关机采用感知与连接主题；新封面采用羊角色眼部特写和三行代码标题。
+本分支为商汤羊角色／SenseTime 版。所有七张最终角色素材保留红金无限符号发饰。启动、Vision、观测记录、十二次连接尝试和关机采用感知与连接主题；界面改用白底、淡紫与紫色强调，高潮为深紫；标志采用与官网对照的开口飘带 SVG。新封面采用羊角色眼部特写和三行代码标题。
 
 | 文件 | 内容 |
 | --- | --- |
 | [SENSETIME.md](SENSETIME.md) | 羊角色、红金发饰、感知仪器和封面改编记录；当前验证结果及尚待补齐的音源／歌词 |
-| [../assets/sensetime/prompts.json](../assets/sensetime/prompts.json) | 六张透明角色素材的生成提示词与修复记录 |
-| [../assets/sensetime/](../assets/sensetime/) | 角色、标志和封面参考，区域测量及完整／简化线稿 SVG |
+| [../assets/sensetime/prompts.json](../assets/sensetime/prompts.json) | 七张透明角色素材的生成提示词与修复记录 |
+| [../assets/sensetime/](../assets/sensetime/) | 角色、标志和封面参考，区域测量及完整渐变／小尺寸填充 SVG |
 | [../data/sensetime_chat.json](../data/sensetime_chat.json)、[../data/sensetime_errors.json](../data/sensetime_errors.json) | 当前聊天、感知与连接主题文案 |
 | [../STORYBOARD.md](../STORYBOARD.md) | 当前 87 个镜头的分镜表，覆盖 129 行时间轴 |
 | [images/sensetime_cover.png](images/sensetime_cover.png) | 当前 1920×1080 封面 |
@@ -77,7 +77,7 @@
   在公開前改成了 `[lyric]`。倉庫裡沒有歌詞文本,行號對應的是你用自己的歌詞檔生成的 `data/lyrics.json`(見上層 README)。
 - 文件裡提到的 `out/`(導出檔、縮圖表、量測輸出)、`backup/`(舊版備份)、`圖片/`(剪影原檔)以及音頻與 LRC,都只在製作者的本機,不在倉庫內。
 - `v4/maps/` 裡的 `<scratchpad>` 是當時那次對話的暫存資料夾;放在那裡的檢查圖沒有保留。
-- 历史文件的语言保留制作时的原貌：要求和进度记录为简体中文，规则为英文，对外说明为繁体中文。当前 Amadeus 说明以简体中文为主。
+- 历史文件的语言保留制作时的原貌：要求和进度记录为简体中文，规则为英文，对外说明为繁体中文。当前 SenseTime 说明以简体中文为主。
 
 ---
 
@@ -152,4 +152,4 @@ Three things to know about them:
 - `out/` (exports, contact sheets, measurements), `backup/` (older versions), `圖片/` (the source files of the silhouettes),
   the audio and the LRC that the documents mention exist only on the maker's machine, not in the repository.
 - `<scratchpad>` in `v4/maps/` was the temporary folder of the conversation of that time; the check images kept there were not preserved.
-- Historical language choices are preserved: requirements and progress logs in Simplified Chinese, rules in English, and original outward-facing pages in Traditional Chinese. Current Amadeus notes mainly use Simplified Chinese.
+- Historical language choices are preserved: requirements and progress logs in Simplified Chinese, rules in English, and original outward-facing pages in Traditional Chinese. Current SenseTime notes mainly use Simplified Chinese.

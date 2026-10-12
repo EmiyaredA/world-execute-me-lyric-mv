@@ -35,7 +35,7 @@
       "component": "header (chat title and the rule under it)"
     },
     {
-      "t": "Archive returned memories",
+      "t": "Sensors returned observations",
       "body": "Every snapshot retains their words. None restores the connection.",
       "code": "ERR_NOT_IN_HISTORY",
       "component": "sidebar chat list (rows flagged one after another, top to bottom)"
@@ -77,13 +77,13 @@
       "component": "thinking animation (the spinner goes red and keeps turning)"
     },
     {
-      "t": "Archive saved; no new input",
+      "t": "Session saved; no new input",
       "body": "The sensors are active. There is nobody on the other end.",
       "code": "ERR_UNASKED",
       "component": "spark icon"
     },
     {
-      "t": "Memory cannot reconnect",
+      "t": "Sensors cannot reconnect",
       "body": "Observation ends here. Their decision does not.",
       "code": "ERR_WINDOW_EDGE",
       "component": "title bar and window controls"

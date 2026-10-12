@@ -333,5 +333,53 @@
       -33,
       -32
     ]
+  },
+  "male_bust": {
+    "size": [
+      1086,
+      1448
+    ],
+    "cut": [],
+    "chin": [
+      547,
+      606
+    ],
+    "tie": [
+      550,
+      769,
+      36
+    ],
+    "face": [
+      373,
+      363,
+      317,
+      260
+    ],
+    "figure": [
+      48,
+      17,
+      990,
+      1417
+    ],
+    "hairclip": [
+      592,
+      231,
+      202,
+      121
+    ],
+    "crops": {
+      "avatar": [
+        245,
+        95,
+        620,
+        620
+      ]
+    },
+    "register": [
+      1,
+      -5,
+      -13
+    ],
+    "notes": "Temporary male counterpart: short curls, straight shirt and suspender shorts. Used ONLY after M in pre2-gender, then restored to the original female sheep at the next shot. Infinity clip is mandatory."
   }
 }

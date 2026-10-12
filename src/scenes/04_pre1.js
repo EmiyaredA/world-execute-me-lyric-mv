@@ -379,7 +379,7 @@ export function pre1Shots(env) {
         client(ctx, t, 1, { skipHint: 1 });
         const bl = clamp(blind(t)), r = rowAt(1);
         if (bl > 0.01) {                                                     // input is suspended: dim and scan the full-resolution client; text and controls stay sharp
-          screen(ctx, () => scanField(ctx, { x: 0, y: 0, w: 1920, h: 1080 }, t, { strength: bl, dim: 0.3, seed: 404 }));
+          screen(ctx, () => scanField(ctx, { x: 0, y: 0, w: 1920, h: 1080 }, t, { strength: bl, dim: ctx.pal.bg[0] > 200 ? 0.04 : 0.3, seed: 404 }));
           ctx.rrect(r.x + r.w - 104, r.y + 33, 104, 56, 28, { fill: null, stroke: 'sub', width: 1, alpha: 0.8 * bl });
           ctx.circle(r.x + r.w - 104 + 28 + 48 * vision(t), r.y + 61, 23, { color: 'sub', width: 1, alpha: 0.8 * bl });
           ctx.text(UI.blind, r.x + r.w, r.y + 109, { size: 10.5, font: 'mono', color: 'sub', align: 'right', alpha: prog(bl, 0.6, 1) });

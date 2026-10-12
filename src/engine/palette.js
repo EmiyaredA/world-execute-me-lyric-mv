@@ -6,7 +6,7 @@
 // Shots name a state; two states blend over time (an event unfolding) or swap on a cut.
 // Everything downstream (2D drawing, bloom tint, flash colour, art saturation) reads the blend.
 
-export const ROLES = ['bg', 'panel', 'raised', 'line', 'text', 'sub', 'mute', 'me', 'meHot', 'meDim', 'err', 'errDim', 'bloom', 'brandRed', 'brandGold'];
+export const ROLES = ['bg', 'panel', 'raised', 'line', 'text', 'sub', 'mute', 'me', 'meHot', 'meDim', 'err', 'errDim', 'bloom', 'brandRed', 'brandGold', 'wool', 'woolMid', 'woolDark'];
 const SCALARS = ['glow', 'sat'];
 /** Old role names still used by a few engine helpers' defaults. */
 const ALIAS = { fg: 'text', mid: 'sub', dim: 'mute', faint: 'line', accent: 'text', alt: 'me' };

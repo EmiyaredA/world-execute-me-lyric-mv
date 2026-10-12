@@ -191,13 +191,13 @@ export function pre2Shots(env) {
     {
       id: 'pre2-gender', at: cF, lines: [57, 58], palette: 'warm', hud: 0, enter: { type: 'cut' },
       layout: 'PLATE: the segmented control as the whole sheet, a cell each for its two letters; her bust whole in the middle; the two letters huge in her serif either side of her',
-      moment: 'The click on the first letter, as it is sung, and the control is as large as the sheet: she stands in it. On the drum the pointer comes down on the other cell and holds it. When the second letter is sung it lets go: a scan crosses the same Sheep bust and the archive field changes, and the letter is printed. The drum after it is a shudder of the sheet. The pointer touches the control, never her.',
+      moment: 'The click on the first letter, as it is sung, and the control is as large as the sheet: she stands in it. On the drum the pointer comes down on the other cell and holds it. When the second letter is sung it lets go: a scan reveals the matching male Sheep for this shot; the next shot restores the original female Sheep, and the letter is printed. The drum after it is a shudder of the sheet. The pointer touches the control, never her.',
       render: (ctx, t) => plateGender(ctx, env, { t, at: cF, press: D(1), click: cue('letterM57'), thud: D(2), sung: cue('letterF'), values: ROWS[0].values, lines: [L57, 58], to: dayGrip(art), until: cDay }),
     },
     {
       id: 'pre2-day', at: cDay, lines: [58, 60], palette: 'warm', hud: 0, enter: { type: 'cut' },
       layout: 'PLATE: the On-call slider as an arc from one end of the horizon to the other, her spark on it as the sun; a small bust under its top; the two ends huge in her serif',
-      moment: 'On call. The slider is an arc across the sheet and its knob is her spark: the sun. The pointer takes it on the cut and pulls, slowly at first: up over the top, where it stands behind his head (the brightest frame of the section), and down into the other end: dusk, and of him only a dark shape is left.',
+      moment: 'On call. The slider is an arc across the sheet and its knob is her spark: the sun. The pointer takes it on the cut and pulls, slowly at first: up over the top, where it stands behind her head (the brightest frame of the section), and down into the other end: dusk, and of her only a dark shape is left.',
       render: (ctx, t) => plateDay(ctx, env, { t, at: cDay, grab: cDay, drag: Bt(203), top: D(3), end: D(4), am: cue('letterAM'), pm: cue('letterPM'), values: ROWS[1].values, lines: [58, L59, 60], to: [1700, 700], until: cRole }),
     },
     {

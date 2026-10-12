@@ -80,14 +80,15 @@ export function plateGender(ctx, env, P) {
   // the two letters, in her voice: each solid only once it has been sung, and only while it is the chosen one
   letter(ctx, va, 392, 790, 500, t, Math.max(at, P.sung ?? at), { off: click });
   letter(ctx, vb, 1528 + sink, 790 + sink, 500, t, click, { pop: 0.15 });
-  // her: the whole bust. When the second letter is sung the stored field changes; the same Sheep silhouette stays in place
+  // her: the whole bust. When the second letter is sung the stored field changes; the temporary male Sheep appears for this shot only
   if (a > 0) {
     const s = 1 + 0.035 * pulse(t - at, 16) + 0.05 * pulse(t - click, 14), a0 = g.globalAlpha;
     g.globalAlpha = a0 * a;
     ctx.circle(960, 520, 300, { fill: true, color: 'line', alpha: 0.55 });                  // paper light behind her black ink
     ctx.at(960 * (1 - s), 560 * (1 - s), () => {
-      art.inks(ctx, 'f_bust', FIG);
-      if (on) art.inkClip(ctx, 'f_bust', FIG, () => {
+      const name = on ? 'male_bust' : 'f_bust', figure = art.fit(name, FIG);
+      art.inks(ctx, name, figure);
+      if (on) art.inkClip(ctx, name, figure, () => {
         const y = FIG.y + FIG.h * prog(t, click, click + 0.45);
         ctx.rect(FIG.x, y - 12, FIG.w, 24, { fill: true, color: 'text', alpha: 0.55 * (1 - prog(t, click, click + 0.45)) });
         for (let j = 0; j < 9; j++) ctx.line(FIG.x, FIG.y + j * FIG.h / 9, FIG.x + FIG.w, FIG.y + j * FIG.h / 9, { color: 'meHot', width: 1.5, alpha: 0.25 });

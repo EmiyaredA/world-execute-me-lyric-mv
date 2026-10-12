@@ -76,6 +76,23 @@ try {
     if (c.kind === 'visible') assert(c.red > 30 && c.gold > 10, `${c.name}: ribbon lost in ${JSON.stringify(c.options)}`);
     else assert(c.red === 0 && c.gold === 0, `${c.name}: ribbon ignores hidden or grey state`);
   }
+  const genderChecks = await page.evaluate(() => {
+    const art = qa.engine.art, inks = art.inks;
+    const checks = [];
+    try {
+      for (const t of [91.70, 91.75, 92.4, 92.7, 96, 102, 124.89, 170.8, 197.3]) {
+        const names = new Set();
+        art.inks = function(ctx, name, ...args) { names.add(name); return inks.call(this, ctx, name, ...args); };
+        qa.engine.renderFrame(t);
+        checks.push({ songTime: t, names: [...names] });
+      }
+    } finally { art.inks = inks; }
+    return checks;
+  });
+  for (const c of genderChecks) {
+    assert.equal(c.names.includes('male_bust'), c.songTime >= 91.72 && c.songTime < 92.65,
+      `Male variant escaped the F/M shot at ${c.songTime}`);
+  }
   const samples = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/memory_lab_samples.json'), 'utf8'));
   // Export raw frames via the same engine/readPixels used by the MP4 exporter, top row first.
   const stills = [];
@@ -114,7 +131,7 @@ try {
   assert.deepEqual(cueFrames.sceneErrors, []);
   assert.deepEqual(errors, []);
   const result = { passed: true, shotTimingUnchanged: true, shots: timings(current).length, distinctAttemptPaths: 12, allAttemptsEndAtNoReply: true,
-    cueFrames, seekChecks, spotChecks, stills, renderer: await page.evaluate(() => qa.engine.rendererInfo()), errors };
+    cueFrames, seekChecks, spotChecks, genderChecks, stills, renderer: await page.evaluate(() => qa.engine.rendererInfo()), errors };
   fs.writeFileSync(path.join(ROOT, 'out/sensetime_render_check.json'), JSON.stringify(result, null, 2) + '\n');
   console.log(`SenseTime render passed: unchanged shot grid, 12 paths, ${cueFrames.frames} cue frames, ${seekChecks.length} deterministic seek checks, ${stills.length} full-size stills.`);
 } finally { await browser?.close(); await new Promise(res => server.close(res)); }

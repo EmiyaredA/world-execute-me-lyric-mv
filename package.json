@@ -21,7 +21,7 @@
     "cover:portrait": "node export/export.mjs --lab coverPortrait --sheet out/sensetime_cover_portrait.png --times 0 --cols 1 --width 1080 --height 1920",
     "check:sensetime": "node tools/check_sensetime.mjs",
     "check:render": "node tools/check_sensetime_render.mjs",
-    "export:layout": "node export/export.mjs --layout-only --silent --width 1920 --height 1080 --fps 60 --cq 26 --out out/sensetime_layout_1080p60.mp4"
+    "export:layout": "node export/layout.mjs"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",

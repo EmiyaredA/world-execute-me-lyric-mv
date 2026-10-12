@@ -1,4 +1,4 @@
-// SenseTime: upright reference-derived line art inside a twelve-segment sensor ring.
+// SenseTime: upright filled SVG ribbon inside a twelve-segment sensor ring.
 // Keep the spark API so existing musical match cuts share this mark.
 import { clamp } from '../engine/util.js';
 import { sensetimeMark } from './sensetime-mark.js';

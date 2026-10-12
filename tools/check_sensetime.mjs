@@ -1,4 +1,4 @@
-// Meaningful adaptation checks: real source geometry, all timed sections, no male assets/fallback shots.
+// Meaningful adaptation checks: real source geometry, all timed sections, temporary male variant limited to the F/M shot; no fallback shots.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -48,7 +48,7 @@ for (const name of cfg.character.names) {
 assert.equal(cfg.identity.name, 'SenseTime');
 assert.equal(fs.readFileSync(`${cfg.paths.art}/mark-full.svg`, 'utf8'), markSvg(), 'Full SVG differs from live Canvas paths');
 assert.equal(fs.readFileSync(`${cfg.paths.art}/mark-compact.svg`, 'utf8'), markSvg({ compact: true }), 'Compact SVG differs from live Canvas paths');
-assert.deepEqual(cfg.character.names, ['f_bust', 'f_profile', 'f_reach', 'f_eye', 'cat_bust', 'cat_paws']);
+assert.deepEqual(cfg.character.names, ['f_bust', 'f_profile', 'f_reach', 'f_eye', 'cat_bust', 'cat_paws', 'male_bust']);
 assert.deepEqual(cfg.character.sourceInks, [[250, 246, 237], [151, 130, 118], [73, 54, 47]]);
 for (const state of ['off', 'dead']) for (const role of ['brandRed', 'brandGold']) {
   const rgb = cfg.palettes[state][role].slice(1).match(/../g).map(v => parseInt(v, 16));
