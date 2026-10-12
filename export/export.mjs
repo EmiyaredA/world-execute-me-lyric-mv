@@ -73,6 +73,8 @@ function pickCodec() {
 function quality(list, flag) {
   const q = arg('cq', null), out = [...list], i = out.indexOf(flag);
   if (q != null && i >= 0) out[i + 1] = String(q);
+  const preset = arg('preset', null), p = out.indexOf('-preset');
+  if (preset != null && p >= 0) out[p + 1] = preset;
   return out;
 }
 

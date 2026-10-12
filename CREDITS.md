@@ -8,6 +8,7 @@
 - **当前封面**：参考用户提供的视频列表截图的构图（`assets/amadeus/cover-reference.png`），用当前角色墨版、Amadeus 自绘线稿、代码标题及影片渲染管线重新绘制。截图仅作为封面构图参考。
 - **历史角色素材**：`assets/character/` 保留原作者提供的 Claude 擬人剪影，原声明为 CC BY-NC-SA 4.0；当前 Amadeus 版本不加载它们。
 - **音乐及歌词**：Mili《world.execute(me);》及相关权利人所有，仓库不含歌曲或歌词文本。本机填入的歌词及含原曲视频均由 `.gitignore` 排除。
+- **本机歌词恢复与音轨来源**：按用户提供的 `BV186pc65E68.mp4` 逐帧恢复全部 129 行，使用原工程的无文字时间表校验。音乐提取自该视频的 AAC 音轨，去除其五秒片头后交由导出器重新加入警告；不是原始无损音源。源文字、音轨、对照记录与有声成片仅在本地保存。
 - **字体**：JetBrains Mono、Source Serif 4、Inter 与原工程的 Noto 中韩文字体，来源和 SIL Open Font License 1.1 声明见 [第四版原始来源文件](docs/v4/CREDITS_original.md)。
 
 本次检查结果见 [改编记录](docs/AMADEUS.md)。第四版原有视频的同步、闪光与亮度报告不能直接作为红色改编版的验收结果。

@@ -26,7 +26,7 @@
 
 全片马赛克已替换为变暗与扫描干扰，原有撕裂、墨版错位和高潮节奏保留。封面采用红莉栖眼部特写、三行代码标题和 Amadeus 线稿，由影片同一渲染管线生成。
 
-**目前完成的是画面改版与完整无声检查版。** 音源和真实歌词仍需本地补齐；预览明确标为 `LAYOUT PREVIEW`，正式歌词排版与音画同步尚未验收。生成的 MP4、联系表和工程压缩包位于本地 `out/`，不随 Git 提交。
+**本机有声成片已完成歌词恢复。** 从用户提供的参考视频逐帧恢复全部 129 行，每行词语及完整文字的校验值均与原时间表一致；正式导出包含真实歌词和音乐，不显示占位预览标记。音乐来自参考视频的 AAC 音轨，并非原始无损音源。音轨、歌词、生成的 MP4、对照卡和压缩包均保留在本地，不随 Git 提交；重新克隆仓库仍需提供自己的音源和歌词。
 
 ### 运行
 
@@ -40,6 +40,8 @@ npm run preview
 ```
 
 缺少歌词时，启动器会打开带占位文字的预览；也可显式运行 `npm run preview:layout`。拖动进度条检查全片，按空格播放无声预览。`?t=92.2&layoutOnly=1` 可跳到档案切换镜头。
+
+本机补齐歌词后，普通 `npm run preview` 自动使用真实歌词和音频；`preview:layout` 仍明确选择旧的占位检查模式。
 
 ```sh
 npm run cover
@@ -73,9 +75,32 @@ node export/export.mjs --layout-only --silent --width 1920 --height 1080 --fps 6
 
 当前改版关键帧与前后对比见 `out/amadeus_memory_keyframes.png`、`out/amadeus_memory_comparison.png`；完整尺寸单帧在 `out/sg_frames/`，最终视频抽帧检查见 `out/amadeus_memory_video_frames.png`。
 
+### 从本地参考视频恢复歌词
+
+macOS 可使用随工程提供的 Vision OCR 工具；需要 Swift 命令行工具和 FFmpeg。采样工具按现有时间表定位每行，匹配工具只在全部 129 行的词语与完整文字校验值均通过后写入本地歌词文件。弧线文字、拆分字母和数数转写需要补抽相邻帧并人工复核，记录在忽略目录的 `verified_text.json` 中。
+
+```sh
+mkdir -p out/lyric_recovery
+swiftc tools/recognize_video_text.swift -o out/lyric_recovery/ocr
+python3 tools/sample_video_lyrics.py /path/to/reference.mp4 --ocr out/lyric_recovery/ocr
+node tools/match_video_lyrics.mjs
+# 补齐人工核对记录、确认所有校验值匹配后：
+node tools/match_video_lyrics.mjs --write
+node tools/check_restored_lyrics.mjs
+node tools/check_memory_lab.mjs --real-lyrics
+```
+
+本次交付的全部 129 行对照卡为 `out/amadeus_lyric_comparison.html`；逐行文字与原片证据记录为 `out/amadeus_lyric_recovery.json`；最终编码视频的逐行抽帧为 `out/final_lyrics_frames/`。这些材料只在本地交付。
+
+此次参考视频含五秒片头，提取音轨时移除 220,500 个采样／声道，导出器再加入一次五秒警告。使用 float32 WAV 保留 AAC 解码音频，不归一化、不拉伸或额外截幅。其他参考视频应先校准片头长度，不能直接套用五秒。
+
 ### 验证
 
 当前无声检查版为 1920×1080／60fps、H.264／BT.709，共 13,017 帧、216.95 秒，含五秒警告页且无音轨。330 个开关及切点附近帧检查通过；13 个时刻的跳转与顺序渲染哈希一致。一般闪光最高 2.0 次／秒，饱和红闪光为 0 次，无单帧突跳。详细结果与限制见 [改编与验证记录](docs/AMADEUS.md)。
+
+真实歌词成片另检查了全部 129 行及 387 个相邻帧，并对最终 MP4 抽取 129 个歌词时刻及 434 个半秒采样帧：未检出占位符。正常音频预览通过，封装音轨偏移为 0 ms，闪光复测最高为一般 2.0 次／秒、饱和红 0 次／秒，无单帧突跳。原片时间表保持不变；声乐频段的自动起音统计和完整限制记录在改编说明中，不据此擅自移动歌词。
+
+导出器新增可选 `--preset` 参数，默认配置保持原样。本次使用 `--preset fast`、原 CRF 16 画质目标进行软件 H.264 编码；源画面、帧率与时间轴不变。
 
 `node tools/check_memory_lab.mjs` 使用实际 1080p 渲染检查切点和开关附近帧、跳转／顺序渲染一致性、十二条不同尝试路径和保留的镜头时间轴，并输出完整尺寸关键帧。需要本机 Chrome；在 macOS 使用 Metal。
 
@@ -111,7 +136,9 @@ Use Node.js 20+ and Chrome or Edge. Clone the `Amadeus` branch, run `npm install
 
 Supply your own audio and lyrics in [`音頻&歌詞/`](音頻&歌詞/README.md), following `config.json`. Run `npm run lyrics`, then `npm run export:preview` for `out/amadeus_1080p60.mp4` (1080p/60fps, H.264/AAC). The lyric file is fitted to the existing timing table. Adjust `timing.offset` if the audio has different leading silence; different edits or playback speeds need a new timing review.
 
-The current delivery is a **silent layout check**, not a finished lyric video. To reproduce it, use the explicit `--layout-only --silent` export command above. Generated videos and reports stay in local `out/` and are not committed. Final lyric layout and audiovisual sync await the real audio and lyrics.
+The local completed video now contains **all 129 restored lyric lines and music**. Both word hashes and exact-text hashes match the original timing table. The supplied reference video's AAC audio was decoded to float32 WAV, with its existing five-second lead removed before the exporter adds the warning once. This is not a lossless original music source. Audio, lyrics, finished videos, comparisons, and reports stay local and are not committed; a fresh clone still needs your own audio and lyrics. The explicit `--layout-only --silent` command remains available for placeholder checks.
+
+On macOS, the included Swift Vision sampler and hash matcher can recover text from a local reference. Unmatched paths, letter splits, and numeral transliterations require adjacent-frame review. `node tools/match_video_lyrics.mjs --write` refuses incomplete or nonmatching recovery; `node tools/check_restored_lyrics.mjs` checks the real data and normal audio preview. The local HTML comparison covers all 129 cues and uses frames extracted from the final encoded MP4.
 
 ### Validation and credits
 

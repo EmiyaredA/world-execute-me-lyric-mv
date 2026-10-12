@@ -18,7 +18,7 @@
 
 | 文件 | 内容 |
 | --- | --- |
-| [AMADEUS.md](AMADEUS.md) | 角色、线稿、记忆仪器和封面改编记录；当前验证结果及尚待补齐的音源／歌词 |
+| [AMADEUS.md](AMADEUS.md) | 角色、线稿、记忆仪器、封面和全部 129 行歌词恢复记录；当前成片验证结果 |
 | [../assets/amadeus/prompts.json](../assets/amadeus/prompts.json) | 六张透明角色素材的生成提示词与修复记录 |
 | [../assets/amadeus/](../assets/amadeus/) | 角色、标志和封面参考，区域测量及完整／简化线稿 SVG |
 | [../data/amadeus_chat.json](../data/amadeus_chat.json)、[../data/amadeus_errors.json](../data/amadeus_errors.json) | 当前聊天、记忆与连接主题文案 |
@@ -26,7 +26,7 @@
 | [images/amadeus_cover.png](images/amadeus_cover.png) | 当前 1920×1080 封面 |
 | [../CREDITS.md](../CREDITS.md) | 当前改编与原工程的来源、作者及授权说明 |
 
-当前完整无声预览、修改前后联系表、单帧和检查报告输出到本地 `out/`，不随 Git 提交。真实歌词排版与音画同步尚未验收。运行与导出方法见 [主 README](../README.md#中文)。
+当前有声成片、无声检查版、全部 129 行原片／占位版／恢复版对照、单帧和检查报告输出到本地 `out/`，不随 Git 提交。真实歌词与音轨已在本机补齐并检查；源歌词和音乐仍需由使用者本地提供。运行与导出方法见 [主 README](../README.md#中文)。
 
 ### 原工程的历史文件
 
@@ -83,7 +83,7 @@
 
 ### Current Amadeus adaptation
 
-See [AMADEUS.md](AMADEUS.md) for the Kurisu assets, transparent Amadeus outline, memory instruments, scan interference, cover revision, validation results, and remaining audio/lyric work. [Character prompts](../assets/amadeus/prompts.json), [current storyboard](../STORYBOARD.md), [cover](images/amadeus_cover.png), and [credits](../CREDITS.md) are included in this branch. Generated videos, contact sheets, full-size stills, and reports stay in local `out/` and are not committed. The current video is a silent layout check; final lyrics and audiovisual sync still require local audio and lyrics.
+See [AMADEUS.md](AMADEUS.md) for the Kurisu assets, transparent Amadeus outline, memory instruments, scan interference, cover revision, complete 129-line lyric recovery, and validation results. [Character prompts](../assets/amadeus/prompts.json), [current storyboard](../STORYBOARD.md), [cover](images/amadeus_cover.png), and [credits](../CREDITS.md) are included in this branch. The local finished video includes restored lyrics and reference-video music. Audio, lyrics, videos, all-cue comparison cards, stills, and reports are kept local and are not committed; a fresh checkout still requires local media inputs.
 
 ### Original production history
 

@@ -21,6 +21,7 @@ from pathlib import Path
 
 import librosa
 import numpy as np
+from scipy.signal import correlate
 
 ROOT = Path(__file__).resolve().parent.parent
 CFG = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
@@ -52,7 +53,8 @@ def main():
     a, b = dec0[:n], src0[:n]
     lags = np.arange(-2400, 2401)
     core = slice(2400, n - 2400)
-    xc = [float(np.dot(a[core], b[2400 + l: n - 2400 + l])) for l in lags]
+    # Same 4,801 dot products as the direct search, computed by FFT for long audio.
+    xc = correlate(b, a[core], mode="valid", method="fft")
     lag = lags[int(np.argmax(xc))]          # >0: mp4 audio is EARLIER than source by lag samples
     print(f"[1] audio in mp4 vs source wav: lag = {-lag / sr * 1000:+.2f} ms  (decoded {len(dec) / sr:.3f} s)")
 

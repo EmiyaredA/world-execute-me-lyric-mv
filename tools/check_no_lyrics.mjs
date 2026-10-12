@@ -18,7 +18,7 @@ const wordsOf = (s) => [...s.matchAll(WORD)].map((m) => ({ w: m[0].normalize('NF
 /** Files that would be published, relative to the project, with forward slashes. */
 export function publishedFiles() {
   const git = spawnSync('git', ['ls-files', '-co', '--exclude-standard', '-z'], { cwd: ROOT, encoding: 'utf8' });
-  if (git.status === 0 && fs.existsSync(path.join(ROOT, '.git'))) return git.stdout.split('\0').filter(Boolean);
+  if (git.status === 0 && fs.existsSync(path.join(ROOT, '.git'))) return git.stdout.split('\0').filter(rel => rel && fs.lstatSync(path.join(ROOT, rel)).isFile());
   // no repository yet: read .gitignore ourselves (the plain forms this project uses: dir/, /rooted, *.ext, !kept, name)
   const rules = fs.existsSync(path.join(ROOT, '.gitignore')) ? fs.readFileSync(path.join(ROOT, '.gitignore'), 'utf8').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#')) : [];
   const hit = (rule, rel, isDir) => {
