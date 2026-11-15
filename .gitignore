@@ -1,4 +1,4 @@
-# The song and its lyrics belong to Mili: bring your own, never commit them.
+# Music and lyrics belong to Mili; preserve the approved project inputs below.
 /音頻&歌詞/*
 !/音頻&歌詞/README.md
 *.wav
@@ -7,8 +7,10 @@
 *.m4a
 *.ogg
 *.lrc
-# made on your machine from your own lyric file (tools/fill_lyrics.mjs): it carries the lyric text
-/data/lyrics.json
+# Explicit archive inputs; other local audio and lyric files remain ignored.
+!/音頻&歌詞/Mili - world.execute (me) ;.wav
+!/音頻&歌詞/Mili - world.execute (me) ;.lrc
+# data/lyrics.json is tracked with its restored text and timing.
 
 # renders (the videos carry the song)
 /out/

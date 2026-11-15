@@ -1,7 +1,7 @@
 // The lyric lines of the film = the WORDS of your own lyric file + the TIMING kept in this repository.
-//   node tools/fill_lyrics.mjs [file]     -> data/lyrics.json   (local; never committed)
+//   node tools/fill_lyrics.mjs [file]     -> data/lyrics.json   (archived with the source LRC)
 //   node tools/fill_lyrics.mjs --table    -> data/lyric_timing.json, from the current data/lyrics.json (maintainer)
-// The repository carries no lyric text. data/lyric_timing.json holds, for each of the film's lines: start / end /
+// The archived LRC supplies the lyric text. data/lyric_timing.json holds, for each of the film's lines: start / end /
 // section / emphasis, how many words and letters it has, and two short hashes (of its words, and of its exact text).
 // Your file (config.json -> paths.lrc: an LRC with any timing, or plain text) only has to carry the same words in the
 // same order. Its own time tags and its own line breaks are not used: rows are re-divided where they are divided
@@ -176,7 +176,7 @@ export function ensureLyrics({ file = null, quiet = false } = {}) {
   if (!src || !fs.existsSync(src)) {
     if (!file && fs.existsSync(out)) return null;       // made earlier; the lyric file has been taken away since
     throw new Error(`[lyrics] no lyric file found${file ? `: ${file}` : ''}.\n` +
-      `  This repository carries no lyric text. Put the lyrics of the song (an .lrc with any timing, or plain text)\n` +
+      `  Restore the archived lyric file, or put the lyrics of the song (an .lrc with any timing, or plain text)\n` +
       `  at "${cfg.paths.lrc}" (config.json -> paths.lrc; a single .lrc / .txt under any name in that folder will do)\n` +
       `  and run again. Only the words are taken from your file: the timing is in ${TABLE}.`);
   }

@@ -1,16 +1,22 @@
-// Before publishing: no file that goes into the repository may carry lyric text.
+// Check that lyric text stays in the three explicitly archived project inputs.
 //   node tools/check_no_lyrics.mjs [--mask]
 // Looks through every file git would publish (outside a git repository: every file .gitignore does not name) for a
 // run of four or more consecutive words of a lyric line, or a whole line of three; the lines are taken from your local
 // data/lyrics.json. The title of the song does not count, single keywords do not either. Prints the place and the
 // number of the line (as in text(i): from 0), never the words; --mask also prints the row with the words struck out.
-// Exit code 1 if anything is found.
+// The approved WAV, LRC and lyrics JSON are skipped; exit code 1 for lyrics elsewhere.
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+// Only these exact paths were approved for the project archive.
+const ARCHIVED_INPUTS = new Set([
+  '音頻&歌詞/Mili - world.execute (me) ;.wav',
+  '音頻&歌詞/Mili - world.execute (me) ;.lrc',
+  'data/lyrics.json',
+]);
 const WORD = /[\p{L}\p{N}\p{M}]+/gu, TITLE = 'world execute me', RUN = 4;
 const TEXT = /\.(js|mjs|cjs|json|md|py|html|css|txt|cmd|ps1|sh|yml|yaml|svg)$|^[^.]+$/i;
 const wordsOf = (s) => [...s.matchAll(WORD)].map((m) => ({ w: m[0].normalize('NFKC').toLowerCase(), a: m.index, b: m.index + m[0].length }));
@@ -84,6 +90,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   for (const rel of files) {
     const file = path.join(ROOT, rel), size = fs.statSync(file).size;
     bytes += size;
+    if (ARCHIVED_INPUTS.has(rel)) continue;
     if (/\.(wav|flac|mp3|m4a|ogg|lrc)$/i.test(rel)) { console.log(`${rel}: an audio or lyric file would be published`); hits++; continue; }
     if (!TEXT.test(path.basename(rel)) || size > 8e6) continue;
     const text = fs.readFileSync(file, 'utf8');
@@ -97,6 +104,6 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       }
     }
   }
-  console.log(`${files.length} files to publish (${(bytes / 1e6).toFixed(1)} MB): ${hits ? `${hits} places carry lyric text` : 'no lyric text found'}`);
+  console.log(`${files.length} files to publish (${(bytes / 1e6).toFixed(1)} MB): ${hits ? `${hits} places carry lyric text` : 'no lyric text outside approved archive inputs'}`);
   process.exit(hits ? 1 : 0);
 }
